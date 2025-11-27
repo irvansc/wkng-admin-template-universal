@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Produk & Stok</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* ======================================================================
+           [ADDED] ORDERS SPECIFIC STYLES 
+           ====================================================================== */
+
+        /* 1. STYLE: GRADIENT ORDER CARD (THEME COMPLIANT) */
+        .order-card-gradient {
+            position: relative;
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            height: 100%;
+        }
+
+        .order-card-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ec4899, #8b5cf6);
+        }
+
+        .order-card-gradient:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+        }
+
+        .grad-status-badge {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
+        }
+
+        .grad-price {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.light-mode .grad-price {
+            background: linear-gradient(90deg, #111827 0%, #4f46e5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 2. STYLE: OUTLINE ORDER CARD (FIXED - MINIMALIST) */
+        .order-card-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .order-card-outline:hover {
+            border-color: var(--accent-purple);
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        /* [MODIFIED] Highlighted ID for Order Outline */
+        .outline-id {
+            font-family: monospace;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .outline-btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        /* [MODIFIED] Icon Only Button for Order Outline */
+        .outline-icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .outline-icon-btn:hover {
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        /* 3. STYLE: KANBAN BOARD CARD */
+        .kanban-col {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            min-height: 400px;
+        }
+
+        .kanban-header {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kanban-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: grab;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .kanban-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--text-muted);
+        }
+
+        .kanban-user-img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* 4. STYLE: TIMELINE / TRACKING ROW */
+        .tracking-row {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .track-visual {
+            flex: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            min-width: 300px;
+        }
+
+        /* Line behind dots */
+        .track-visual::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--border-color);
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        .track-step {
+            position: relative;
+            z-index: 1;
+            background: var(--bg-card);
+            padding: 0 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .track-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--border-color);
+            border: 2px solid var(--bg-card);
+        }
+
+        .track-step.active .track-dot {
+            background: var(--accent-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+
+        .track-step.active~.track-step .track-dot {
+            background: var(--border-color);
+        }
+
+        /* Upcoming steps */
+        .track-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .track-step.active .track-label {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* 5. STYLE: RECEIPT / TICKET LOOK */
+        .receipt-card {
+            background: white;
+            /* Receipts usually white/light */
+            color: #1f2937;
+            /* Dark text for readability */
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            /* Zigzag bottom effect using css gradient */
+            background-image: radial-gradient(circle at 10px 100%, transparent 6px, white 7px);
+            background-size: 20px 100%;
+            background-position: 0 100%;
+            background-repeat: repeat-x;
+            padding-bottom: 30px;
+            /* Space for zigzag */
+        }
+
+        body:not(.light-mode) .receipt-card {
+            background: #e5e7eb;
+            /* Slightly dim white for dark mode comfort */
+            background-image: radial-gradient(circle at 10px 100%, transparent 6px, #e5e7eb 7px);
+        }
+
+        .receipt-header {
+            border-bottom: 2px dashed #9ca3af;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .receipt-total {
+            border-top: 2px dashed #9ca3af;
+            padding-top: 10px;
+            margin-top: 10px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .receipt-barcode {
+            height: 30px;
+            background: repeating-linear-gradient(to right, #000, #000 2px, transparent 2px, transparent 4px);
+            margin-top: 15px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness" aria-expanded="true">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse show" id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="/products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link active"><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link"><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link"><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link"><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link"><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link"><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Navbar -->
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari sesuatu...">
+                </div>
+
+                <!-- [NEW] Notification Bell with Red Dot -->
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p>
+                                    <span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p>
+                                    <span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p>
+                                    <span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER-->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Manajemen Pesanan</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">
+                            Kelola pesanan, pembayaran, dan pengiriman secara real-time.
+                        </p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-box-seam"></i> ORDERS MANAGEMENT SYSTEM</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><i
+                                        class="bi bi-house-door-fill"></i></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">E-Commerce</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Orders</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END OF PAGE HEADER -->
+
+
+            <!-- START OF CONTENT HERE -->
+            <!-- STYLE 1: GRADIENT (WAJIB) -->
+            <div class="d-flex align-items-center justify-content-between mt-4">
+                <div class="section-title-modern mt-0 mb-3">Style 1: Gradient Cards (Premium Theme)</div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Card 1 -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="order-card-gradient">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="grad-status-badge">Processing</span>
+                            <small class="text-muted">2m ago</small>
+                        </div>
+                        <h5 class="fw-bold text-main mb-1">#ORD-7782</h5>
+                        <div class="text-muted small mb-3">Budi Santoso</div>
+
+                        <div class="d-flex align-items-center gap-2 mb-4">
+                            <img src="https://placehold.co/40x40/333/fff?text=NK" class="rounded-2" alt="item">
+                            <img src="https://placehold.co/40x40/333/fff?text=NK" class="rounded-2" alt="item">
+                            <div class="small text-muted">+2 items</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-end mt-auto">
+                            <div>
+                                <small class="text-muted d-block">Total</small>
+                                <span class="grad-price">$240.00</span>
+                            </div>
+                            <button class="btn btn-sm btn-light rounded-circle" style="width: 32px; height: 32px;"><i
+                                    class="bi bi-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="order-card-gradient">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="grad-status-badge"
+                                style="background: linear-gradient(135deg, #10b981, #3b82f6);">Completed</span>
+                            <small class="text-muted">1h ago</small>
+                        </div>
+                        <h5 class="fw-bold text-main mb-1">#ORD-7781</h5>
+                        <div class="text-muted small mb-3">Siti Aminah</div>
+
+                        <div class="d-flex align-items-center gap-2 mb-4">
+                            <img src="https://placehold.co/40x40/333/fff?text=SN" class="rounded-2" alt="item">
+                            <div class="small text-muted">Sony Headphone</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-end mt-auto">
+                            <div>
+                                <small class="text-muted d-block">Total</small>
+                                <span class="grad-price">$348.00</span>
+                            </div>
+                            <button class="btn btn-sm btn-light rounded-circle" style="width: 32px; height: 32px;"><i
+                                    class="bi bi-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STYLE 2: OUTLINE MINIMAL (WAJIB - MODIFIED) -->
+            <div class="section-title-modern">Style 2: Outline Minimal (Fixed)</div>
+            <p class="text-muted small">Menggunakan highlight pada ID dan icon-only button sesuai permintaan.</p>
+
+            <div class="row g-4">
+                <!-- Minimal 1 -->
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="order-card-outline">
+                        <div class="d-flex justify-content-between">
+                            <div class="outline-id">#ORD-9921</div>
+                            <i class="bi bi-three-dots text-muted" style="cursor: pointer;"></i>
+                        </div>
+                        <div>
+                            <!-- [MODIFIED] Reduced font size -->
+                            <h6 class="mb-1 text-main" style="font-size: 0.95rem;">Ahmad Dani</h6>
+                            <div class="small text-muted">2 Items • Via Website</div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <i class="bi bi-geo-alt-fill text-muted small"></i>
+                            <span class="small text-muted text-truncate">Jakarta Selatan</span>
+                        </div>
+                        <!-- [MODIFIED] Icon Only Buttons -->
+                        <div class="outline-btn-group">
+                            <button class="outline-icon-btn" title="Detail"><i class="bi bi-eye"></i></button>
+                            <button class="outline-icon-btn" title="Print Invoice"><i
+                                    class="bi bi-printer"></i></button>
+                            <button class="outline-icon-btn ms-auto" title="Approve"><i
+                                    class="bi bi-check-lg text-success"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Minimal 2 -->
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="order-card-outline">
+                        <div class="d-flex justify-content-between">
+                            <div class="outline-id">#ORD-9922</div>
+                            <i class="bi bi-three-dots text-muted" style="cursor: pointer;"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 text-main" style="font-size: 0.95rem;">Rina Nose</h6>
+                            <div class="small text-muted">1 Item • Via App</div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <i class="bi bi-geo-alt-fill text-muted small"></i>
+                            <span class="small text-muted text-truncate">Bandung City</span>
+                        </div>
+                        <div class="outline-btn-group">
+                            <button class="outline-icon-btn" title="Detail"><i class="bi bi-eye"></i></button>
+                            <button class="outline-icon-btn" title="Print Invoice"><i
+                                    class="bi bi-printer"></i></button>
+                            <button class="outline-icon-btn ms-auto" title="Approve"><i
+                                    class="bi bi-check-lg text-success"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STYLE 3: KANBAN BOARD (VARIETY) -->
+            <div class="section-title-modern">Style 3: Kanban Process Board</div>
+
+            <div class="row g-4 overflow-auto flex-nowrap pb-3" style="min-height: 450px;">
+                <!-- Column: Pending -->
+                <div class="col-md-4 col-sm-10" style="min-width: 300px;">
+                    <div class="kanban-col">
+                        <div class="kanban-header text-warning">
+                            <span><i class="bi bi-clock me-2"></i> Pending Payment</span>
+                            <span class="badge bg-warning text-dark rounded-pill">3</span>
+                        </div>
+
+                        <!-- Item -->
+                        <div class="kanban-card">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-soft-warning text-warning small">Unpaid</span>
+                                <small class="text-muted">Just now</small>
+                            </div>
+                            <p class="mb-2 text-main fw-bold small">Order #8821 - Gadget Acc</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <img src="https://placehold.co/30x30?text=U1" class="kanban-user-img" alt="u">
+                                <span class="fw-bold text-main small">$45.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Item -->
+                        <div class="kanban-card">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-soft-warning text-warning small">Unpaid</span>
+                                <small class="text-muted">5m ago</small>
+                            </div>
+                            <p class="mb-2 text-main fw-bold small">Order #8820 - Mechanical Key</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <img src="https://placehold.co/30x30?text=U2" class="kanban-user-img" alt="u">
+                                <span class="fw-bold text-main small">$120.50</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column: Processing -->
+                <div class="col-md-4 col-sm-10" style="min-width: 300px;">
+                    <div class="kanban-col">
+                        <div class="kanban-header text-info">
+                            <span><i class="bi bi-gear me-2"></i> Processing</span>
+                            <span class="badge bg-info text-dark rounded-pill">1</span>
+                        </div>
+                        <div class="kanban-card">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-soft-info text-info small">Packed</span>
+                                <small class="text-muted">10m ago</small>
+                            </div>
+                            <p class="mb-2 text-main fw-bold small">Order #8819 - Monitor 24"</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <img src="https://placehold.co/30x30?text=U3" class="kanban-user-img" alt="u">
+                                <span class="fw-bold text-main small">$180.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column: Shipped -->
+                <div class="col-md-4 col-sm-10" style="min-width: 300px;">
+                    <div class="kanban-col">
+                        <div class="kanban-header text-success">
+                            <span><i class="bi bi-truck me-2"></i> Shipped</span>
+                            <span class="badge bg-success text-white rounded-pill">2</span>
+                        </div>
+                        <div class="kanban-card">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-soft-success text-success small">JNE Express</span>
+                                <small class="text-muted">1h ago</small>
+                            </div>
+                            <p class="mb-2 text-main fw-bold small">Order #8815 - Mouse Wireless</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <img src="https://placehold.co/30x30?text=U4" class="kanban-user-img" alt="u">
+                                <span class="fw-bold text-main small">$25.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STYLE 4: TIMELINE TRACKING (VARIETY) -->
+            <div class="section-title-modern">Style 4: Timeline Tracking Row</div>
+
+            <div class="tracking-row">
+                <div class="track-info">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="badge bg-primary">In Transit</span>
+                        <span class="text-muted small">#ORD-TRACK-001</span>
+                    </div>
+                    <h5 class="text-main fw-bold mb-0">Macbook Air M2</h5>
+                    <small class="text-muted">Customer: Indra Jegel</small>
+                </div>
+                <div class="track-visual">
+                    <div class="track-step active">
+                        <div class="track-dot"></div>
+                        <span class="track-label">Confirmed</span>
+                    </div>
+                    <div class="track-step active">
+                        <div class="track-dot"></div>
+                        <span class="track-label">Packed</span>
+                    </div>
+                    <div class="track-step active">
+                        <div class="track-dot"></div>
+                        <span class="track-label">Shipped</span>
+                    </div>
+                    <div class="track-step">
+                        <div class="track-dot"></div>
+                        <span class="track-label">Delivered</span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                </div>
+            </div>
+
+            <div class="tracking-row">
+                <div class="track-info">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="badge bg-secondary">Pending</span>
+                        <span class="text-muted small">#ORD-TRACK-002</span>
+                    </div>
+                    <h5 class="text-main fw-bold mb-0">Logitech MX Master 3</h5>
+                    <small class="text-muted">Customer: Andre Taulany</small>
+                </div>
+                <div class="track-visual">
+                    <div class="track-step active">
+                        <div class="track-dot"></div>
+                        <span class="track-label">Confirmed</span>
+                    </div>
+                    <div class="track-step">
+                        <div class="track-dot"></div>
+                        <span class="track-label">Packed</span>
+                    </div>
+                    <div class="track-step">
+                        <div class="track-dot"></div>
+                        <span class="track-label">Shipped</span>
+                    </div>
+                    <div class="track-step">
+                        <div class="track-dot"></div>
+                        <span class="track-label">Delivered</span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button class="btn btn-outline-secondary btn-sm">View Details</button>
+                </div>
+            </div>
+
+            <!-- STYLE 5: RECEIPT LOOK (VARIETY) -->
+            <div class="section-title-modern">Style 5: Physical Receipt Look</div>
+
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="receipt-card">
+                        <div class="receipt-header">
+                            <div class="fw-bold text-dark">NEXUS STORE</div>
+                            <div class="small text-muted">Receipt #99102</div>
+                            <div class="small text-muted">25 Nov 2025</div>
+                        </div>
+                        <div class="receipt-row text-dark">
+                            <span>Coffee Maker</span>
+                            <span>$120.00</span>
+                        </div>
+                        <div class="receipt-row text-dark">
+                            <span>Filters (x2)</span>
+                            <span>$10.00</span>
+                        </div>
+                        <div class="receipt-total text-dark">
+                            <span>TOTAL</span>
+                            <span>$130.00</span>
+                        </div>
+                        <div class="receipt-barcode"></div>
+                        <div class="text-center mt-3">
+                            <span class="badge bg-success bg-opacity-10 text-success">PAID</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END OF CONTENT HERE -->
+
+
+            <!-- START OF COPYRIGHT FOOTER SECTION -->
+            <footer class="footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025 <strong class="text-white">Nexus
+                                Admin</strong>. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan Privasi</a>
+                            <a href="#" class="footer-link">Syarat & Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- END OF COPYRIGHT FOOTER -->
+        </main>
+    </div>
+
+    <!-- Theme Toggle Floating (Maintained) -->
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/script.js"></script>
+
+</body>
+
+</html>

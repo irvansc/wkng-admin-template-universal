@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Form Elements</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome for Social Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+       
+
+        /* ======================================================================
+           2. SPECIFIC: FORM ELEMENTS PAGE STYLES
+           ====================================================================== */
+
+        /* --- UNIVERSAL PAGE HEADER STYLE --- */
+        .active-page-header {
+            padding: 30px;
+            border-radius: 24px;
+            background-color: var(--bg-card);
+            position: relative;
+            margin-bottom: 3.5rem;
+            border: 2px solid transparent;
+            /* Gradient Background Pattern */
+            background-image: linear-gradient(var(--bg-card), var(--bg-card)), linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15);
+        }
+
+        .page-title-large {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        body.light-mode .page-title-large {
+            background: none;
+            -webkit-text-fill-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            white-space: nowrap;
+        }
+
+        .breadcrumb-modern {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        body.light-mode .breadcrumb-modern {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-color: var(--border-color);
+        }
+
+        .breadcrumb-item-custom {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item-custom:hover {
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-item-custom.active {
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .breadcrumb-home-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-sep {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* --- FORM SPECIFIC STYLES --- */
+        .section-title-modern {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 40px 0 20px;
+            padding-left: 12px;
+            border-left: 4px solid var(--accent-purple);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Custom Form Controls */
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+       /* --- TAMBAHKAN BAGIAN INI (MULAI) --- */
+       .form-control::placeholder,
+       .form-select::placeholder {
+           color: var(--text-muted) !important;
+           opacity: 0.7; /* Mengatur transparansi agar terlihat seperti placeholder */
+       }
+       /* --- TAMBAHKAN BAGIAN INI (SELESAI) --- */
+        .form-control,
+        .form-select {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 8px;
+            padding: 10px 14px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        /* Gradient Focus Style */
+        .form-control-gradient:focus {
+            border-image: linear-gradient(to right, #6366f1, #3b82f6) 1;
+            box-shadow: none;
+        }
+
+        /* Outline Style */
+        .form-control-outline {
+            background-color: transparent;
+            border-width: 2px;
+        }
+
+        .form-control-outline:focus {
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        /* Outline Gradient Style */
+        .input-group-outline-gradient {
+            position: relative;
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 1px;
+            /* space for border */
+            background-clip: content-box;
+        }
+
+        .input-group-outline-gradient::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            padding: 2px;
+            /* border width */
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .input-group-outline-gradient .form-control {
+            border: none;
+            background: transparent;
+        }
+
+
+        /* Disabled State */
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: rgba(0, 0, 0, 0.2);
+            opacity: 0.7;
+        }
+
+        body.light-mode .form-control:disabled {
+            background-color: #e2e8f0;
+        }
+
+        /* Form Check & Switch */
+        .form-check-input {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-check-label {
+            color: var(--text-main);
+            cursor: pointer;
+        }
+        .form-select option {
+            background-color: var(--bg-card); /* Menggunakan warna solid card */
+            color: var(--text-main);
+        }
+        /* Floating Labels Override */
+        .form-floating > .form-control,
+        .form-floating > .form-select {
+            height: 52px; /* Sedikit lebih tinggi agar lega */
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 12px; /* Membuat sudut lebih halus */
+            padding-top: 1.625rem; /* Ruang untuk label di atas */
+            padding-bottom: 0.625rem;
+            line-height: 1.25;
+        }
+
+        .form-floating>label {
+            color: var(--text-muted);
+            padding: 14px 14px; /* Posisi teks di tengah vertikal */
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: 0 0;
+            opacity: 0.8;
+        }
+
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label,
+        .form-floating > .form-select ~ label {
+            opacity: 1;
+            color: var(--accent-purple); /* Warna label jadi ungu saat aktif */
+            transform: scale(0.85) translateY(-0.7rem) translateX(0.15rem); /* Posisi naik lebih rapi */
+            font-weight: 600; /* Teks label jadi agak tebal */
+            background-color: transparent; 
+        }
+        .form-floating > .form-control:focus,
+        .form-floating > .form-select:focus {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        .form-floating > .form-control::placeholder {
+            color: transparent !important; 
+        }
+
+        /* Input Group Text */
+        .input-group-text {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+            color: var(--text-muted);
+        }
+
+        body.light-mode .input-group-text {
+            background-color: #f1f5f9;
+        }
+
+        /* Custom Range */
+        .form-range::-webkit-slider-thumb {
+            background: var(--accent-purple);
+        }
+
+        /* Custom File Input */
+        .form-control[type="file"] {
+            padding: 8px;
+        }
+
+        /* Color Picker */
+        .form-control-color {
+            width: 3rem;
+            height: 3rem;
+            padding: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-120%);
+                width: 260px !important;
+                padding-right: 16px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-navbar-standalone {
+                justify-content: flex-end;
+                padding-left: 70px;
+                margin-bottom: 20px;
+                gap: 10px;
+            }
+
+            .search-standalone-box {
+                width: auto;
+                flex-grow: 1;
+                max-width: 100%;
+            }
+
+            .search-standalone-input {
+                padding-left: 40px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .search-standalone-icon {
+                left: 14px;
+            }
+
+            .notification-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+        }
+
+        .dropdown-menu {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Bayangan agar lebih pop-up */
+        }
+
+        /* 2. Ubah warna teks item dropdown */
+        .dropdown-item {
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        /* 3. Efek Hover pada item dropdown */
+        .dropdown-item:hover, 
+        .dropdown-item:focus {
+            background-color: rgba(255, 255, 255, 0.05); /* Efek highlight transparan */
+            color: var(--text-main);
+        }
+
+        /* 4. Khusus Light Mode (Opsional, agar tetap konsisten) */
+        body.light-mode .dropdown-item:hover, 
+        body.light-mode .dropdown-item:focus {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse" id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="/products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link "><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link "><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link "><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link "><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link "><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse " id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link "><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link "><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link "><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI" ><i
+                        class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse " id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link "><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link "><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link "><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link "><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link "><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link "><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms" aria-expanded="true"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link active"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT (FORM ELEMENTS PAGE) -->
+        <main class="main-content">
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                  <i class="bi bi-search search-standalone-icon"></i>
+                  <input type="text" class="search-standalone-input" placeholder="Cari...">
+                </div>
+            
+                <div class="notification-wrapper dropdown">
+                  <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-display="static">
+                    <i class="bi bi-bell"></i>
+                    <div class="notification-dot-red"></div>
+                  </div>
+                  <ul class="dropdown-menu notification-dropdown-menu">
+                    <div
+                      class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                      <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                      <span class="badge bg-danger rounded-pill">3 Baru</span>
+                    </div>
+                    <li><a class="notification-item" href="#">
+                        <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                        </div>
+                        <div class="notif-content">
+                          <h6>System Alert</h6>
+                          <p>CPU Usage above 90% detected.</p><span class="notif-time">2 mins ago</span>
+                        </div>
+                      </a></li>
+                    <li><a class="notification-item" href="#">
+                        <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                        <div class="notif-content">
+                          <h6>New Order</h6>
+                          <p>Received order #ORD-248 from Budi.</p><span class="notif-time">15 mins ago</span>
+                        </div>
+                      </a></li>
+                    <li><a class="notification-item" href="#">
+                        <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                        <div class="notif-content">
+                          <h6>Server Update</h6>
+                          <p>Server scheduled for maintenance.</p><span class="notif-time">1 hour ago</span>
+                        </div>
+                      </a></li>
+                    <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                        style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                  </ul>
+                </div>
+            </div>
+            
+
+            <!-- PAGE HEADER -->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Form Elements</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">Komponen input data
+                            yang lengkap, modern, dan user-friendly.</p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-input-cursor-text"></i> UI COMPONENT</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><span class="breadcrumb-home-icon"><i
+                                            class="bi bi-house-door-fill"></i></span></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Forms</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Elements</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. BASIC INPUTS -->
+            <div class="section-title-modern">Basic Inputs</div>
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="widget-card h-100">
+                        <h6 class="mb-4 fw-bold">Standard Fields</h6>
+                        <div class="mb-3">
+                            <label for="basicInput" class="form-label">Text Input</label>
+                            <input type="text" class="form-control " id="basicinput" placeholder="Masukkan teks...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="emailInput" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="emailInput" placeholder="name@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="passwordInput" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="passwordInput" value="password123">
+                        </div>
+                        <div class="mb-3">
+                            <label for="textareaInput" class="form-label">Textarea</label>
+                            <textarea class="form-control" id="textareaInput" rows="3"
+                                placeholder="Tulis pesan Anda..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="widget-card h-100">
+                        <h6 class="mb-4 fw-bold">Sizing & States</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Large Input</label>
+                            <input class="form-control form-control-lg" type="text" placeholder=".form-control-lg">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Small Input</label>
+                            <input class="form-control form-control-sm" type="text" placeholder=".form-control-sm">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Disabled Input</label>
+                            <input class="form-control" type="text" placeholder="Disabled input" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Readonly Input</label>
+                            <input class="form-control" type="text" value="Readonly value" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: GRADIENT & OUTLINE STYLES -->
+            <div class="section-title-modern">Modern Variations</div>
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="widget-card h-100">
+                        <h6 class="mb-4 fw-bold">Gradient Focus & Outline</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Gradient Focus</label>
+                            <input type="text" class="form-control form-control-gradient"
+                                placeholder="Focus to see gradient border">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Outline Style</label>
+                            <input type="text" class="form-control form-control-outline"
+                                placeholder="Transparent background">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Outline Gradient Border</label>
+                            <div class="input-group-outline-gradient">
+                                <input type="text" class="form-control" placeholder="Gradient border container">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 2. FLOATING LABELS & SELECTS -->
+            <div class="section-title-modern">Modern Layouts</div>
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="widget-card h-100">
+                        <h6 class="mb-4 fw-bold">Floating Labels</h6>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                            <label for="floatingInput">Email address</label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                            <label for="floatingPassword">Password</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="widget-card h-100">
+                        <h6 class="mb-4 fw-bold">Selects & File Input</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Default Select</label>
+                            <select class="form-select">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">File Input</label>
+                            <input class="form-control" type="file" id="formFile">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleColorInput" class="form-label">Color Picker</label>
+                            <input type="color" class="form-control form-control-color w-100" id="exampleColorInput"
+                                value="#6366f1" title="Choose your color">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. CHECKBOXES & RADIOS -->
+            <div class="section-title-modern">Selection Controls</div>
+            <div class="row g-4 mb-5">
+                <div class="col-lg-4">
+                    <div class="widget-card h-100">
+                        <h6 class="mb-4 fw-bold">Checkboxes</h6>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                            <label class="form-check-label" for="flexCheckDefault">Default checkbox</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                            <label class="form-check-label" for="flexCheckChecked">Checked checkbox</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDisabled" disabled>
+                            <label class="form-check-label" for="flexCheckDisabled">Disabled checkbox</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="widget-card h-100">
+                        <h6 class="mb-4 fw-bold">Radios</h6>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                            <label class="form-check-label" for="flexRadioDefault1">Default radio</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"
+                                checked>
+                            <label class="form-check-label" for="flexRadioDefault2">Default checked radio</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDisabled" id="flexRadioDisabled"
+                                disabled>
+                            <label class="form-check-label" for="flexRadioDisabled">Disabled radio</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="widget-card h-100">
+                        <h6 class="mb-4 fw-bold">Switches & Range</h6>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Default switch checkbox
+                                input</label>
+                        </div>
+                        <div class="form-check form-switch mb-4">
+                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+                            <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox
+                                input</label>
+                        </div>
+
+                        <label for="customRange1" class="form-label">Example range</label>
+                        <input type="range" class="form-range" id="customRange1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. INPUT GROUPS -->
+            <div class="section-title-modern">Input Groups</div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="widget-card h-100">
+                        <h6 class="mb-4 fw-bold">Basic Groups</h6>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">@</span>
+                            <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                                aria-describedby="basic-addon1">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Recipient's username"
+                                aria-label="Recipient's username" aria-describedby="basic-addon2">
+                            <span class="input-group-text" id="basic-addon2">@example.com</span>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">$</span>
+                            <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+                            <span class="input-group-text">.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="widget-card h-100">
+                        <h6 class="mb-4 fw-bold">Button Addons</h6>
+                        <div class="input-group mb-3">
+                            <button class="btn btn-outline-secondary" type="button" id="button-addon1">Button</button>
+                            <input type="text" class="form-control" placeholder=""
+                                aria-label="Example text with button addon" aria-describedby="button-addon1">
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Recipient's username"
+                                aria-label="Recipient's username" aria-describedby="button-addon2">
+                            <button class="btn btn-primary" type="button" id="button-addon2">Button</button>
+                        </div>
+
+                        <div class="input-group">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">Dropdown</button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                            </ul>
+                            <input type="text" class="form-control" aria-label="Text input with dropdown button">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+  <!-- [ADDED] COPYRIGHT FOOTER SECTION -->
+  <footer class="footer-dashboard">
+    <div class="row align-items-center justify-content-between">
+        <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+            <p class="mb-0 small text-muted">Copyright &copy; 2025 <strong class="text-white">Nexus
+                    Admin</strong>. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+            <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                <a href="#" class="footer-link">Kebijakan Privasi</a>
+                <a href="#" class="footer-link">Syarat & Ketentuan</a>
+                <a href="#" class="footer-link">Bantuan</a>
+            </div>
+        </div>
+    </div>
+</footer>
+        </main>
+    </div>
+
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/script.js"></script>
+   
+</body>
+
+</html>

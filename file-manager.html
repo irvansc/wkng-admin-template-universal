@@ -1,0 +1,2008 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Calendar</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* ======================================================================
+           🔥🔥 EXTREME FILE MANAGER CORE CSS 🔥🔥
+           ====================================================================== */
+
+        /* --- BASE STRUCTURE (Layout Logic) --- */
+        .fm-wrapper {
+            background-color: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            height: calc(100vh - 280px);
+            /* Responsive Height */
+            min-height: 600px;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .fm-sidebar {
+            width: 260px;
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.02);
+            flex-shrink: 0;
+            overflow-y: auto;
+            transition: all 0.4s ease;
+        }
+
+        .fm-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .fm-toolbar {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background: transparent;
+            z-index: 10;
+        }
+
+        .fm-content-area {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            position: relative;
+            scroll-behavior: smooth;
+        }
+
+        /* --- GRID & LIST SYSTEM --- */
+        .fm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+
+        .fm-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-bottom: 40px;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .fm-card {
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .fm-card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .fm-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .fm-card:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+
+        /* Add more delays via JS loop if needed */
+
+        /* --- BASE CARD STYLE --- */
+        .fm-card {
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .fm-list .fm-card {
+            flex-direction: row;
+            text-align: left;
+            padding: 12px 20px;
+            min-height: 64px;
+            align-items: center;
+        }
+
+        .fm-card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        .fm-list .fm-card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0;
+            margin-right: 20px;
+        }
+
+        .fm-card-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+            z-index: 2;
+        }
+
+        .fm-list .fm-card-name {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .fm-card-info {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            z-index: 2;
+        }
+
+        /* Selected State */
+        .fm-card.selected {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--accent-purple);
+        }
+
+        .fm-card.selected .fm-card-icon {
+            transform: scale(1.1);
+        }
+
+        /* --- SIDEBAR ITEMS --- */
+        .fm-sidebar-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .fm-sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .fm-sidebar-item.active {
+            background: var(--accent-purple);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        /* --- CONTEXT MENU --- */
+        .fm-context-menu {
+            position: fixed;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 8px;
+            width: 220px;
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            animation: menuFadeIn 0.2s ease-out;
+        }
+
+        @keyframes menuFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .fm-ctx-item {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .fm-ctx-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .fm-ctx-item.danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        /* ======================================================================
+           🔥🔥 NEW FEATURE: ADAPTIVE STORAGE WIDGET 🔥🔥
+           ====================================================================== */
+
+        /* Base Widget */
+        .fm-storage-widget {
+            margin-top: auto;
+            padding: 20px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .storage-progress {
+            height: 6px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .storage-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-purple);
+            border-radius: 10px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 1. Standard / Fluent / Drive / Elevate */
+        .style-standard .fm-storage-widget,
+        .style-fluent .fm-storage-widget,
+        .style-drive .fm-storage-widget {
+            background: rgba(0, 0, 0, 0.03);
+            border: none;
+        }
+
+        .style-elevate .fm-storage-widget {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background: var(--bg-card);
+        }
+
+        /* 2. Glassmorphism */
+        .style-glass .fm-storage-widget {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .style-glass .storage-bar {
+            background: linear-gradient(90deg, #6366f1, #ec4899);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+
+        /* 3. Cyberpunk (Data Core) */
+        .style-cyber .fm-storage-widget {
+            background: #000;
+            border: 1px solid #333;
+            font-family: 'Orbitron';
+        }
+
+        .style-cyber .storage-progress {
+            background: #111;
+            height: 12px;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+        }
+
+        .style-cyber .storage-bar {
+            background: repeating-linear-gradient(45deg, #0ff, #0ff 10px, #000 10px, #000 20px);
+            box-shadow: 0 0 10px #0ff;
+        }
+
+        .style-cyber .btn-upgrade {
+            border: 1px solid #0ff;
+            color: #0ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: transparent;
+        }
+
+        .style-cyber .btn-upgrade:hover {
+            background: #0ff;
+            color: #000;
+            box-shadow: 0 0 15px #0ff;
+        }
+
+        /* 4. Luxury (Gold Bar) */
+        .style-luxury .fm-storage-widget {
+            background: linear-gradient(to bottom, #111, #000);
+            border: 1px solid #d4af37;
+        }
+
+        .style-luxury .storage-bar {
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+        }
+
+        .style-luxury .storage-label {
+            color: #d4af37;
+            font-family: 'Playfair Display';
+        }
+
+        /* 5. Retro (ASCII) */
+        .style-retro .fm-storage-widget {
+            background: #000;
+            border: 2px solid #fff;
+            font-family: 'VT323';
+        }
+
+        .style-retro .storage-progress {
+            height: 20px;
+            background: transparent;
+            border: 1px solid #fff;
+            border-radius: 0;
+        }
+
+        .style-retro .storage-bar {
+            background: #fff;
+            border-radius: 0;
+            background-image: linear-gradient(90deg, transparent 50%, #000 50%);
+            background-size: 10px 100%;
+        }
+
+        /* 6. Neo-Brutalism */
+        .style-brutal .fm-storage-widget {
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 0;
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .style-brutal .storage-progress {
+            border: 2px solid #000;
+            height: 16px;
+            background: #fff;
+            border-radius: 0;
+        }
+
+        .style-brutal .storage-bar {
+            background: #ff00ff;
+            border-radius: 0;
+            border-right: 2px solid #000;
+        }
+
+        .style-brutal .btn-upgrade {
+            background: #ffff00;
+            color: #000;
+            border: 2px solid #000;
+            font-weight: 800;
+            text-transform: uppercase;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .style-brutal .btn-upgrade:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        /* 7. Cinematic (Minimal) */
+        .style-cinematic .fm-storage-widget {
+            display: none;
+        }
+
+        /* Hide in cinematic or minimal */
+
+
+        /* ======================================================================
+           🎨 EXISTING STYLES (PRESERVED)
+           ====================================================================== */
+
+        .style-standard .fm-wrapper {
+            background: var(--bg-card);
+            box-shadow: none;
+            border: 1px solid var(--border-color);
+        }
+
+        .style-standard .fm-card:hover {
+            background: rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+            border-color: var(--border-color);
+        }
+
+        .style-elevate .fm-wrapper {
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            overflow: visible;
+        }
+
+        .style-elevate .fm-sidebar {
+            border-radius: 24px;
+            background: var(--bg-card);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.05);
+            margin-right: 20px;
+            border: none;
+            height: 100%;
+        }
+
+        .style-elevate .fm-body {
+            border-radius: 24px;
+            background: var(--bg-card);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.05);
+            border: none;
+        }
+
+        .style-elevate .fm-card {
+            background: var(--bg-dark);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 20px;
+        }
+
+        .style-elevate .fm-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .style-elevate .fm-sidebar-item.active {
+            border-radius: 50px;
+            background: black;
+            color: white;
+        }
+
+        .style-glass .fm-wrapper {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            gap: 20px;
+            padding: 0;
+            overflow: visible;
+        }
+
+        .style-glass .fm-sidebar {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            height: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .style-glass .fm-body {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .style-glass .fm-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .style-glass .fm-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        .style-neu .fm-wrapper {
+            background: var(--bg-card);
+            border: none;
+        }
+
+        .style-neu .fm-sidebar {
+            background: transparent;
+            border-right: none;
+        }
+
+        .style-neu .fm-toolbar {
+            border-bottom: none;
+        }
+
+        .style-neu .fm-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3), -10px -10px 20px rgba(255, 255, 255, 0.02);
+        }
+
+        body.light-mode .style-neu .fm-card {
+            box-shadow: 8px 8px 16px #d1d5db, -8px -8px 16px #ffffff;
+            border: none;
+        }
+
+        .style-neu .fm-card:hover {
+            transform: scale(0.98);
+            box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.3), inset -5px -5px 10px rgba(255, 255, 255, 0.02);
+        }
+
+        .style-neu .fm-sidebar-item.active {
+            box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.3), inset -3px -3px 6px rgba(255, 255, 255, 0.05);
+            background: transparent;
+            color: var(--accent-purple);
+        }
+
+        .style-cyber {
+            --text-main: #e0e0e0;
+            --bg-card: #050505;
+        }
+
+        .style-cyber .fm-wrapper {
+            background: #000;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 98% 100%, 0 100%);
+        }
+
+        .style-cyber .fm-sidebar {
+            border-right: 2px dashed #333;
+            background: linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .style-cyber .fm-card {
+            border: 1px solid #333;
+            font-family: 'Orbitron', sans-serif;
+            background: rgba(0, 0, 0, 0.8);
+            border-left: 3px solid #333;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+
+        .style-cyber .fm-card-name {
+            letter-spacing: 1px;
+            color: #0ff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+        }
+
+        .style-cyber .fm-card:hover {
+            border-color: #0ff;
+            border-left-color: #f0f;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .style-cyber .fm-sidebar-item.active {
+            background: #0ff;
+            color: #000;
+            box-shadow: 0 0 15px #0ff;
+            font-weight: 800;
+            clip-path: polygon(0 0, 90% 0, 100% 100%, 0 100%);
+        }
+
+        .style-aurora .fm-wrapper {
+            background: rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .style-aurora .fm-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, rgba(236, 72, 153, 0.3) 30%, transparent 70%);
+            animation: auroraSpin 10s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes auroraSpin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .style-aurora .fm-sidebar,
+        .style-aurora .fm-body {
+            position: relative;
+            z-index: 1;
+            background: transparent;
+        }
+
+        .style-aurora .fm-sidebar {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .style-aurora .fm-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .style-aurora .fm-card:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(236, 72, 153, 0.4));
+            border-color: white;
+            transform: scale(1.05) rotate(1deg);
+        }
+
+        .style-macos .fm-wrapper {
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .style-macos .fm-sidebar {
+            background: rgba(40, 40, 40, 0.95);
+            border-right: 1px solid #111;
+            padding-top: 40px;
+            position: relative;
+        }
+
+        .style-macos .fm-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f56;
+            box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
+        }
+
+        body.light-mode .style-macos .fm-sidebar {
+            background: rgba(240, 240, 245, 0.95);
+            border-right: 1px solid #d1d1d6;
+        }
+
+        .style-macos .fm-content-area {
+            background: var(--bg-dark);
+        }
+
+        .style-macos .fm-sidebar-item {
+            border-radius: 6px;
+            font-size: 0.85rem;
+            height: 32px;
+            padding: 0 10px;
+        }
+
+        .style-macos .fm-sidebar-item.active {
+            background: #007aff;
+            box-shadow: none;
+            color: white;
+        }
+
+        .style-macos .fm-card {
+            border-radius: 4px;
+            padding: 10px;
+            background: transparent;
+            border: none;
+        }
+
+        .style-macos .fm-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .style-macos .fm-card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 4px;
+            filter: none;
+        }
+
+        .style-macos .fm-card-name {
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        .style-luxury {
+            --accent-purple: #d4af37;
+            --text-main: #fcfcfc;
+        }
+
+        .style-luxury .fm-wrapper {
+            background: #080808;
+            border: 4px double #d4af37;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
+        }
+
+        .style-luxury .fm-sidebar {
+            border-right: 1px solid #333;
+            background: #0c0c0c;
+        }
+
+        .style-luxury .fm-card-name {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 0.5px;
+            color: #d4af37;
+            font-size: 1rem;
+        }
+
+        .style-luxury .fm-card {
+            border: 1px solid #222;
+            background: linear-gradient(to bottom, #111, #000);
+            border-radius: 2px;
+        }
+
+        .style-luxury .fm-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .style-luxury .fm-sidebar-item.active {
+            background: linear-gradient(45deg, #d4af37, #f1c40f);
+            color: #000;
+            border-radius: 2px;
+        }
+
+        .style-hologram .fm-wrapper {
+            background-color: #020408;
+            background-image: linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+
+        .style-hologram .fm-sidebar {
+            border-right: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .style-hologram .fm-card {
+            border: 1px dashed rgba(0, 255, 255, 0.3);
+            background: rgba(0, 255, 255, 0.02);
+            border-radius: 0;
+            position: relative;
+        }
+
+        .style-hologram .fm-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 4px;
+            background: #0ff;
+        }
+
+        .style-hologram .fm-card:hover {
+            border-style: solid;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .style-hologram .fm-sidebar-item.active {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #0ff;
+            color: #0ff;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        .style-ultimate .fm-wrapper {
+            background: var(--bg-card);
+            border: none;
+            padding: 3px;
+            background-image: linear-gradient(135deg, #6366f1, #ec4899, #f59e0b);
+            border-radius: 28px;
+            box-shadow: 0 20px 60px -10px rgba(99, 102, 241, 0.4);
+            gap: 0;
+        }
+
+        .style-ultimate .fm-sidebar {
+            background: var(--bg-card);
+            border-radius: 24px 0 0 24px;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .style-ultimate .fm-body {
+            background: var(--bg-card);
+            border-radius: 0 24px 24px 0;
+        }
+
+        .style-ultimate .fm-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+
+        .style-ultimate .fm-card:hover::before {
+            opacity: 1;
+        }
+
+        .style-ultimate .fm-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            border-color: var(--accent-purple);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ... Additional styles like drive, fluent, brutal, retro, cinematic are inherited ... */
+        .style-drive .fm-wrapper {
+            background: #ffffff;
+            border-radius: 16px;
+            color: #1f1f1f;
+        }
+
+        body:not(.light-mode) .style-drive .fm-wrapper {
+            background: #1e1e1e;
+            color: #e3e3e3;
+        }
+
+        .style-drive .fm-sidebar {
+            background: transparent;
+            border: none;
+            padding-right: 0;
+        }
+
+        .style-drive .fm-sidebar-item {
+            border-radius: 0 50px 50px 0;
+            margin-right: 10px;
+            padding-left: 24px;
+        }
+
+        .style-drive .fm-sidebar-item.active {
+            background: #c2e7ff;
+            color: #001d35;
+        }
+
+        body:not(.light-mode) .style-drive .fm-sidebar-item.active {
+            background: #004a77;
+            color: #c2e7ff;
+        }
+
+        .style-drive .fm-card {
+            background: #f0f4f9;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            box-shadow: none;
+        }
+
+        body:not(.light-mode) .style-drive .fm-card {
+            background: #2a2a2a;
+        }
+
+        .style-drive .fm-card:hover {
+            background: #e1e5ea;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        .style-fluent .fm-wrapper {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(50px) saturate(180%);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        body:not(.light-mode) .style-fluent .fm-wrapper {
+            background: rgba(32, 32, 32, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .style-fluent .fm-sidebar {
+            background: transparent;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .style-fluent .fm-toolbar {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        body:not(.light-mode) .style-fluent .fm-toolbar {
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .style-fluent .fm-card {
+            border-radius: 4px;
+            background: transparent;
+            padding: 10px;
+            border: 1px solid transparent;
+        }
+
+        .style-fluent .fm-card:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        body:not(.light-mode) .style-fluent .fm-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .style-fluent .fm-card-icon {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+            transform: scale(0.9);
+        }
+
+        .style-fluent .fm-sidebar-item {
+            border-radius: 4px;
+        }
+
+        .style-fluent .fm-sidebar-item.active {
+            background: rgba(0, 0, 0, 0.05);
+            color: inherit;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        body:not(.light-mode) .style-fluent .fm-sidebar-item.active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .style-brutal .fm-wrapper {
+            background: #fff9e6;
+            border: 3px solid #000;
+            box-shadow: 8px 8px 0px #000;
+            border-radius: 0;
+            color: #000;
+        }
+
+        .style-brutal .fm-sidebar {
+            background: #ff90e8;
+            border-right: 3px solid #000;
+        }
+
+        .style-brutal .fm-toolbar {
+            background: #fff;
+            border-bottom: 3px solid #000;
+        }
+
+        .style-brutal .fm-card {
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 0;
+            box-shadow: 4px 4px 0px #000;
+            transition: all 0.1s;
+        }
+
+        .style-brutal .fm-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000;
+            background: #00f0ff;
+        }
+
+        .style-brutal .fm-card-name {
+            font-weight: 800;
+            color: #000 !important;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .style-brutal .fm-sidebar-item {
+            border: 2px solid transparent;
+            font-weight: 700;
+            color: #000 !important;
+            text-transform: uppercase;
+        }
+
+        .style-brutal .fm-sidebar-item.active {
+            background: #000;
+            color: #fff !important;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.5);
+        }
+
+        .style-brutal .fm-card-icon {
+            color: #000 !important;
+        }
+
+        .style-retro .fm-wrapper {
+            background: #0000AA;
+            border: 4px double #ffffff;
+            font-family: 'VT323', monospace;
+            color: #ffffff;
+        }
+
+        .style-retro .fm-sidebar {
+            border-right: 2px solid #ffffff;
+            background: #0000AA;
+        }
+
+        .style-retro .fm-toolbar {
+            background: #00aaaa;
+            color: #000;
+            border-bottom: 1px solid #fff;
+            font-weight: bold;
+        }
+
+        .style-retro .fm-card {
+            border: none;
+            border-radius: 0;
+            background: transparent;
+            color: #fff;
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+        }
+
+        .style-retro .fm-card:hover,
+        .style-retro .fm-card.selected {
+            background: #00aaaa;
+            color: #000;
+        }
+
+        .style-retro .fm-card-name,
+        .style-retro .fm-card-info {
+            color: inherit !important;
+            font-family: inherit;
+        }
+
+        .style-retro .fm-sidebar-item {
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .style-retro .fm-sidebar-item:hover,
+        .style-retro .fm-sidebar-item.active {
+            background: #00aaaa;
+            color: #000;
+            box-shadow: none;
+        }
+
+        .style-retro .fm-card-icon {
+            display: none;
+        }
+
+        .style-retro .fm-card-name::before {
+            content: '[ ';
+        }
+
+        .style-retro .fm-card-name::after {
+            content: ' ]';
+        }
+
+        .style-cinematic .fm-wrapper {
+            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            flex-direction: column;
+            box-shadow: 0 0 100px rgba(0,0,0,0.9);
+        }
+
+        .style-cinematic .fm-sidebar {
+            width: 100%;
+            height: auto;
+            flex-direction: row;
+            overflow-x: auto;
+            border-right: none;
+            border-bottom: 1px solid #333;
+            background: #111;
+            padding: 10px;
+        }
+
+        .style-cinematic .fm-sidebar #uploadBtn { display: none; }
+
+        .style-cinematic .fm-sidebar-item {
+            margin-right: 0;
+            white-space: nowrap;
+            color: rgba(255,255,255,0.6);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 10px 24px;
+            border: 1px solid transparent;
+            border-radius: 40px; /* Pill Shape Items */
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+ /* HOVER STATE */
+ .style-cinematic .fm-sidebar-item:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+   /* Icon Styling */
+   .style-cinematic .fm-sidebar-item i {
+    font-size: 1.1rem;
+    margin-right: 0 !important; /* Reset margin */
+}
+
+/* Active Icon Glow */
+.style-cinematic .fm-sidebar-item.active i {
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.8));
+}
+
+        .style-cinematic .fm-sidebar-item.active {
+            color: #fff;
+            background: linear-gradient(135deg, #e50914, #ff4757); /* Cinematic Red Gradient */
+            box-shadow: 
+                0 0 20px rgba(229, 9, 20, 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .style-cinematic .fm-grid {
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 30px;
+            padding: 20px 50px 50px 50px;
+        }
+
+        .style-cinematic .fm-card {
+            border-radius: 12px;
+            background: #1f1f1f;
+            aspect-ratio: 2/3;
+            border: 1px solid rgba(255,255,255,0.05);
+            justify-content: flex-end;
+            align-items: flex-start;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+         /* Ikon Besar di Tengah */
+         .style-cinematic .fm-card-icon {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            color: rgba(255,255,255,0.1);
+            transition: all 0.4s ease;
+        }
+        .style-cinematic .fm-card:hover .fm-card-icon {
+            color: #e50914;
+            transform: translate(-50%, -60%) scale(1.2);
+            filter: drop-shadow(0 0 20px rgba(229, 9, 20, 0.5));
+        }
+
+        .style-cinematic .fm-card-name {
+            z-index: 2; color: #fff; font-size: 1.2rem; font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8); margin-bottom: 5px;
+        }
+        .style-cinematic .fm-card-info {
+            z-index: 2; color: rgba(255,255,255,0.7); font-size: 0.85rem;
+        }
+        .style-cinematic .fm-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent 60%);
+        }
+
+        .style-cinematic .fm-storage-widget { display: none; } 
+        .style-cinematic .fm-toolbar { display: none; } /* Hide Toolbar completely for clean look */
+        .style-cinematic #breadcrumbList { display: none; }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link"><i class="bi bi-graph-up-arrow"></i> <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse " id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="orders.html" class="nav-link"><span>Pesanan</span></a>
+                        <a href="customers.html" class="nav-link"><span>Pelanggan (CRM)</span></a>
+                        <a href="pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link"><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link"><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link"><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link"><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps" aria-expanded="true"><i
+                        class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link "><span>Email</span></a>
+                        <a href="chat.html" class="nav-link "><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link "><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link active"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT (CALENDAR PAGE) -->
+        <main class="main-content">
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari jadwal...">
+                </div>
+
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p><span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER -->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">File Manager</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">Kelola aset digital
+                            Anda dengan gaya yang memukau.</p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-calendar-event"></i> SCHEDULE</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><span class="breadcrumb-home-icon"><i
+                                            class="bi bi-house-door-fill"></i></span></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Aplikasi</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Calendar</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           <!-- STYLE SWITCHER (Position Fixed below Header) -->
+        <div class="d-flex align-items-center gap-3 mb-4 p-3 rounded-4 bg-dark border border-secondary border-opacity-25"
+        style="width: fit-content;">
+        <label class="fw-bold text-white small text-uppercase ls-1"><i
+                class="bi bi-palette me-2 text-warning"></i>Select UI Style:</label>
+        <select id="styleSwitcher" class="form-select form-select-sm bg-black text-white border-secondary"
+            style="width: 250px;">
+            <optgroup label="Classic Collection">
+                <option value="style-standard">1. Standard Pro</option>
+                <option value="style-elevate">2. Modern Elevate</option>
+                <option value="style-glass">3. Glassmorphism 💎</option>
+                <option value="style-neu">4. Neumorphism</option>
+                <option value="style-cyber">5. Neon Cyberpunk 🤖</option>
+                <option value="style-aurora">6. Aurora Gradient</option>
+                <option value="style-macos">7. macOS Minimalist 🍎</option>
+                <option value="style-luxury">8. Luxury Gold 👑</option>
+                <option value="style-hologram">9. Hologram Futuristic</option>
+                <option value="style-ultimate" selected>10. Ultimate Powerful 🚀</option>
+            </optgroup>
+            <optgroup label="New Extreme Collection">
+                <option value="style-drive">11. Material Drive (Google) 📂</option>
+                <option value="style-fluent">12. Fluent OS (Windows 11) 🪟</option>
+                <option value="style-brutal">13. Neo-Brutalism (Bold) 💥</option>
+                <option value="style-retro">14. Retro Commander (DOS) 💾</option>
+                <option value="style-cinematic">15. Cinematic Stream (Netflix) 🎬</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <!-- === EXTREME FILE MANAGER CONTAINER === -->
+    <div id="fmContainer" class="fm-wrapper style-ultimate">
+
+        <!-- 1. SIDEBAR -->
+        <div class="fm-sidebar d-none d-md-flex">
+            <button id="uploadBtn" class="btn btn-primary w-100 mb-4 py-3 rounded-3 fw-bold shadow-lg"
+                style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border:none; transition: transform 0.2s;">
+                <i class="bi bi-cloud-upload me-2"></i> Upload Baru
+            </button>
+
+            <!-- Filter Groups -->
+            <div class="small text-uppercase text-muted fw-bold mb-2 ps-2"
+                style="font-size: 0.7rem; letter-spacing: 1px;">Storage</div>
+            <div class="fm-sidebar-item active" onclick="filterFiles('all', this)">
+                <span><i class="bi bi-hdd-network me-3"></i>My Drive</span>
+            </div>
+            <div class="fm-sidebar-item" onclick="filterFiles('starred', this)">
+                <span><i class="bi bi-star me-3"></i>Starred</span>
+            </div>
+            <div class="fm-sidebar-item" onclick="filterFiles('recent', this)">
+                <span><i class="bi bi-clock-history me-3"></i>Recent</span>
+            </div>
+            <div class="fm-sidebar-item" onclick="filterFiles('trash', this)">
+                <span><i class="bi bi-trash me-3"></i>Trash</span>
+            </div>
+
+            <div class="small text-uppercase text-muted fw-bold mb-2 mt-4 ps-2"
+                style="font-size: 0.7rem; letter-spacing: 1px;">File Type</div>
+            <div class="fm-sidebar-item" onclick="filterFiles('image', this)">
+                <span><i class="bi bi-images me-3 text-warning"></i>Images</span>
+                <span class="badge bg-secondary bg-opacity-25 text-warning rounded-pill" id="count-image">0</span>
+            </div>
+            <div class="fm-sidebar-item" onclick="filterFiles('document', this)">
+                <span><i class="bi bi-file-earmark-text me-3 text-info"></i>Documents</span>
+                <span class="badge bg-secondary bg-opacity-25 text-info rounded-pill" id="count-document">0</span>
+            </div>
+            <div class="fm-sidebar-item" onclick="filterFiles('video', this)">
+                <span><i class="bi bi-camera-video me-3 text-danger"></i>Videos</span>
+                <span class="badge bg-secondary bg-opacity-25 text-danger rounded-pill" id="count-video">0</span>
+            </div>
+
+            <!-- STORAGE MONITOR WIDGET -->
+            <div class="fm-storage-widget mt-auto">
+                <div class="d-flex justify-content-between align-items-end mb-2">
+                    <span class="storage-label fw-bold small text-muted text-uppercase ls-1">Storage</span>
+                    <span class="storage-value small fw-bold">75%</span>
+                </div>
+                <div class="storage-progress">
+                    <div class="storage-bar" style="width: 75%"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-2 text-muted small" style="font-size: 0.7rem;">
+                    <span>75GB used</span>
+                    <span>100GB total</span>
+                </div>
+                <button class="btn btn-sm btn-primary w-100 mt-3 btn-upgrade">Upgrade Plan</button>
+            </div>
+        </div>
+
+        <!-- 2. MAIN BODY -->
+        <div class="fm-body">
+            <!-- TOOLBAR -->
+            <div class="fm-toolbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-sm btn-link text-white d-md-none"
+                        onclick="document.querySelector('.fm-sidebar').classList.toggle('d-none'); document.querySelector('.fm-sidebar').classList.toggle('d-flex');">
+                        <i class="bi bi-list fs-4"></i>
+                    </button>
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0" id="breadcrumbList">
+                            <li class="breadcrumb-item"><a href="#" onclick="resetBreadcrumb()"
+                                    class="text-muted text-decoration-none">Drive</a></li>
+                            <li class="breadcrumb-item active text-primary fw-bold" id="currentFolderTitle">All
+                                Files</li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                    <div class="input-group input-group-sm me-2" style="width: 200px;">
+                        <span class="input-group-text bg-transparent border-secondary text-secondary"><i
+                                class="bi bi-search"></i></span>
+                        <input type="text" id="searchInput"
+                            class="form-control bg-transparent border-secondary text-white"
+                            placeholder="Search files...">
+                    </div>
+                    <div class="btn-group shadow-sm">
+                        <button class="btn btn-sm btn-outline-secondary text-white" onclick="sortFiles('name')"
+                            title="Sort Name"><i class="bi bi-sort-alpha-down"></i></button>
+                        <button class="btn btn-sm btn-outline-secondary text-white" onclick="sortFiles('date')"
+                            title="Sort Date"><i class="bi bi-calendar"></i></button>
+                    </div>
+                    <div class="btn-group shadow-sm ms-2">
+                        <button class="btn btn-sm btn-outline-secondary text-white active" id="viewGridBtn"
+                            onclick="setView('grid')"><i class="bi bi-grid-fill"></i></button>
+                        <button class="btn btn-sm btn-outline-secondary text-white" id="viewListBtn"
+                            onclick="setView('list')"><i class="bi bi-list-ul"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENT AREA -->
+            <div class="fm-content-area" id="dropZone">
+                <h6 class="text-muted mb-3 small fw-bold text-uppercase ls-1 ps-1 section-header-folders">Folders
+                </h6>
+                <div class="fm-grid mb-4" id="folderContainer">
+                    <!-- Folders injected via JS -->
+                </div>
+
+                <h6 class="text-muted mb-3 small fw-bold text-uppercase ls-1 ps-1 section-header-files">Files</h6>
+                <div class="fm-grid" id="fileContainer">
+                    <!-- Files injected via JS -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="text-center py-5 d-none">
+                    <i class="bi bi-folder2-open text-muted opacity-25" style="font-size: 5rem;"></i>
+                    <h5 class="text-muted mt-3">Folder Kosong</h5>
+                    <p class="text-secondary small">Drag & drop files here to upload</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. CONTEXT MENU -->
+        <div id="contextMenu" class="fm-context-menu">
+            <div class="fm-ctx-item" onclick="ctxAction('preview')"><i class="bi bi-eye"></i> Preview</div>
+            <div class="fm-ctx-item" onclick="ctxAction('rename')"><i class="bi bi-pencil"></i> Rename</div>
+            <div class="fm-ctx-item" onclick="ctxAction('download')"><i class="bi bi-download"></i> Download</div>
+            <div class="fm-ctx-item" onclick="ctxAction('star')"><i class="bi bi-star"></i> Add to Starred</div>
+            <div style="height:1px; background:rgba(255,255,255,0.1); margin:4px 0;"></div>
+            <div class="fm-ctx-item danger" onclick="ctxAction('delete')"><i class="bi bi-trash"></i> Delete</div>
+        </div>
+
+    </div>
+
+            <!-- START OF COPYRIGHT FOOTER SECTION -->
+            <footer class=" footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025
+                            <strong class="text-white">Nexus
+                                Admin</strong>. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan
+                                Privasi</a>
+                            <a href="#" class="footer-link">Syarat &
+                                Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- END OF COPYRIGHT FOOTER -->
+
+        </main>
+
+        <!-- Toast -->
+        <div class="toast-custom" id="toast">
+            <i class="bi bi-check-circle-fill text-success"></i>
+            <span id="toastMessage">Action successful</span>
+        </div>
+
+        <!-- Preview Modal -->
+        <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-content-glass">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="previewTitle">File Preview</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center" id="previewBody">
+                        <!-- Content injected here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary btn-sm">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/script.js"></script>
+
+    <script>
+        /**
+         * GLOBAL DATA STORE
+         * Menyimpan data file & folder
+         */
+         let fileData = [
+         { id: 1, name: 'Marketing Assets', type: 'folder', count: 12, date: '2025-01-01' },
+         { id: 2, name: 'Project Alpha', type: 'folder', count: 5, date: '2025-01-02' },
+         { id: 3, name: 'Finance 2024', type: 'folder', count: 24, date: '2025-01-03' },
+         { id: 4, name: 'Hero_Banner_v2.jpg', type: 'image', size: '2.4 MB', date: '2025-01-10', starred: true },
+         { id: 5, name: 'Q1_Report.pdf', type: 'document', size: '1.2 MB', date: '2025-01-11', starred: false },
+         { id: 6, name: 'Client_Contract.docx', type: 'document', size: '500 KB', date: '2025-01-12', starred: false },
+         { id: 7, name: 'Promo_Video.mp4', type: 'video', size: '125 MB', date: '2025-01-15', starred: false },
+         { id: 8, name: 'Source_Code.zip', type: 'zip', size: '1.2 GB', date: '2025-01-05', starred: false },
+         { id: 9, name: 'Logo_Vector.svg', type: 'image', size: '45 KB', date: '2025-01-20', starred: true },
+         { id: 10, name: 'Meeting_Notes.txt', type: 'document', size: '2 KB', date: '2025-01-21', starred: false }
+     ];
+
+     let currentFilter = 'all';
+     let currentSearch = '';
+     let currentView = 'grid';
+     let selectedItem = null;
+
+     // --- 1. STYLE SWITCHER LOGIC ---
+     const fmContainer = document.getElementById('fmContainer');
+     const styleSwitcher = document.getElementById('styleSwitcher');
+
+     styleSwitcher.addEventListener('change', (e) => {
+         // Hapus semua class style yang mungkin ada
+         fmContainer.classList.remove(
+             'style-standard', 'style-elevate', 'style-glass', 'style-neu',
+             'style-cyber', 'style-aurora', 'style-macos', 'style-luxury',
+             'style-hologram', 'style-ultimate', 'style-drive', 'style-fluent',
+             'style-brutal', 'style-retro', 'style-cinematic'
+         );
+         // Tambah class baru
+         fmContainer.classList.add(e.target.value);
+
+         // Re-render untuk efek animasi
+         render();
+     });
+
+     // --- 2. RENDER ENGINE ---
+     function render() {
+         const folderCont = document.getElementById('folderContainer');
+         const fileCont = document.getElementById('fileContainer');
+         const emptyState = document.getElementById('emptyState');
+
+         folderCont.innerHTML = '';
+         fileCont.innerHTML = '';
+
+         // Update Counts Sidebar
+         document.getElementById('count-image').innerText = fileData.filter(f => f.type === 'image').length;
+         document.getElementById('count-document').innerText = fileData.filter(f => f.type === 'document').length;
+         document.getElementById('count-video').innerText = fileData.filter(f => f.type === 'video').length;
+
+         // Filtering
+         let filtered = fileData.filter(item => {
+             const matchSearch = item.name.toLowerCase().includes(currentSearch.toLowerCase());
+             let matchType = true;
+
+             if (currentFilter === 'starred') matchType = item.starred;
+             else if (currentFilter === 'trash') matchType = false; // Mock trash logic
+             else if (currentFilter !== 'all') {
+                 if (item.type === 'folder') matchType = true; // Always show folders unless specific file type filter?
+                 else matchType = item.type === currentFilter;
+             }
+
+             // Jika filter spesifik file type (image/video), jangan tampilkan folder
+             if (['image', 'document', 'video'].includes(currentFilter) && item.type === 'folder') return false;
+
+             return matchSearch && matchType;
+         });
+
+         const folders = filtered.filter(i => i.type === 'folder');
+         const files = filtered.filter(i => i.type !== 'folder');
+
+         if (folders.length === 0 && files.length === 0) {
+             emptyState.classList.remove('d-none');
+             document.querySelector('.section-header-folders').style.display = 'none';
+             document.querySelector('.section-header-files').style.display = 'none';
+             return;
+         } else {
+             emptyState.classList.add('d-none');
+         }
+
+         // Render Folders
+         if (folders.length > 0) {
+             document.querySelector('.section-header-folders').style.display = 'block';
+             folders.forEach(item => folderCont.appendChild(createCard(item)));
+         } else {
+             document.querySelector('.section-header-folders').style.display = 'none';
+         }
+
+         // Render Files
+         if (files.length > 0) {
+             document.querySelector('.section-header-files').style.display = 'block';
+             files.forEach(item => fileCont.appendChild(createCard(item)));
+         } else {
+             document.querySelector('.section-header-files').style.display = 'none';
+         }
+     }
+
+     function createCard(item) {
+         const div = document.createElement('div');
+         div.className = `fm-card ${selectedItem && selectedItem.id === item.id ? 'selected' : ''}`;
+         div.setAttribute('data-id', item.id);
+         div.onclick = (e) => { e.stopPropagation(); selectItem(item); };
+         div.oncontextmenu = (e) => showContextMenu(e, item);
+         div.draggable = true; // Drag enable
+
+         // Icon Mapping
+         let icon = '';
+         let colorClass = '';
+
+         switch (item.type) {
+             case 'folder': icon = 'bi-folder-fill'; colorClass = 'text-warning'; break;
+             case 'image': icon = 'bi-file-earmark-image'; colorClass = 'text-info'; break;
+             case 'video': icon = 'bi-file-earmark-play'; colorClass = 'text-danger'; break;
+             case 'document': icon = 'bi-file-earmark-word'; colorClass = 'text-primary'; break;
+             case 'zip': icon = 'bi-file-earmark-zip'; colorClass = 'text-secondary'; break;
+             default: icon = 'bi-file-earmark'; colorClass = 'text-muted';
+         }
+
+         // HTML Structure
+         div.innerHTML = `
+             <i class="bi ${icon} fm-card-icon ${colorClass}"></i>
+             <div class="fm-card-name" title="${item.name}">${item.name}</div>
+             <div class="fm-card-info">
+                 ${item.type === 'folder' ? item.count + ' items' : item.size} <br>
+                 <span class="opacity-50 small">${item.date}</span>
+             </div>
+             ${item.starred ? '<i class="bi bi-star-fill text-warning position-absolute top-0 end-0 m-2 small shadow-sm"></i>' : ''}
+         `;
+
+         return div;
+     }
+
+     // --- 3. INTERACTION LOGIC ---
+
+     function filterFiles(type, el) {
+         currentFilter = type;
+         document.querySelectorAll('.fm-sidebar-item').forEach(i => i.classList.remove('active'));
+         el.classList.add('active');
+
+         // Breadcrumb text
+         const text = type === 'all' ? 'All Files' : type.charAt(0).toUpperCase() + type.slice(1);
+         document.getElementById('currentFolderTitle').innerText = text;
+         render();
+     }
+
+     document.getElementById('searchInput').addEventListener('input', (e) => {
+         currentSearch = e.target.value;
+         render();
+     });
+
+     function selectItem(item) {
+         selectedItem = item;
+         document.querySelectorAll('.fm-card').forEach(c => c.classList.remove('selected'));
+         const el = document.querySelector(`.fm-card[data-id="${item.id}"]`);
+         if (el) el.classList.add('selected');
+     }
+
+     // --- 4. VIEW TOGGLE ---
+     function setView(view) {
+         currentView = view;
+         const folderCont = document.getElementById('folderContainer');
+         const fileCont = document.getElementById('fileContainer');
+
+         document.getElementById('viewGridBtn').classList.toggle('active', view === 'grid');
+         document.getElementById('viewListBtn').classList.toggle('active', view === 'list');
+
+         if (view === 'list') {
+             folderCont.classList.replace('fm-grid', 'fm-list');
+             fileCont.classList.replace('fm-grid', 'fm-list');
+         } else {
+             folderCont.classList.replace('fm-list', 'fm-grid');
+             fileCont.classList.replace('fm-list', 'fm-grid');
+         }
+     }
+
+     // --- 5. CONTEXT MENU & ACTIONS ---
+     const contextMenu = document.getElementById('contextMenu');
+
+     function showContextMenu(e, item) {
+         e.preventDefault();
+         selectItem(item); // Auto select on right click
+
+         const menuW = contextMenu.offsetWidth;
+         const menuH = contextMenu.offsetHeight;
+         const screenW = window.innerWidth;
+         const screenH = window.innerHeight;
+
+         let x = e.clientX;
+         let y = e.clientY;
+
+         if (x + menuW > screenW) x -= menuW;
+         if (y + menuH > screenH) y -= menuH;
+
+         contextMenu.style.left = `${x}px`;
+         contextMenu.style.top = `${y}px`;
+         contextMenu.style.display = 'flex';
+     }
+
+     document.addEventListener('click', () => contextMenu.style.display = 'none');
+
+     function ctxAction(action) {
+         if (!selectedItem) return;
+
+         if (action === 'delete') {
+             if (confirm(`Are you sure you want to delete ${selectedItem.name}?`)) {
+                 fileData = fileData.filter(f => f.id !== selectedItem.id);
+                 render();
+             }
+         } else if (action === 'rename') {
+             const newName = prompt("Rename file to:", selectedItem.name);
+             if (newName) {
+                 selectedItem.name = newName;
+                 render();
+             }
+         } else if (action === 'star') {
+             selectedItem.starred = !selectedItem.starred;
+             render();
+         } else if (action === 'download') {
+             alert(`Downloading ${selectedItem.name}...`);
+         } else if (action === 'preview') {
+             alert(`Previewing ${selectedItem.name}\nType: ${selectedItem.type}\nSize: ${selectedItem.size}`);
+         }
+     }
+
+     // --- 6. DRAG & DROP UPLOAD ---
+     const dropZone = document.getElementById('dropZone');
+     const fileInput = document.getElementById('fileInput');
+     const uploadBtn = document.getElementById('uploadBtn');
+
+     uploadBtn.addEventListener('click', () => fileInput.click());
+
+     fileInput.addEventListener('change', (e) => handleUpload(e.target.files));
+
+     dropZone.addEventListener('dragover', (e) => {
+         e.preventDefault();
+         dropZone.style.background = 'rgba(99, 102, 241, 0.1)';
+         dropZone.style.border = '2px dashed var(--accent-purple)';
+     });
+
+     dropZone.addEventListener('dragleave', (e) => {
+         dropZone.style.background = 'transparent';
+         dropZone.style.border = 'none';
+     });
+
+     dropZone.addEventListener('drop', (e) => {
+         e.preventDefault();
+         dropZone.style.background = 'transparent';
+         dropZone.style.border = 'none';
+         handleUpload(e.dataTransfer.files);
+     });
+
+     function handleUpload(files) {
+         if (files.length > 0) {
+             Array.from(files).forEach(file => {
+                 let type = 'document';
+                 if (file.type.startsWith('image')) type = 'image';
+                 else if (file.type.startsWith('video')) type = 'video';
+
+                 const newItem = {
+                     id: Date.now() + Math.random(),
+                     name: file.name,
+                     type: type,
+                     size: (file.size / 1024).toFixed(1) + ' KB',
+                     date: 'Just Now',
+                     starred: false
+                 };
+                 fileData.push(newItem);
+             });
+             render();
+             alert(`${files.length} Files uploaded successfully!`);
+         }
+     }
+
+     // --- 7. SORTING ---
+     function sortFiles(by) {
+         if (by === 'name') {
+             fileData.sort((a, b) => a.name.localeCompare(b.name));
+         } else if (by === 'date') {
+             // Mock sort simple
+             fileData.sort((a, b) => b.id - a.id); // Newest first based on ID logic
+         }
+         render();
+     }
+
+     // INIT
+     render();
+    </script>
+
+
+</body>
+
+</html>

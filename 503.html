@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>503 Service Unavailable - Nexus Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. CORE STYLES (KONSISTEN)
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-yellow: #f59e0b;
+            --accent-orange: #f97316;
+            --border-color: #374151;
+            --gradient-primary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+
+            /* Text Gradients */
+            --text-gradient-dark: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            --text-gradient-light: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+
+            /* Warning Gradient (Yellow/Orange for 503) */
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        /* ======================================================================
+           2. BACKGROUND SHAPES
+           ====================================================================== */
+        .shape {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            animation: floatShape 10s infinite ease-in-out;
+            opacity: 0.5;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: #f59e0b;
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+        }
+
+        /* Yellow */
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: #f97316;
+            border-radius: 50%;
+            bottom: -50px;
+            right: -50px;
+            animation-delay: 2s;
+        }
+
+        /* Orange */
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: #ec4899;
+            border-radius: 50%;
+            top: 40%;
+            left: 40%;
+            animation-delay: 4s;
+            opacity: 0.3;
+        }
+
+        @keyframes floatShape {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(20px, -20px);
+            }
+        }
+
+        /* ======================================================================
+           3. CONTENT CONTAINER
+           ====================================================================== */
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 60px 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+
+        body.light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ======================================================================
+           4. SLEEPING SERVER ANIMATION (PURE CSS)
+           ====================================================================== */
+        .server-container {
+            width: 140px;
+            height: 160px;
+            position: relative;
+            margin: 0 auto 20px;
+        }
+
+        /* Server Box */
+        .server-box {
+            width: 100px;
+            height: 140px;
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            border-radius: 12px;
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            gap: 15px;
+            animation: serverBreathe 4s ease-in-out infinite;
+        }
+
+        /* Server Lights (Rack Units) */
+        .server-rack {
+            width: 80%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        /* Blinking Lights */
+        .server-light {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            top: -3px;
+        }
+
+        .light-1 {
+            left: 10px;
+            background: #ef4444;
+            animation: blinkSlow 3s infinite;
+        }
+
+        /* Merah (Offline) */
+        .light-2 {
+            left: 25px;
+            background: #f59e0b;
+            animation: blinkFast 1s infinite;
+        }
+
+        /* Kuning (Proses) */
+        .light-3 {
+            right: 10px;
+            background: #3b82f6;
+            opacity: 0.3;
+        }
+
+        /* Biru (Mati/Sleep) */
+
+        /* Zzz Animation */
+        .zzz {
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            font-weight: 800;
+            font-size: 20px;
+            color: #f59e0b;
+            opacity: 0;
+            animation: zzzFloat 3s infinite;
+        }
+
+        .zzz:nth-child(2) {
+            top: 30px;
+            right: 0px;
+            font-size: 15px;
+            animation-delay: 1s;
+        }
+
+        .zzz:nth-child(3) {
+            top: 40px;
+            right: -10px;
+            font-size: 10px;
+            animation-delay: 2s;
+        }
+
+        /* Animations */
+        @keyframes serverBreathe {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-5px) scale(1.02);
+            }
+
+            /* Efek bernapas saat tidur */
+        }
+
+        @keyframes blinkSlow {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes blinkFast {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes zzzFloat {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(15px, -30px) rotate(10deg);
+                opacity: 0;
+            }
+        }
+
+        /* ======================================================================
+           5. TYPOGRAPHY & BUTTONS
+           ====================================================================== */
+        .error-code {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            background: var(--gradient-warning);
+            /* Kuning/Oranye untuk 503 */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .error-desc {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-home {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+            color: white;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-fixed {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle-fixed:hover {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            transform: rotate(15deg);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle-fixed" id="themeToggle" title="Ganti Tema">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="error-container">
+        <div class="glass-card">
+
+            <!-- Sleeping Server Animation -->
+            <div class="server-container">
+                <!-- Zzz Floating Text -->
+                <div class="zzz">Z</div>
+                <div class="zzz">Z</div>
+                <div class="zzz">z</div>
+
+                <!-- Server Body -->
+                <div class="server-box">
+                    <div class="server-rack">
+                        <div class="server-light light-1"></div>
+                        <div class="server-light light-3"></div>
+                    </div>
+                    <div class="server-rack">
+                        <div class="server-light light-3"></div>
+                        <div class="server-light light-2"></div>
+                    </div>
+                    <div class="server-rack">
+                        <div class="server-light light-3"></div>
+                        <div class="server-light light-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Content -->
+            <h1 class="error-code">503</h1>
+            <h2 class="error-title">Layanan Tidak Tersedia</h2>
+            <p class="error-desc">
+                Sistem kami sedang tidur sebentar untuk pemeliharaan rutin. Silakan kembali lagi nanti saat server sudah
+                bangun dan segar kembali.
+            </p>
+
+            <!-- Action Button -->
+            <a href="home.html" class="btn-home">
+                <i class="bi bi-arrow-clockwise"></i> Cek Status
+            </a>
+
+        </div>
+
+        <div class="mt-4 text-muted small opacity-50">
+            Error Code: 503_SERVICE_UNAVAILABLE | Nexus System
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const body = document.body;
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            // Initial Theme Load
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            }
+
+            // Theme Toggle Logic
+            themeToggle?.addEventListener("click", () => {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Email</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* ======================================================================
+           2. SPECIFIC: EMAIL PAGE STYLES
+           (Styling khusus untuk halaman email)
+           ====================================================================== */
+
+        /* --- [NEW] UNIVERSAL PAGE HEADER STYLE --- */
+        .active-page-header {
+            padding: 30px;
+            border-radius: 24px;
+            background-color: var(--bg-card);
+            position: relative;
+            margin-bottom: 3.5rem;
+            border: 2px solid transparent;
+            /* Gradient Background Pattern */
+            background-image: linear-gradient(var(--bg-card), var(--bg-card)), linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15);
+        }
+
+        .page-title-large {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        body.light-mode .page-title-large {
+            background: none;
+            -webkit-text-fill-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            white-space: nowrap;
+        }
+
+        .breadcrumb-modern {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        body.light-mode .breadcrumb-modern {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-color: var(--border-color);
+        }
+
+        .breadcrumb-item-custom {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item-custom:hover {
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-item-custom.active {
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .breadcrumb-home-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-sep {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* --- EMAIL LAYOUT CSS --- */
+        .email-container {
+            display: flex;
+            gap: 24px;
+            height: calc(100vh - 250px);
+            min-height: 600px;
+        }
+
+        /* Email Sidebar */
+        .email-sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .btn-compose {
+            background: var(--accent-purple);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 24px;
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-compose:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+
+        .email-nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        .email-nav-item:hover,
+        .email-nav-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        body.light-mode .email-nav-item:hover,
+        body.light-mode .email-nav-item.active {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .email-nav-item.active {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        .email-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-mode .email-badge {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .label-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* Email List */
+        .email-list-wrapper {
+            flex-grow: 1;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            /* For overlay handling */
+        }
+
+        .email-toolbar {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .email-scroll-area {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .email-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .email-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        body.light-mode .email-item:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .email-item.unread {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .email-item.unread .email-subject {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .email-checkbox {
+            margin-right: 16px;
+        }
+
+        .email-star {
+            margin-right: 16px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .email-star.active {
+            color: #f59e0b;
+        }
+
+        .email-sender-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--accent-purple);
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        .email-content-wrapper {
+            flex-grow: 1;
+            min-width: 0;
+            margin-right: 16px;
+        }
+
+        .email-sender-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .email-subject {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .email-preview {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            opacity: 0.7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .email-meta {
+            text-align: right;
+            min-width: 80px;
+        }
+
+        .email-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .email-paperclip {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* [MODIFIED] Form Elements Custom - Better Contrast */
+        .form-control-dark {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .form-control-dark::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .form-control-dark:focus {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* [NEW] Custom Simple Editor */
+        .editor-container {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg-dark);
+        }
+
+        .editor-toolbar {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+        }
+
+        body.light-mode .editor-toolbar {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .editor-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .editor-btn:hover,
+        .editor-btn.active {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent-purple);
+        }
+
+        .editor-body {
+            min-height: 200px;
+            padding: 16px;
+            color: var(--text-main);
+            outline: none;
+            overflow-y: auto;
+        }
+
+        .editor-body:empty:before {
+            content: attr(data-placeholder);
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* [NEW] File Attachment Preview */
+        .file-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-main);
+            margin-top: 10px;
+            width: fit-content;
+        }
+
+        .file-preview-item i {
+            color: var(--accent-purple);
+        }
+
+        /* [NEW] Emoji Picker Popover (Simulated) */
+        .emoji-picker {
+            position: absolute;
+            bottom: 60px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1060;
+            display: none;
+        }
+
+        .emoji-btn {
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .emoji-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* [NEW] Read View Overlay */
+        .email-read-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-card);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .email-read-view.active {
+            transform: translateX(0);
+        }
+
+        .read-view-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .read-view-body {
+            padding: 24px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .sender-info {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 992px) {
+            .email-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .email-sidebar {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-120%);
+                width: 260px !important;
+                padding-right: 16px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-navbar-standalone {
+                justify-content: flex-end;
+                padding-left: 70px;
+                margin-bottom: 20px;
+                gap: 10px;
+            }
+
+            .search-standalone-box {
+                width: auto;
+                flex-grow: 1;
+                max-width: 100%;
+            }
+
+            .search-standalone-input {
+                padding-left: 40px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .search-standalone-icon {
+                left: 14px;
+            }
+
+            .notification-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link"><i class="bi bi-graph-up-arrow"></i> <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse " id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="orders.html" class="nav-link"><span>Pesanan</span></a>
+                        <a href="customers.html" class="nav-link"><span>Pelanggan (CRM)</span></a>
+                        <a href="pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link"><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link"><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link"><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link"><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps" aria-expanded="true"><i
+                        class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link active"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT (EMAIL PAGE) -->
+        <main class="main-content">
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari email...">
+                </div>
+
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p><span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p><span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p><span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER (Unified Style) -->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Email</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">Kelola pesan masuk dan
+                            komunikasi tim Anda.</p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-inbox"></i> COMMUNICATION</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><span class="breadcrumb-home-icon"><i
+                                            class="bi bi-house-door-fill"></i></span></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Aplikasi</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Email</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMAIL CONTENT AREA -->
+            <div class="email-container">
+                <!-- 1. Email Sidebar -->
+                <div class="email-sidebar">
+                    <button class="btn btn-compose" data-bs-toggle="modal" data-bs-target="#composeModal"><i
+                            class="bi bi-pencil-square me-2"></i> Tulis Email</button>
+
+                    <div class="d-flex flex-column gap-1">
+                        <a href="#" class="email-nav-item active">
+                            <div class="d-flex align-items-center"><i class="bi bi-inbox me-3"></i> Inbox</div><span
+                                class="email-badge">4</span>
+                        </a>
+                        <a href="#" class="email-nav-item">
+                            <div class="d-flex align-items-center"><i class="bi bi-send me-3"></i> Sent</div>
+                        </a>
+                        <a href="#" class="email-nav-item">
+                            <div class="d-flex align-items-center"><i class="bi bi-file-earmark me-3"></i> Drafts</div>
+                            <span class="email-badge">2</span>
+                        </a>
+                        <a href="#" class="email-nav-item">
+                            <div class="d-flex align-items-center"><i class="bi bi-star me-3"></i> Starred</div>
+                        </a>
+                        <a href="#" class="email-nav-item">
+                            <div class="d-flex align-items-center"><i class="bi bi-trash me-3"></i> Trash</div>
+                        </a>
+                    </div>
+
+                    <div class="mt-4">
+                        <small class="text-muted fw-bold px-2 mb-2 d-block">LABELS</small>
+                        <a href="#" class="email-nav-item">
+                            <div class="d-flex align-items-center"><span class="label-dot bg-primary"></span> Personal
+                            </div>
+                        </a>
+                        <a href="#" class="email-nav-item">
+                            <div class="d-flex align-items-center"><span class="label-dot bg-success"></span> Work</div>
+                        </a>
+                        <a href="#" class="email-nav-item">
+                            <div class="d-flex align-items-center"><span class="label-dot bg-warning"></span> Payments
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 2. Email List -->
+                <div class="email-list-wrapper">
+                    <!-- [NEW] Read View Overlay -->
+                    <div class="email-read-view" id="readView">
+                        <div class="read-view-header">
+                            <div class="d-flex gap-3">
+                                <button class="btn btn-icon text-muted" id="backToInboxBtn"><i
+                                        class="bi bi-arrow-left"></i></button>
+                                <button class="btn btn-icon text-muted"><i class="bi bi-archive"></i></button>
+                                <button class="btn btn-icon text-muted"><i class="bi bi-trash"></i></button>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-icon text-muted"><i class="bi bi-chevron-left"></i></button>
+                                <button class="btn btn-icon text-muted"><i class="bi bi-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="read-view-body">
+                            <h4 class="fw-bold mb-4" id="readSubject">Project Update: Nexus Admin v2.0 Launch</h4>
+                            <div class="sender-info">
+                                <div class="email-sender-avatar" id="readAvatar">JD</div>
+                                <div>
+                                    <div class="fw-bold text-main" id="readSender">John Doe <span
+                                            class="fw-normal text-muted small">&lt;john@example.com&gt;</span></div>
+                                    <div class="text-muted small" id="readDate">Today, 10:42 AM</div>
+                                </div>
+                            </div>
+                            <div class="email-body-content text-muted" style="line-height: 1.8;">
+                                <p>Hi Team,</p>
+                                <p>Just wanted to share the latest updates on the admin template. We have successfully
+                                    integrated the new email module with full responsive support.</p>
+                                <p>Key updates:</p>
+                                <ul>
+                                    <li>New Compose Modal with Rich Text</li>
+                                    <li>Improved Mobile Responsiveness</li>
+                                    <li>Dark Mode compatibility for all forms</li>
+                                </ul>
+                                <p>Regards,<br>John</p>
+                            </div>
+                            <div class="mt-5 pt-4 border-top border-secondary border-opacity-10">
+                                <button class="btn btn-outline-secondary me-2"><i class="bi bi-reply me-2"></i>
+                                    Reply</button>
+                                <button class="btn btn-outline-secondary"><i class="bi bi-forward me-2"></i>
+                                    Forward</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="email-toolbar">
+                        <div class="form-check email-checkbox mb-0">
+                            <input class="form-check-input bg-transparent border-secondary" type="checkbox">
+                        </div>
+                        <button class="btn btn-icon btn-sm text-muted"><i class="bi bi-arrow-clockwise"></i></button>
+                        <button class="btn btn-icon btn-sm text-muted"><i class="bi bi-archive"></i></button>
+                        <button class="btn btn-icon btn-sm text-muted"><i class="bi bi-trash"></i></button>
+                        <div class="ms-auto text-muted small">1-50 of 1,245</div>
+                        <button class="btn btn-icon btn-sm text-muted"><i class="bi bi-chevron-left"></i></button>
+                        <button class="btn btn-icon btn-sm text-muted"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+
+                    <div class="email-scroll-area">
+                        <!-- Email Item 1 (Unread) -->
+                        <div class="email-item unread"
+                            onclick="openEmail('John Doe', 'Project Update: Nexus Admin v2.0 Launch', 'JD')">
+                            <div class="form-check email-checkbox mb-0" onclick="event.stopPropagation()"><input
+                                    class="form-check-input bg-transparent border-secondary" type="checkbox"></div>
+                            <i class="bi bi-star email-star" onclick="event.stopPropagation()"></i>
+                            <div class="email-sender-avatar">JD</div>
+                            <div class="email-content-wrapper">
+                                <div class="d-flex justify-content-between">
+                                    <div class="email-sender-name">John Doe</div>
+                                </div>
+                                <div class="email-subject">Project Update: Nexus Admin v2.0 Launch</div>
+                                <div class="email-preview">Hi Team, just wanted to share the latest updates on the admin
+                                    template...</div>
+                            </div>
+                            <div class="email-meta">
+                                <div class="email-date">10:42 AM</div>
+                                <i class="bi bi-paperclip email-paperclip"></i>
+                            </div>
+                        </div>
+
+                        <!-- Email Item 2 (Read) -->
+                        <div class="email-item"
+                            onclick="openEmail('Support Team', 'Ticket #4920 has been resolved', 'S')">
+                            <div class="form-check email-checkbox mb-0" onclick="event.stopPropagation()"><input
+                                    class="form-check-input bg-transparent border-secondary" type="checkbox"></div>
+                            <i class="bi bi-star-fill email-star active" onclick="event.stopPropagation()"></i>
+                            <div class="email-sender-avatar bg-soft-success text-success">S</div>
+                            <div class="email-content-wrapper">
+                                <div class="d-flex justify-content-between">
+                                    <div class="email-sender-name">Support Team</div>
+                                </div>
+                                <div class="email-subject">Ticket #4920 has been resolved</div>
+                                <div class="email-preview">Dear Admin, the issue regarding the dashboard loading speed
+                                    has been fixed.</div>
+                            </div>
+                            <div class="email-meta">
+                                <div class="email-date">Yesterday</div>
+                            </div>
+                        </div>
+
+                        <!-- Email Item 3 (Read) -->
+                        <div class="email-item" onclick="openEmail('AWS Billing', 'Invoice for November 2025', 'A')">
+                            <div class="form-check email-checkbox mb-0" onclick="event.stopPropagation()"><input
+                                    class="form-check-input bg-transparent border-secondary" type="checkbox"></div>
+                            <i class="bi bi-star email-star" onclick="event.stopPropagation()"></i>
+                            <div class="email-sender-avatar bg-soft-warning text-warning">A</div>
+                            <div class="email-content-wrapper">
+                                <div class="d-flex justify-content-between">
+                                    <div class="email-sender-name">AWS Billing</div>
+                                </div>
+                                <div class="email-subject">Invoice for November 2025</div>
+                                <div class="email-preview">Your AWS invoice for the period of November 1 - November 30
+                                    is ready.</div>
+                            </div>
+                            <div class="email-meta">
+                                <div class="email-date">Nov 24</div>
+                                <i class="bi bi-paperclip email-paperclip"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- START OF COPYRIGHT FOOTER SECTION -->
+            <footer class=" footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025
+                            <strong class="text-white">Nexus
+                                Admin</strong>. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan
+                                Privasi</a>
+                            <a href="#" class="footer-link">Syarat &
+                                Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- END OF COPYRIGHT FOOTER -->
+        </main>
+    </div>
+
+    <!-- [MODIFIED] Fully Functional Compose Modal -->
+    <div class="modal fade" id="composeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content"
+                style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">
+                <div class="modal-header border-bottom border-secondary border-opacity-10">
+                    <h5 class="modal-title fw-bold">Pesan Baru</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="composeForm">
+                        <div class="mb-3">
+                            <input type="email" class="form-control form-control-dark"
+                                placeholder="Kepada: (Contoh: user@nexus.com)">
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" class="form-control form-control-dark" placeholder="Subjek:">
+                        </div>
+
+                        <!-- Custom Editor -->
+                        <div class="editor-container mb-3">
+                            <div class="editor-toolbar">
+                                <button type="button" class="editor-btn" onclick="formatDoc('bold')" title="Bold"><i
+                                        class="bi bi-type-bold"></i></button>
+                                <button type="button" class="editor-btn" onclick="formatDoc('italic')" title="Italic"><i
+                                        class="bi bi-type-italic"></i></button>
+                                <button type="button" class="editor-btn" onclick="formatDoc('underline')"
+                                    title="Underline"><i class="bi bi-type-underline"></i></button>
+                                <div
+                                    style="width: 1px; background: var(--border-color); height: 20px; margin: 6px 4px;">
+                                </div>
+                                <button type="button" class="editor-btn" onclick="formatDoc('insertUnorderedList')"
+                                    title="Bullet List"><i class="bi bi-list-ul"></i></button>
+                                <button type="button" class="editor-btn" onclick="formatDoc('insertOrderedList')"
+                                    title="Numbered List"><i class="bi bi-list-ol"></i></button>
+                            </div>
+                            <div class="editor-body" contenteditable="true"
+                                data-placeholder="Tulis pesan Anda di sini..."></div>
+                        </div>
+
+                        <!-- File Preview Container -->
+                        <div id="filePreviewArea"></div>
+                    </form>
+                </div>
+                <div
+                    class="modal-footer border-top border-secondary border-opacity-10 justify-content-between position-relative">
+                    <div class="d-flex gap-2">
+                        <!-- Hidden Inputs -->
+                        <input type="file" id="fileInput" hidden multiple onchange="handleFileSelect(this)">
+
+                        <button class="btn btn-icon text-muted" onclick="document.getElementById('fileInput').click()"
+                            title="Lampirkan File"><i class="bi bi-paperclip"></i></button>
+                        <button class="btn btn-icon text-muted" onclick="toggleEmojiPicker()" title="Sisipkan Emoji"><i
+                                class="bi bi-emoji-smile"></i></button>
+                        <button class="btn btn-icon text-muted" title="Sisipkan Gambar"><i
+                                class="bi bi-image"></i></button>
+                    </div>
+
+                    <!-- Emoji Picker -->
+                    <div class="emoji-picker" id="emojiPicker">
+                        <div class="emoji-btn" onclick="insertEmoji('😀')">😀</div>
+                        <div class="emoji-btn" onclick="insertEmoji('😂')">😂</div>
+                        <div class="emoji-btn" onclick="insertEmoji('😍')">😍</div>
+                        <div class="emoji-btn" onclick="insertEmoji('👍')">👍</div>
+                        <div class="emoji-btn" onclick="insertEmoji('🎉')">🎉</div>
+                        <div class="emoji-btn" onclick="insertEmoji('🔥')">🔥</div>
+                        <div class="emoji-btn" onclick="insertEmoji('❤️')">❤️</div>
+                        <div class="emoji-btn" onclick="insertEmoji('✅')">✅</div>
+                        <div class="emoji-btn" onclick="insertEmoji('👋')">👋</div>
+                        <div class="emoji-btn" onclick="insertEmoji('🤔')">🤔</div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Buang</button>
+                        <button type="button" class="btn btn-primary px-4" onclick="sendEmail()">Kirim <i
+                                class="bi bi-send-fill ms-2"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill me-2"></i> Pesan berhasil dikirim!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/script.js"></script>
+    <script>
+
+
+        /* ======================================================================
+           SPECIFIC JS: EMAIL FUNCTIONALITY
+           ====================================================================== */
+
+        // 1. Editor Functions
+        function formatDoc(cmd, value = null) {
+            document.execCommand(cmd, false, value);
+            document.querySelector('.editor-body').focus();
+        }
+
+        // 2. File Attachment
+        function handleFileSelect(input) {
+            const container = document.getElementById('filePreviewArea');
+            if (input.files && input.files.length > 0) {
+                for (let i = 0; i < input.files.length; i++) {
+                    const file = input.files[i];
+                    const div = document.createElement('div');
+                    div.className = 'file-preview-item';
+                    div.innerHTML = `<i class="bi bi-file-earmark-text"></i> ${file.name} <i class="bi bi-x text-danger ms-2" style="cursor:pointer;" onclick="this.parentElement.remove()"></i>`;
+                    container.appendChild(div);
+                }
+            }
+        }
+
+        // 3. Emoji Functions
+        function toggleEmojiPicker() {
+            const picker = document.getElementById('emojiPicker');
+            picker.style.display = picker.style.display === 'grid' ? 'none' : 'grid';
+        }
+
+        function insertEmoji(emoji) {
+            document.querySelector('.editor-body').focus();
+            document.execCommand('insertText', false, emoji);
+            document.getElementById('emojiPicker').style.display = 'none';
+        }
+
+        // 4. Send Email Simulation
+        function sendEmail() {
+            // Close Modal
+            const modalEl = document.getElementById('composeModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+
+            // Show Toast
+            const toastEl = document.getElementById('liveToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+            // Clear Form
+            document.getElementById('composeForm').reset();
+            document.querySelector('.editor-body').innerHTML = '';
+            document.getElementById('filePreviewArea').innerHTML = '';
+        }
+
+        // 5. Read View Logic
+        function openEmail(sender, subject, avatarText) {
+            const view = document.getElementById('readView');
+
+            // Set Data
+            document.getElementById('readSender').innerHTML = `${sender} <span class="fw-normal text-muted small">&lt;email@example.com&gt;</span>`;
+            document.getElementById('readSubject').innerText = subject;
+            document.getElementById('readAvatar').innerText = avatarText;
+            // Reset class specific colors just in case
+            document.getElementById('readAvatar').className = 'email-sender-avatar';
+
+            view.classList.add('active');
+        }
+
+        document.getElementById('backToInboxBtn')?.addEventListener('click', () => {
+            document.getElementById('readView').classList.remove('active');
+        });
+
+    </script>
+</body>
+
+</html>

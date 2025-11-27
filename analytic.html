@@ -1,0 +1,799 @@
+<!-- 
+======================================================
+  WKNG TEMPLATE UNIVERSAL - ADMIN DASHBOARD
+  © 2025 Irvanscx (Irvansc)
+
+  Developer GitHub : https://github.com/irvansc
+  Template GitHub  : https://github.com/irvansc/wkng-template-universal
+  Instagram        : @irvansc
+
+  Dibuat menggunakan:
+  - HTML, CSS, JavaScript
+  - Bootstrap 5 & Bootstrap Icons
+  - Serta beberapa library open-source lainnya
+
+  Catatan:
+  Semua komponen dalam template ini berasal dari internet 
+  dan dikustomisasi ulang. Mohon tetap cantumkan kredit ini 
+  apabila menggunakan ulang atau memodifikasi template.
+
+======================================================
+-->
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WKNG Admin - Advanced Analytics</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="assets/vendor/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="assets/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=W" alt="wkng Logo">
+                    <span class="logo-text">WKNG ADMIN</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link active"><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse " id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="orders.html" class="nav-link"><span>Pesanan</span></a>
+                        <a href="customers.html" class="nav-link"><span>Pelanggan (CRM)</span></a>
+                        <a href="pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link"><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link"><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link"><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link"><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@wkng.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT (ANALYTICS PAGE) -->
+        <main class="main-content">
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari data analitik...">
+                </div>
+
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p><span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p><span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p><span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER -->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Analytics Dashboard</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">Laporan performa
+                            komprehensif untuk berbagai sektor manajemen.</p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-graph-up"></i> LIVE DATA</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><span class="breadcrumb-home-icon"><i
+                                            class="bi bi-house-door-fill"></i></span></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Utama</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Analytics</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. CORPORATE ANALYTICS (ADVANCED) -->
+            <div class="section-title-modern">Corporate Financial Overview</div>
+            <div class="row g-4">
+                <!-- Top Stats Row -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted small mb-1">Total Revenue</p>
+                            <h4 class="fw-bold mb-0">$2.4M</h4>
+                        </div>
+                        <div class="text-end">
+                            <div class="trend-badge trend-up"><i class="bi bi-arrow-up"></i> 12.5%</div>
+                            <small class="text-muted d-block mt-1">vs last month</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted small mb-1">Total Expenses</p>
+                            <h4 class="fw-bold mb-0">$1.1M</h4>
+                        </div>
+                        <div class="text-end">
+                            <div class="trend-badge trend-down"><i class="bi bi-arrow-up"></i> 4.2%</div>
+                            <small class="text-muted d-block mt-1">Needs attention</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted small mb-1">Net Profit</p>
+                            <h4 class="fw-bold mb-0">$1.3M</h4>
+                        </div>
+                        <div class="text-end">
+                            <div class="trend-badge trend-up"><i class="bi bi-arrow-up"></i> 8.4%</div>
+                            <small class="text-muted d-block mt-1">Healthy</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted small mb-1">EBITDA</p>
+                            <h4 class="fw-bold mb-0">$1.5M</h4>
+                        </div>
+                        <div class="text-end">
+                            <div class="trend-badge trend-up"><i class="bi bi-arrow-up"></i> 10%</div>
+                            <small class="text-muted d-block mt-1">Strong</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Chart & Side List -->
+                <div class="col-lg-8">
+                    <div class="analytic-box">
+                        <div class="analytic-box-header">
+                            <div>
+                                <h5 class="analytic-title">Financial Performance</h5>
+                                <span class="analytic-subtitle">Revenue vs Expenses (Annual)</span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3">Download PDF</button>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="corpMainChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="analytic-box">
+                        <div class="analytic-box-header">
+                            <h5 class="analytic-title">Largest Transactions</h5>
+                        </div>
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar bg-soft-primary text-primary"><i class="bi bi-building"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 small fw-bold">PT. Mega Corp</h6>
+                                        <small class="text-muted" style="font-size: 0.7rem;">24 Nov 2025</small>
+                                    </div>
+                                </div>
+                                <span class="fw-bold text-success">+$120k</span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar bg-soft-warning text-warning"><i class="bi bi-server"></i></div>
+                                    <div>
+                                        <h6 class="mb-0 small fw-bold">AWS Server</h6>
+                                        <small class="text-muted" style="font-size: 0.7rem;">23 Nov 2025</small>
+                                    </div>
+                                </div>
+                                <span class="fw-bold text-danger">-$15k</span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar bg-soft-info text-info"><i class="bi bi-people"></i></div>
+                                    <div>
+                                        <h6 class="mb-0 small fw-bold">Payroll Nov</h6>
+                                        <small class="text-muted" style="font-size: 0.7rem;">20 Nov 2025</small>
+                                    </div>
+                                </div>
+                                <span class="fw-bold text-danger">-$85k</span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="avatar bg-soft-success text-success"><i class="bi bi-basket"></i></div>
+                                    <div>
+                                        <h6 class="mb-0 small fw-bold">Sales Batch A</h6>
+                                        <small class="text-muted" style="font-size: 0.7rem;">18 Nov 2025</small>
+                                    </div>
+                                </div>
+                                <span class="fw-bold text-success">+$45k</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-light w-100 mt-4 btn-sm text-primary fw-bold">View All
+                            Transactions</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. PUBLIC SECTOR (WARGA & PENDIDIKAN) -->
+            <div class="section-title-modern">Public Sector Analytics</div>
+            <div class="row g-4">
+                <!-- Demographics -->
+                <div class="col-lg-6">
+                    <div class="analytic-box">
+                        <div class="analytic-box-header">
+                            <div>
+                                <h5 class="analytic-title">Population Pyramid</h5>
+                                <span class="analytic-subtitle">Age distribution by gender</span>
+                            </div>
+                        </div>
+                        <div style="height: 250px;">
+                            <canvas id="populationChart"></canvas>
+                        </div>
+                        <div class="row mt-4 text-center">
+                            <div class="col-4 border-end border-secondary border-opacity-10">
+                                <h5 class="fw-bold mb-0">45.2k</h5>
+                                <small class="text-muted">Total Citizens</small>
+                            </div>
+                            <div class="col-4 border-end border-secondary border-opacity-10">
+                                <h5 class="fw-bold mb-0 text-success">+1.2%</h5>
+                                <small class="text-muted">Growth Rate</small>
+                            </div>
+                            <div class="col-4">
+                                <h5 class="fw-bold mb-0">420</h5>
+                                <small class="text-muted">Density /km²</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Stats -->
+                <div class="col-lg-6">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="stat-box-modern">
+                                <div class="stat-box-label">Total Schools</div>
+                                <div class="stat-box-value">24</div>
+                                <div class="progress mt-2" style="height: 4px;">
+                                    <div class="progress-bar bg-primary" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-box-modern">
+                                <div class="stat-box-label">Active Students</div>
+                                <div class="stat-box-value">12,450</div>
+                                <div class="progress mt-2" style="height: 4px;">
+                                    <div class="progress-bar bg-success" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="analytic-box" style="min-height: auto;">
+                                <div class="analytic-box-header mb-2">
+                                    <h5 class="analytic-title">School Performance Index</h5>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table-modern">
+                                        <thead>
+                                            <tr>
+                                                <th>School Name</th>
+                                                <th>Students</th>
+                                                <th>Avg. Grade</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>SMA 1 Harapan</td>
+                                                <td>1,200</td>
+                                                <td>88.5</td>
+                                                <td><span
+                                                        class="badge bg-success bg-opacity-10 text-success">Excellent</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>SMP 4 Merdeka</td>
+                                                <td>950</td>
+                                                <td>82.0</td>
+                                                <td><span
+                                                        class="badge bg-primary bg-opacity-10 text-primary">Good</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>SD Tunas Bangsa</td>
+                                                <td>600</td>
+                                                <td>75.4</td>
+                                                <td><span
+                                                        class="badge bg-warning bg-opacity-10 text-warning">Average</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. COMMERCE (ECOMMERCE & UMKM) -->
+            <div class="section-title-modern">Commerce & UMKM Insights</div>
+            <div class="row g-4 mb-5">
+                <!-- Sales Funnel -->
+                <div class="col-lg-4">
+                    <div class="analytic-box">
+                        <div class="analytic-box-header">
+                            <div>
+                                <h5 class="analytic-title">Sales Funnel</h5>
+                                <span class="analytic-subtitle">Conversion analysis</span>
+                            </div>
+                        </div>
+                        <div class="funnel-container mt-2">
+                            <div class="funnel-step">
+                                <div class="funnel-label"><span>Impressions</span> <span>120k</span></div>
+                                <div class="funnel-bar">
+                                    <div class="funnel-fill bg-primary" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="funnel-step">
+                                <div class="funnel-label"><span>Clicks</span> <span>45k</span></div>
+                                <div class="funnel-bar">
+                                    <div class="funnel-fill bg-info" style="width: 65%"></div>
+                                </div>
+                            </div>
+                            <div class="funnel-step">
+                                <div class="funnel-label"><span>Add to Cart</span> <span>12k</span></div>
+                                <div class="funnel-bar">
+                                    <div class="funnel-fill bg-warning" style="width: 35%"></div>
+                                </div>
+                            </div>
+                            <div class="funnel-step">
+                                <div class="funnel-label"><span>Purchased</span> <span>3.5k</span></div>
+                                <div class="funnel-bar">
+                                    <div class="funnel-fill bg-success" style="width: 15%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-success d-flex align-items-center gap-2 mt-4 mb-0 py-2">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            <small>Conversion rate improved by <strong>0.5%</strong> this week.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UMKM Platform Stats -->
+                <div class="col-lg-8">
+                    <div class="analytic-box">
+                        <div class="row h-100">
+                            <div class="col-md-6 d-flex flex-column justify-content-center">
+                                <h5 class="analytic-title mb-4">UMKM Digitalization</h5>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="display-5 fw-bold me-3">1,240</div>
+                                    <div class="text-muted small">UMKM <br>Go Digital</div>
+                                </div>
+                                <p class="text-muted small mb-4">Total UMKM yang telah terintegrasi dengan platform
+                                    digital pembayaran QRIS dan E-Commerce lokal.</p>
+                                <div class="d-flex gap-2">
+                                    <div class="badge bg-soft-primary text-primary p-2 px-3">Kuliner: 45%</div>
+                                    <div class="badge bg-soft-info text-info p-2 px-3">Fashion: 30%</div>
+                                    <div class="badge bg-soft-warning text-warning p-2 px-3">Jasa: 25%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div style="height: 220px;">
+                                    <canvas id="umkmChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- [ADDED] COPYRIGHT FOOTER SECTION -->
+            <footer class="footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025 <strong class="text-white">wkng
+                                Admin</strong>. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan Privasi</a>
+                            <a href="#" class="footer-link">Syarat & Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="assets/vendor/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/chart.js"></script>
+    <script src="assets/js/script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            /* ======================================================================
+               SPECIFIC JS: ADVANCED ANALYTICS CHARTS
+               ====================================================================== */
+
+            let corpChart, popChart, umkmChart;
+
+            // 1. Corporate Main Chart (Mixed: Line + Bar)
+            const ctxCorp = document.getElementById('corpMainChart');
+            if (ctxCorp) {
+                corpChart = new Chart(ctxCorp, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [
+                            {
+                                type: 'line',
+                                label: 'Net Profit',
+                                data: [10, 20, 15, 25, 30, 28, 35, 40, 38, 45, 50, 55],
+                                borderColor: '#10b981',
+                                borderWidth: 2,
+                                tension: 0.4,
+                                pointRadius: 0,
+                                yAxisID: 'y'
+                            },
+                            {
+                                type: 'bar',
+                                label: 'Revenue',
+                                data: [50, 60, 55, 70, 80, 75, 85, 90, 88, 95, 100, 110],
+                                backgroundColor: '#6366f1',
+                                borderRadius: 4,
+                                yAxisID: 'y'
+                            },
+                            {
+                                type: 'bar',
+                                label: 'Expenses',
+                                data: [40, 40, 40, 45, 50, 47, 50, 50, 50, 50, 50, 55],
+                                backgroundColor: '#ef4444',
+                                borderRadius: 4,
+                                yAxisID: 'y'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: { legend: { position: 'top' } },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+                        }
+                    }
+                });
+            }
+
+            // 2. Population Pyramid (Stacked Bar Horizontal)
+            const ctxPop = document.getElementById('populationChart');
+            if (ctxPop) {
+                popChart = new Chart(ctxPop, {
+                    type: 'bar',
+                    data: {
+                        labels: ['0-10', '11-20', '21-30', '31-40', '41-50', '51-60', '60+'],
+                        datasets: [
+                            {
+                                label: 'Male',
+                                data: [-1200, -1500, -1800, -2000, -1700, -1400, -900], // Negative for left side
+                                backgroundColor: '#3b82f6',
+                                borderRadius: 4
+                            },
+                            {
+                                label: 'Female',
+                                data: [1150, 1450, 1900, 2100, 1650, 1450, 1000],
+                                backgroundColor: '#ec4899',
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                stacked: true,
+                                grid: { color: 'rgba(255,255,255,0.05)' },
+                                ticks: { callback: function (val) { return Math.abs(val); } } // Positive labels
+                            },
+                            y: { stacked: true, grid: { display: false } }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function (c) { return c.dataset.label + ': ' + Math.abs(c.raw); }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 3. UMKM Pie Chart
+            const ctxUmkm = document.getElementById('umkmChart');
+            if (ctxUmkm) {
+                umkmChart = new Chart(ctxUmkm, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Kuliner', 'Fashion', 'Jasa', 'Kerajinan', 'Lainnya'],
+                        datasets: [{
+                            data: [45, 30, 15, 5, 5],
+                            backgroundColor: ['#6366f1', '#0ea5e9', '#f59e0b', '#10b981', '#6b7280'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'right', labels: { color: '#9ca3af', boxWidth: 12 } }
+                        }
+                    }
+                });
+            }
+
+            function updateChartsTheme(isLight) {
+                const gridColor = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+
+                if (corpChart) {
+                    corpChart.options.scales.y.grid.color = gridColor;
+                    corpChart.update();
+                }
+                if (popChart) {
+                    popChart.options.scales.x.grid.color = gridColor;
+                    popChart.update();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

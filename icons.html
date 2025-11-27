@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Icon Library</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- RemixIcon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. GLOBAL VARIABLES & RESET
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-sidebar: #1f2937;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #d1d5db;
+            --accent-purple: #6366f1;
+            --accent-blue: #3b82f6;
+            --border-color: #374151;
+
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-info: #0ea5e9;
+
+            --sidebar-width: 260px;
+            --sidebar-width-collapsed: 90px;
+            --sidebar-left-pos: 16px;
+            --sidebar-padding-x: 16px;
+
+            --input-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-bg: #ffffff;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+            border-radius: 10px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        /* ======================================================================
+           2. LAYOUT & SIDEBAR 
+           ====================================================================== */
+        .mobile-menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            height: calc(100vh - 32px);
+            position: fixed;
+            top: 16px;
+            left: var(--sidebar-left-pos);
+            padding: 24px 0 24px var(--sidebar-padding-x);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            overflow: visible;
+        }
+
+        .sidebar-header {
+            margin-bottom: 20px;
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            min-height: 40px;
+            position: relative;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin: 0 -16px 20px;
+        }
+
+        .nav-scrollable {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            padding-right: 4px;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 10px 0 12px;
+            padding: 0 10px;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            padding: 10px 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+            margin-right: 12px;
+            transition: all 0.2s;
+            font-weight: 500;
+            white-space: nowrap;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-link i:not(.arrow-icon) {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .arrow-icon {
+            margin-left: auto;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        /* Active State */
+        .nav-link.active-btn,
+        .nav-link[aria-expanded="true"] {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(236, 72, 153, 0.4);
+            border-color: transparent;
+        }
+
+        .nav-link[aria-expanded="true"] {
+            background: transparent !important;
+            color: var(--text-main) !important;
+            box-shadow: none !important;
+        }
+
+        .nav-link.active-btn i:not(.arrow-icon),
+        .nav-link[aria-expanded="true"] i:not(.arrow-icon) {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .nav-link[aria-expanded="true"] i:not(.arrow-icon) {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%) !important;
+        }
+
+        .nav-link[aria-expanded="true"] .arrow-icon {
+            transform: rotate(90deg);
+            color: var(--text-main) !important;
+        }
+
+        /* Submenu */
+        .nav-submenu {
+            padding-left: 0;
+            list-style: none;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-top: 4px;
+        }
+
+        .nav-submenu .nav-link {
+            padding-left: 50px;
+            height: 40px;
+            font-size: 0.85rem;
+            background: transparent !important;
+            box-shadow: none !important;
+            opacity: 0.7;
+        }
+
+        .nav-submenu .nav-link:hover {
+            color: var(--text-main) !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            opacity: 1;
+        }
+
+        .nav-submenu .nav-link.active {
+            background: rgba(255, 255, 255, 0.05) !important;
+            font-weight: 700;
+            opacity: 1;
+        }
+
+        .nav-submenu .nav-link.active span {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Collapse & Profile */
+        .sidebar-collapse-btn {
+            position: absolute;
+            top: 28px;
+            right: -15px;
+            width: 32px;
+            height: 32px;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-wrapper {
+            margin-top: auto;
+            width: 100%;
+            padding-right: 16px;
+            padding-top: 10px;
+        }
+
+        .user-profile {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white !important;
+            padding: 12px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            width: 100%;
+            border: none;
+            box-shadow: 0 8px 20px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+            padding: 24px 12px;
+        }
+
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .nav-category,
+        .sidebar.collapsed .arrow-icon,
+        .sidebar.collapsed .user-info {
+            display: none;
+        }
+
+        .sidebar.collapsed .collapse {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding-left: 0;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .nav-link,
+        .sidebar.collapsed .user-profile {
+            justify-content: center;
+            padding: 10px;
+            margin-right: 0;
+        }
+
+        .sidebar.collapsed .sidebar-collapse-btn i {
+            transform: rotate(180deg);
+        }
+
+        /* ======================================================================
+           3. MAIN CONTENT
+           ====================================================================== */
+        .main-content {
+            margin-left: calc(var(--sidebar-left-pos) + var(--sidebar-width) + 24px);
+            width: calc(100% - (var(--sidebar-left-pos) + var(--sidebar-width) + 24px));
+            padding: 30px 30px 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.sidebar-collapsed .main-content {
+            margin-left: calc(var(--sidebar-left-pos) + var(--sidebar-width-collapsed) + 24px);
+            width: calc(100% - (var(--sidebar-left-pos) + var(--sidebar-width-collapsed) + 24px));
+        }
+
+        .top-navbar-standalone {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .search-standalone-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-standalone-input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px 20px 12px 48px;
+            color: var(--text-main);
+        }
+
+        .search-standalone-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .search-standalone-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-purple);
+        }
+
+        /* Header */
+        .active-page-header {
+            padding: 30px;
+            border-radius: 24px;
+            background-color: var(--bg-card);
+            position: relative;
+            margin-bottom: 3.5rem;
+            border: 2px solid transparent;
+            background-image: linear-gradient(var(--bg-card), var(--bg-card)), linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15);
+        }
+
+        .page-title-large {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .breadcrumb-modern {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .breadcrumb-item-custom {
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item-custom:hover {
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-item-custom.active {
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .breadcrumb-sep {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .widget-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            overflow: hidden;
+            transition: 0.3s;
+            color: var(--text-main);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: #6366f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.5);
+            cursor: pointer;
+            z-index: 900;
+        }
+
+        /* ======================================================================
+           4. ICON LIBRARY SPECIFIC STYLES (FIXED TABS)
+           ====================================================================== */
+
+        /* Alert */
+        .icon-alert {
+            background: rgba(99, 102, 241, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            color: var(--text-main);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Tabs [FIXED VISIBILITY] */
+        .nav-tabs-custom {
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .nav-tabs-custom .nav-link {
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 12px 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs-custom .nav-link:hover {
+            color: var(--accent-purple);
+            border-color: transparent;
+            /* Fix bootstrap hover border */
+        }
+
+        /* Force styles on active state to override Bootstrap defaults */
+        .nav-tabs-custom .nav-link.active {
+            color: var(--accent-purple) !important;
+            background: transparent !important;
+            border-color: transparent !important;
+            border-bottom: 2px solid var(--accent-purple) !important;
+        }
+
+        /* Search */
+        .icon-search-input {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 16px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .icon-search-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Grid & Icons */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 16px;
+            padding-bottom: 20px;
+        }
+
+        .icon-box {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .icon-box:hover {
+            transform: translateY(-5px);
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid transparent;
+            background-image: linear-gradient(var(--bg-card), var(--bg-card)),
+                linear-gradient(135deg, #ec4899, #8b5cf6);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .icon-box i {
+            transition: transform 0.3s;
+        }
+
+        .icon-box:hover i {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.6));
+        }
+
+        /* Tooltip */
+        .copy-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #10b981;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            z-index: 2000;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+        }
+
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .pagination-info {
+            color: var(--text-main) !important;
+            opacity: 0.8;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-120%);
+                width: 260px !important;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-navbar-standalone {
+                justify-content: flex-start;
+                padding-left: 55px;
+            }
+
+            .search-standalone-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Toast Notification -->
+    <div class="copy-toast" id="copyToast">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>Kode icon berhasil disalin!</span>
+    </div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo"><i class="bi bi-hexagon-fill"
+                        style="font-size: 1.5rem; color: #6366f1;"></i><span class="logo-text">Nexus</span></div>
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <div class="sidebar-divider"></div>
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link"><i class="bi bi-grid-1x2-fill"></i> <span>Dashboard</span></a>
+                <a href="#" class="nav-link"><i class="bi bi-graph-up-arrow"></i> <span>Analytics</span></a>
+
+                <div class="nav-category">APLIKASI</div>
+                <a href="#" class="nav-link"><i class="bi bi-envelope"></i> <span>Email</span></a>
+                <a href="#" class="nav-link"><i class="bi bi-chat-dots"></i> <span>Chat</span></a>
+                <a href="#" class="nav-link"><i class="bi bi-calendar3"></i> <span>Calendar</span></a>
+
+                <div class="nav-category">ANTARMUKA</div>
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuUI" aria-expanded="true"><i
+                        class="bi bi-layers-fill"></i>
+                    <span>Komponen UI</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="#" class="nav-link">Alerts</a>
+                        <a href="buttons.html" class="nav-link">Buttons</a>
+                        <a href="cards.html" class="nav-link">Cards & Widgets</a>
+                        <a href="wizard.html" class="nav-link">Wizard & Steps</a>
+                        <a href="icons.html" class="nav-link active"><span>Icons</span></a>
+                        <a href="#" class="nav-link">Modals</a>
+                    </div>
+                </div>
+
+                <a class="nav-link collapsed" data-bs-toggle="collapse" href="#menuForms"><i
+                        class="bi bi-file-text"></i> <span>Forms & Tables</span> <i
+                        class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="#" class="nav-link">Form Elements</a>
+                        <a href="tables.html" class="nav-link">Data Tables</a>
+                    </div>
+                </div>
+
+                <div class="nav-category">HALAMAN</div>
+                <a class="nav-link collapsed" data-bs-toggle="collapse" href="#menuPages"><i
+                        class="bi bi-file-lock"></i> <span>Otentikasi</span> <i
+                        class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+                        <a href="login.html" class="nav-link">Login</a>
+                        <a href="register.html" class="nav-link">Register</a>
+                        <a href="#" class="nav-link">404 Error</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-link"><i class="bi bi-gear"></i> <span>Pengaturan</span></a>
+            </div>
+            <div class="dropup profile-wrapper">
+                <div class="user-profile dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="avatar">A</div>
+                    <div class="user-info" style="flex: 1; min-width: 0;">
+                        <div style="font-size: 0.9rem; font-weight: 600;">Admin Pusat</div>
+                        <div class="text-muted"
+                            style="font-size: 0.75rem; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                            admin@nexus.com</div>
+                    </div>
+                </div>
+                <ul class="dropdown-menu custom-dropdown-menu w-100">
+                    <li><a class="dropdown-item" href="#">Profil</a></li>
+                    <li><a class="dropdown-item text-danger" href="login.html">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box"><i class="bi bi-search search-standalone-icon"></i><input type="text"
+                        class="search-standalone-input" placeholder="Cari di seluruh halaman..."></div>
+            </div>
+
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Icon Library</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">Koleksi ribuan icon
+                            vector dengan gaya modern.</p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-stars"></i> ASSETS</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><span class="breadcrumb-home-icon"><i
+                                            class="bi bi-house-door-fill"></i></span></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Komponen UI</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Icons</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alert Info -->
+            <div class="icon-alert">
+                <i class="bi bi-info-circle-fill fs-4" style="color: var(--accent-purple);"></i>
+                <div>
+                    <h6 class="fw-bold mb-1">Cara Penggunaan</h6>
+                    <div class="small opacity-75" style="color: var(--text-main);">Klik pada icon untuk menyalin kode
+                        class secara otomatis. Hover untuk melihat efek glow.</div>
+                </div>
+            </div>
+
+            <div class="widget-card">
+                <!-- Tabs Header -->
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                    <ul class="nav nav-tabs nav-tabs-custom mb-0" id="iconTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="bs-tab" data-bs-toggle="tab"
+                                data-bs-target="#bs-content" type="button" role="tab"
+                                onclick="switchLibrary('bs')">Bootstrap Icons</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="fa-tab" data-bs-toggle="tab" data-bs-target="#fa-content"
+                                type="button" role="tab" onclick="switchLibrary('fa')">FontAwesome 6</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="ri-tab" data-bs-toggle="tab" data-bs-target="#ri-content"
+                                type="button" role="tab" onclick="switchLibrary('ri')">RemixIcon</button>
+                        </li>
+                    </ul>
+
+                    <!-- Search Box -->
+                    <input type="text" id="iconSearch" class="icon-search-input" placeholder="Cari nama icon...">
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="bs-content" role="tabpanel">
+                        <div class="icon-grid" id="bs-grid"></div>
+                        <div class="pagination-container" id="bs-pagination"></div>
+                    </div>
+                    <div class="tab-pane fade" id="fa-content" role="tabpanel">
+                        <div class="icon-grid" id="fa-grid"></div>
+                        <div class="pagination-container" id="fa-pagination"></div>
+                    </div>
+                    <div class="tab-pane fade" id="ri-content" role="tabpanel">
+                        <div class="icon-grid" id="ri-grid"></div>
+                        <div class="pagination-container" id="ri-pagination"></div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="text-center py-5 d-none">
+                    <div class="text-muted mb-2"><i class="bi bi-search fs-1"></i></div>
+                    <h6 class="text-muted">Icon tidak ditemukan</h6>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- DATA ICONS ---
+        const bootstrapIcons = [
+            "bi-alarm", "bi-alarm-fill", "bi-align-bottom", "bi-align-center", "bi-align-end", "bi-align-middle", "bi-align-start", "bi-align-top",
+            "bi-alt", "bi-app", "bi-app-indicator", "bi-apple", "bi-archive", "bi-archive-fill", "bi-arrow-90deg-down", "bi-arrow-90deg-left",
+            "bi-arrow-90deg-right", "bi-arrow-90deg-up", "bi-arrow-bar-down", "bi-arrow-bar-left", "bi-arrow-bar-right", "bi-arrow-bar-up",
+            "bi-arrow-clockwise", "bi-arrow-counterclockwise", "bi-arrow-down", "bi-arrow-down-circle", "bi-arrow-down-circle-fill", "bi-arrow-down-left-circle",
+            "bi-arrow-down-left-circle-fill", "bi-arrow-down-left-square", "bi-arrow-down-left-square-fill", "bi-arrow-down-right-circle",
+            "bi-arrow-down-right-circle-fill", "bi-arrow-down-right-square", "bi-arrow-down-right-square-fill", "bi-arrow-down-short", "bi-arrow-down-square",
+            "bi-arrow-down-square-fill", "bi-arrow-down-up", "bi-arrow-left", "bi-arrow-left-circle", "bi-arrow-left-circle-fill", "bi-arrow-left-right",
+            "bi-arrow-left-short", "bi-arrow-left-square", "bi-arrow-left-square-fill", "bi-arrow-repeat", "bi-arrow-return-left", "bi-arrow-return-right",
+            "bi-arrow-right", "bi-arrow-right-circle", "bi-arrow-right-circle-fill", "bi-arrow-right-short", "bi-arrow-right-square", "bi-arrow-right-square-fill",
+            "bi-arrow-up", "bi-arrow-up-circle", "bi-arrow-up-circle-fill", "bi-arrow-up-left-circle", "bi-arrow-up-left-circle-fill", "bi-arrow-up-left-square",
+            "bi-arrow-up-left-square-fill", "bi-arrow-up-right-circle", "bi-arrow-up-right-circle-fill", "bi-arrow-up-right-square", "bi-arrow-up-right-square-fill",
+            "bi-arrow-up-short", "bi-arrow-up-square", "bi-arrow-up-square-fill", "bi-arrows-angle-contract", "bi-arrows-angle-expand", "bi-arrows-collapse",
+            "bi-arrows-expand", "bi-arrows-fullscreen", "bi-arrows-move", "bi-aspect-ratio", "bi-aspect-ratio-fill", "bi-asterisk", "bi-at", "bi-award",
+            "bi-award-fill", "bi-back", "bi-backspace", "bi-backspace-fill", "bi-backspace-reverse", "bi-backspace-reverse-fill", "bi-badge-3d", "bi-badge-3d-fill",
+            "bi-badge-4k", "bi-badge-4k-fill", "bi-badge-8k", "bi-badge-8k-fill", "bi-badge-ad", "bi-badge-ad-fill", "bi-badge-ar", "bi-badge-ar-fill", "bi-badge-cc",
+            "bi-badge-cc-fill", "bi-badge-hd", "bi-badge-hd-fill", "bi-badge-tm", "bi-badge-tm-fill", "bi-badge-vo", "bi-badge-vo-fill", "bi-badge-vr", "bi-badge-vr-fill",
+            "bi-badge-wc", "bi-badge-wc-fill", "bi-bag", "bi-bag-check", "bi-bag-check-fill", "bi-bag-dash", "bi-bag-dash-fill", "bi-bag-fill", "bi-bag-plus",
+            "bi-bag-plus-fill", "bi-bag-x", "bi-bag-x-fill", "bi-bank", "bi-bank2", "bi-bar-chart", "bi-bar-chart-fill", "bi-bar-chart-line", "bi-bar-chart-line-fill",
+            "bi-bar-chart-steps", "bi-basket", "bi-basket-fill", "bi-basket2", "bi-basket2-fill", "bi-basket3", "bi-basket3-fill", "bi-battery", "bi-battery-charging",
+            "bi-battery-full", "bi-battery-half", "bi-bell", "bi-bell-fill", "bi-bell-slash", "bi-bell-slash-fill", "bi-bezier", "bi-bezier2", "bi-bicycle",
+            "bi-binoculars", "bi-binoculars-fill", "bi-blockquote-left", "bi-blockquote-right", "bi-book", "bi-book-fill", "bi-book-half", "bi-bookmark",
+            "bi-bookmark-check", "bi-bookmark-check-fill", "bi-bookmark-dash", "bi-bookmark-dash-fill", "bi-bookmark-fill", "bi-bookmark-heart",
+            "bi-bookmark-heart-fill", "bi-bookmark-plus", "bi-bookmark-plus-fill", "bi-bookmark-star", "bi-bookmark-star-fill", "bi-bookmark-x", "bi-bookmark-x-fill",
+            "bi-bookmarks", "bi-bookmarks-fill", "bi-bookshelf", "bi-bootstrap", "bi-bootstrap-fill", "bi-bootstrap-reboot", "bi-border", "bi-border-all",
+            "bi-border-bottom", "bi-border-center", "bi-border-inner", "bi-border-left", "bi-border-middle", "bi-border-outer", "bi-border-right", "bi-border-style",
+            "bi-border-style-inverse", "bi-border-top", "bi-border-width", "bi-bounding-box", "bi-bounding-box-circles", "bi-box", "bi-box-arrow-down",
+            "bi-box-arrow-down-left", "bi-box-arrow-down-right", "bi-box-arrow-in-down", "bi-box-arrow-in-down-left", "bi-box-arrow-in-down-right",
+            "bi-box-arrow-in-left", "bi-box-arrow-in-right", "bi-box-arrow-in-up", "bi-box-arrow-in-up-left", "bi-box-arrow-in-up-right", "bi-box-arrow-left",
+            "bi-box-arrow-right", "bi-box-arrow-up", "bi-box-arrow-up-left", "bi-box-arrow-up-right", "bi-box-seam", "bi-braces", "bi-bricks", "bi-briefcase",
+            "bi-briefcase-fill", "bi-brightness-alt-high", "bi-brightness-alt-high-fill", "bi-brightness-alt-low", "bi-brightness-alt-low-fill", "bi-brightness-high",
+            "bi-brightness-high-fill", "bi-brightness-low", "bi-brightness-low-fill", "bi-broadcast", "bi-broadcast-pin", "bi-brush", "bi-brush-fill", "bi-bucket",
+            "bi-bucket-fill", "bi-bug", "bi-bug-fill", "bi-building", "bi-bullseye", "bi-calculator", "bi-calculator-fill", "bi-calendar", "bi-calendar-check",
+            "bi-calendar-check-fill", "bi-calendar-date", "bi-calendar-date-fill", "bi-calendar-day", "bi-calendar-day-fill", "bi-calendar-event",
+            "bi-calendar-event-fill", "bi-calendar-fill", "bi-calendar-minus", "bi-calendar-minus-fill", "bi-calendar-month", "bi-calendar-month-fill",
+            "bi-calendar-plus", "bi-calendar-plus-fill", "bi-calendar-range", "bi-calendar-range-fill", "bi-calendar-week", "bi-calendar-week-fill", "bi-calendar-x",
+            "bi-calendar-x-fill", "bi-calendar2", "bi-calendar2-check", "bi-calendar2-check-fill", "bi-calendar2-date", "bi-calendar2-date-fill", "bi-calendar2-day",
+            "bi-calendar2-day-fill", "bi-calendar2-event", "bi-calendar2-event-fill", "bi-calendar2-fill", "bi-calendar2-minus", "bi-calendar2-minus-fill",
+            "bi-calendar2-month", "bi-calendar2-month-fill", "bi-calendar2-plus", "bi-calendar2-plus-fill", "bi-calendar2-range", "bi-calendar2-range-fill",
+            "bi-calendar2-week", "bi-calendar2-week-fill", "bi-calendar2-x", "bi-calendar2-x-fill", "bi-calendar3", "bi-calendar3-event", "bi-calendar3-event-fill",
+            "bi-calendar3-fill", "bi-calendar3-range", "bi-calendar3-range-fill", "bi-calendar3-week", "bi-calendar3-week-fill", "bi-camera", "bi-camera-fill",
+            "bi-camera-reels", "bi-camera-reels-fill", "bi-camera-video", "bi-camera-video-fill", "bi-camera-video-off", "bi-camera-video-off-fill", "bi-camera2",
+            "bi-capslock", "bi-capslock-fill", "bi-card-checklist", "bi-card-heading", "bi-card-image", "bi-card-list", "bi-card-text", "bi-caret-down",
+            "bi-caret-down-fill", "bi-caret-down-square", "bi-caret-down-square-fill", "bi-caret-left", "bi-caret-left-fill", "bi-caret-left-square",
+            "bi-caret-left-square-fill", "bi-caret-right", "bi-caret-right-fill", "bi-caret-right-square", "bi-caret-right-square-fill", "bi-caret-up",
+            "bi-caret-up-fill", "bi-caret-up-square", "bi-caret-up-square-fill", "bi-cart", "bi-cart-check", "bi-cart-check-fill", "bi-cart-dash", "bi-cart-dash-fill",
+            "bi-cart-fill", "bi-cart-plus", "bi-cart-plus-fill", "bi-cart-x", "bi-cart-x-fill", "bi-cart2", "bi-cart3", "bi-cart4", "bi-cash", "bi-cash-stack",
+            "bi-cast", "bi-chat", "bi-chat-dots", "bi-chat-dots-fill", "bi-chat-fill", "bi-chat-left", "bi-chat-left-dots", "bi-chat-left-dots-fill", "bi-chat-left-fill",
+            "bi-chat-left-quote", "bi-chat-left-quote-fill", "bi-chat-left-text", "bi-chat-left-text-fill", "bi-chat-quote", "bi-chat-quote-fill", "bi-chat-right",
+            "bi-chat-right-dots", "bi-chat-right-dots-fill", "bi-chat-right-fill", "bi-chat-right-quote", "bi-chat-right-quote-fill", "bi-chat-right-text",
+            "bi-chat-right-text-fill", "bi-chat-square", "bi-chat-square-dots", "bi-chat-square-dots-fill", "bi-chat-square-fill", "bi-chat-square-quote",
+            "bi-chat-square-quote-fill", "bi-chat-square-text", "bi-chat-square-text-fill", "bi-chat-text", "bi-chat-text-fill", "bi-check", "bi-check-all",
+            "bi-check-circle", "bi-check-circle-fill", "bi-check-square", "bi-check-square-fill", "bi-check2", "bi-check2-all", "bi-check2-circle", "bi-check2-square",
+            "bi-chevron-bar-contract", "bi-chevron-bar-down", "bi-chevron-bar-left", "bi-chevron-bar-right", "bi-chevron-bar-up", "bi-chevron-compact-down",
+            "bi-chevron-compact-left", "bi-chevron-compact-right", "bi-chevron-compact-up", "bi-chevron-contract", "bi-chevron-double-down", "bi-chevron-double-left",
+            "bi-chevron-double-right", "bi-chevron-double-up", "bi-chevron-down", "bi-chevron-expand", "bi-chevron-left", "bi-chevron-right", "bi-chevron-up",
+            "bi-circle", "bi-circle-fill", "bi-circle-half", "bi-slash-circle-fill", "bi-clock", "bi-clock-fill", "bi-clock-history", "bi-cloud", "bi-cloud-arrow-down",
+            "bi-cloud-arrow-down-fill", "bi-cloud-arrow-up", "bi-cloud-arrow-up-fill", "bi-cloud-check", "bi-cloud-check-fill", "bi-cloud-download",
+            "bi-cloud-download-fill", "bi-cloud-drizzle", "bi-cloud-drizzle-fill", "bi-cloud-fill", "bi-cloud-fog", "bi-cloud-fog-fill", "bi-cloud-fog2",
+            "bi-cloud-fog2-fill", "bi-cloud-hail", "bi-cloud-hail-fill", "bi-cloud-haze", "bi-cloud-haze-1", "bi-cloud-haze-fill", "bi-cloud-haze2-fill",
+            "bi-cloud-lightning", "bi-cloud-lightning-fill", "bi-cloud-lightning-rain", "bi-cloud-lightning-rain-fill", "bi-cloud-minus", "bi-cloud-minus-fill",
+            "bi-cloud-moon", "bi-cloud-moon-fill", "bi-cloud-plus", "bi-cloud-plus-fill", "bi-cloud-rain", "bi-cloud-rain-fill", "bi-cloud-rain-heavy",
+            "bi-cloud-rain-heavy-fill", "bi-cloud-slash", "bi-cloud-slash-fill", "bi-cloud-sleet", "bi-cloud-sleet-fill", "bi-cloud-snow", "bi-cloud-snow-fill",
+            "bi-cloud-sun", "bi-cloud-sun-fill", "bi-cloud-upload", "bi-cloud-upload-fill", "bi-clouds", "bi-clouds-fill", "bi-cloudy", "bi-cloudy-fill", "bi-code",
+            "bi-code-slash", "bi-code-square", "bi-collection", "bi-collection-fill", "bi-collection-play", "bi-collection-play-fill", "bi-columns", "bi-columns-gap",
+            "bi-command", "bi-compass", "bi-compass-fill", "bi-cone", "bi-cone-striped", "bi-controller", "bi-cpu", "bi-cpu-fill", "bi-credit-card", "bi-credit-card-2-back",
+            "bi-credit-card-2-back-fill", "bi-credit-card-2-front", "bi-credit-card-2-front-fill", "bi-credit-card-fill", "bi-crop", "bi-cup", "bi-cup-fill", "bi-cup-straw",
+            "bi-cursor", "bi-cursor-fill", "bi-cursor-text", "bi-dash", "bi-dash-circle", "bi-dash-circle-fill", "bi-dash-square", "bi-dash-square-fill", "bi-diagram-2",
+            "bi-diagram-2-fill", "bi-diagram-3", "bi-diagram-3-fill", "bi-diamond", "bi-diamond-fill", "bi-diamond-half", "bi-dice-1", "bi-dice-1-fill", "bi-dice-2",
+            "bi-dice-2-fill", "bi-dice-3", "bi-dice-3-fill", "bi-dice-4", "bi-dice-4-fill", "bi-dice-5", "bi-dice-5-fill", "bi-dice-6", "bi-dice-6-fill", "bi-disc",
+            "bi-disc-fill", "bi-discord", "bi-display", "bi-display-fill", "bi-distribute-horizontal", "bi-distribute-vertical", "bi-door-closed", "bi-door-closed-fill",
+            "bi-door-open", "bi-door-open-fill", "bi-dot", "bi-download", "bi-droplet", "bi-droplet-fill", "bi-droplet-half", "bi-earbuds", "bi-easel", "bi-easel-fill",
+            "bi-egg", "bi-egg-fill", "bi-egg-fried", "bi-eject", "bi-eject-fill", "bi-emoji-angry", "bi-emoji-angry-fill", "bi-emoji-dizzy", "bi-emoji-dizzy-fill",
+            "bi-emoji-expressionless", "bi-emoji-expressionless-fill", "bi-emoji-frown", "bi-emoji-frown-fill", "bi-emoji-heart-eyes", "bi-emoji-heart-eyes-fill",
+            "bi-emoji-laughing", "bi-emoji-laughing-fill", "bi-emoji-neutral", "bi-emoji-neutral-fill", "bi-emoji-smile", "bi-emoji-smile-fill", "bi-emoji-smile-upside-down",
+            "bi-emoji-smile-upside-down-fill", "bi-emoji-sunglasses", "bi-emoji-sunglasses-fill", "bi-emoji-wink", "bi-emoji-wink-fill", "bi-envelope", "bi-envelope-fill",
+            "bi-envelope-open", "bi-envelope-open-fill", "bi-eraser", "bi-eraser-fill", "bi-exclamation", "bi-exclamation-circle", "bi-exclamation-circle-fill",
+            "bi-exclamation-diamond", "bi-exclamation-diamond-fill", "bi-exclamation-octagon", "bi-exclamation-octagon-fill", "bi-exclamation-square",
+            "bi-exclamation-square-fill", "bi-exclamation-triangle", "bi-exclamation-triangle-fill", "bi-exclude", "bi-eye", "bi-eye-fill", "bi-eye-slash",
+            "bi-eye-slash-fill", "bi-eyedropper", "bi-eyeglasses", "bi-facebook", "bi-file", "bi-file-arrow-down", "bi-file-arrow-down-fill", "bi-file-arrow-up",
+            "bi-file-arrow-up-fill", "bi-file-bar-graph", "bi-file-bar-graph-fill", "bi-file-binary", "bi-file-binary-fill", "bi-file-break", "bi-file-break-fill",
+            "bi-file-check", "bi-file-check-fill", "bi-file-code", "bi-file-code-fill", "bi-file-diff", "bi-file-diff-fill", "bi-file-earmark", "bi-file-earmark-arrow-down",
+            "bi-file-earmark-arrow-down-fill", "bi-file-earmark-arrow-up", "bi-file-earmark-arrow-up-fill", "bi-file-earmark-bar-graph", "bi-file-earmark-bar-graph-fill",
+            "bi-file-earmark-binary", "bi-file-earmark-binary-fill", "bi-file-earmark-break", "bi-file-earmark-break-fill", "bi-file-earmark-check",
+            "bi-file-earmark-check-fill", "bi-file-earmark-code", "bi-file-earmark-code-fill", "bi-file-earmark-diff", "bi-file-earmark-diff-fill", "bi-file-earmark-easel",
+            "bi-file-earmark-easel-fill", "bi-file-earmark-excel", "bi-file-earmark-excel-fill", "bi-file-earmark-fill", "bi-file-earmark-font",
+            "bi-file-earmark-font-fill", "bi-file-earmark-image", "bi-file-earmark-image-fill", "bi-file-earmark-lock", "bi-file-earmark-lock-fill",
+            "bi-file-earmark-lock2", "bi-file-earmark-lock2-fill", "bi-file-earmark-medical", "bi-file-earmark-medical-fill", "bi-file-earmark-minus",
+            "bi-file-earmark-minus-fill", "bi-file-earmark-music", "bi-file-earmark-music-fill", "bi-file-earmark-pdf", "bi-file-earmark-pdf-fill",
+            "bi-file-earmark-person", "bi-file-earmark-person-fill", "bi-file-earmark-play", "bi-file-earmark-play-fill", "bi-file-earmark-plus",
+            "bi-file-earmark-plus-fill", "bi-file-earmark-post", "bi-file-earmark-post-fill", "bi-file-earmark-ppt", "bi-file-earmark-ppt-fill",
+            "bi-file-earmark-richtext", "bi-file-earmark-richtext-fill", "bi-file-earmark-ruled", "bi-file-earmark-ruled-fill", "bi-file-earmark-slides",
+            "bi-file-earmark-slides-fill", "bi-file-earmark-spreadsheet", "bi-file-earmark-spreadsheet-fill", "bi-file-earmark-text", "bi-file-earmark-text-fill",
+            "bi-file-earmark-word", "bi-file-earmark-word-fill", "bi-file-earmark-x", "bi-file-earmark-x-fill", "bi-file-earmark-zip", "bi-file-earmark-zip-fill",
+            "bi-file-easel", "bi-file-easel-fill", "bi-file-excel", "bi-file-excel-fill", "bi-file-fill", "bi-file-font", "bi-file-font-fill", "bi-file-image",
+            "bi-file-image-fill", "bi-file-lock", "bi-file-lock-fill", "bi-file-lock2", "bi-file-lock2-fill", "bi-file-medical", "bi-file-medical-fill",
+            "bi-file-minus", "bi-file-minus-fill", "bi-file-music", "bi-file-music-fill", "bi-file-pdf", "bi-file-pdf-fill", "bi-file-person", "bi-file-person-fill",
+            "bi-file-play", "bi-file-play-fill", "bi-file-plus", "bi-file-plus-fill", "bi-file-post", "bi-file-post-fill", "bi-file-ppt", "bi-file-ppt-fill",
+            "bi-file-richtext", "bi-file-richtext-fill", "bi-file-ruled", "bi-file-ruled-fill", "bi-file-slides", "bi-file-slides-fill", "bi-file-spreadsheet",
+            "bi-file-spreadsheet-fill", "bi-file-text", "bi-file-text-fill", "bi-file-word", "bi-file-word-fill", "bi-file-x", "bi-file-x-fill", "bi-file-zip",
+            "bi-file-zip-fill", "bi-files", "bi-files-alt", "bi-film", "bi-filter", "bi-filter-circle", "bi-filter-circle-fill", "bi-filter-left", "bi-filter-right",
+            "bi-filter-square", "bi-filter-square-fill", "bi-flag", "bi-flag-fill", "bi-flower1", "bi-flower2", "bi-flower3", "bi-folder", "bi-folder-check",
+            "bi-folder-fill", "bi-folder-minus", "bi-folder-plus", "bi-folder-symlink", "bi-folder-symlink-fill", "bi-folder-x", "bi-folder2", "bi-folder2-open",
+            "bi-fonts", "bi-forward", "bi-forward-fill", "bi-front", "bi-fullscreen", "bi-fullscreen-exit", "bi-funnel", "bi-funnel-fill", "bi-gear", "bi-gear-fill",
+            "bi-gem", "bi-geo", "bi-geo-alt", "bi-geo-alt-fill", "bi-geo-fill", "bi-gift", "bi-gift-fill", "bi-github", "bi-globe", "bi-globe2", "bi-google", "bi-graph-down",
+            "bi-graph-up", "bi-grid", "bi-grid-1x2", "bi-grid-1x2-fill", "bi-grid-3x2", "bi-grid-3x2-gap", "bi-grid-3x2-gap-fill", "bi-grid-3x3", "bi-grid-3x3-gap",
+            "bi-grid-3x3-gap-fill", "bi-grid-fill", "bi-grip-horizontal", "bi-grip-vertical", "bi-hammer", "bi-hand-index", "bi-hand-index-fill", "bi-hand-index-thumb",
+            "bi-hand-index-thumb-fill", "bi-hand-thumbs-down", "bi-hand-thumbs-down-fill", "bi-hand-thumbs-up", "bi-hand-thumbs-up-fill", "bi-handbag", "bi-handbag-fill",
+            "bi-hash", "bi-hdd", "bi-hdd-fill", "bi-hdd-network", "bi-hdd-network-fill", "bi-hdd-rack", "bi-hdd-rack-fill", "bi-hdd-stack", "bi-hdd-stack-fill",
+            "bi-headphones", "bi-headset", "bi-headset-vr", "bi-heart", "bi-heart-fill", "bi-heart-half", "bi-heptagon", "bi-heptagon-fill", "bi-heptagon-half",
+            "bi-hexagon", "bi-hexagon-fill", "bi-hexagon-half", "bi-hourglass", "bi-hourglass-bottom", "bi-hourglass-split", "bi-hourglass-top", "bi-house",
+            "bi-house-door", "bi-house-door-fill", "bi-house-fill", "bi-hr", "bi-hurricane", "bi-image", "bi-image-alt", "bi-image-fill", "bi-images", "bi-inbox",
+            "bi-inbox-fill", "bi-inboxes", "bi-inboxes-fill", "bi-info", "bi-info-circle", "bi-info-circle-fill", "bi-info-square", "bi-info-square-fill",
+            "bi-input-cursor", "bi-input-cursor-text", "bi-instagram", "bi-intersect", "bi-journal", "bi-journal-album", "bi-journal-arrow-down", "bi-journal-arrow-up",
+            "bi-journal-bookmark", "bi-journal-bookmark-fill", "bi-journal-check", "bi-journal-code", "bi-journal-medical", "bi-journal-minus", "bi-journal-plus",
+            "bi-journal-richtext", "bi-journal-text", "bi-journal-x", "bi-journals", "bi-joystick", "bi-justify", "bi-justify-left", "bi-justify-right", "bi-kanban",
+            "bi-kanban-fill", "bi-key", "bi-key-fill", "bi-keyboard", "bi-keyboard-fill", "bi-ladder", "bi-lamp", "bi-lamp-fill", "bi-laptop", "bi-laptop-fill",
+            "bi-layer-backward", "bi-layer-forward", "bi-layers", "bi-layers-fill", "bi-layers-half", "bi-layout-sidebar", "bi-layout-sidebar-inset",
+            "bi-layout-sidebar-inset-reverse", "bi-layout-sidebar-reverse", "bi-layout-split", "bi-layout-text-sidebar", "bi-layout-text-sidebar-reverse",
+            "bi-layout-text-window", "bi-layout-text-window-reverse", "bi-layout-three-columns", "bi-layout-wof"
+        ];
+        const fontAwesomeIcons = [
+            "fa-solid fa-house", "fa-solid fa-user", "fa-solid fa-check", "fa-solid fa-download", "fa-solid fa-image", "fa-solid fa-phone", "fa-solid fa-bars", "fa-solid fa-envelope", "fa-solid fa-star", "fa-solid fa-location-dot", "fa-solid fa-music", "fa-solid fa-wand-magic-sparkles", "fa-solid fa-heart", "fa-solid fa-arrow-right", "fa-solid fa-circle-xmark", "fa-solid fa-bomb", "fa-solid fa-poo", "fa-solid fa-camera-retro", "fa-solid fa-cloud", "fa-solid fa-comment", "fa-solid fa-caret-up", "fa-solid fa-truck-fast", "fa-solid fa-pen-nib", "fa-solid fa-arrow-up", "fa-solid fa-hippo", "fa-solid fa-face-smile", "fa-solid fa-calendar-days", "fa-solid fa-paperclip", "fa-solid fa-shield-halved", "fa-solid fa-file", "fa-solid fa-bell", "fa-solid fa-cart-shopping", "fa-solid fa-clipboard", "fa-solid fa-filter", "fa-solid fa-circle-info", "fa-solid fa-arrow-up-from-bracket", "fa-solid fa-bolt", "fa-solid fa-car", "fa-solid fa-ghost", "fa-solid fa-mug-hot", "fa-solid fa-circle-user", "fa-solid fa-pen", "fa-solid fa-umbrella", "fa-solid fa-gift", "fa-solid fa-film", "fa-solid fa-list", "fa-solid fa-gear", "fa-solid fa-trash", "fa-solid fa-circle-up", "fa-solid fa-circle-down", "fa-solid fa-inbox", "fa-solid fa-rotate-right", "fa-solid fa-lock", "fa-solid fa-headphones", "fa-solid fa-barcode", "fa-solid fa-tag", "fa-solid fa-book", "fa-solid fa-bookmark", "fa-solid fa-print", "fa-solid fa-camera", "fa-solid fa-font", "fa-solid fa-video", "fa-solid fa-circle-half-stroke", "fa-solid fa-droplet", "fa-solid fa-pen-to-square", "fa-solid fa-share-from-square", "fa-solid fa-plus", "fa-solid fa-minus", "fa-solid fa-share", "fa-solid fa-circle-exclamation", "fa-solid fa-fire", "fa-solid fa-eye", "fa-solid fa-eye-slash", "fa-solid fa-plane", "fa-solid fa-magnet", "fa-solid fa-hand", "fa-solid fa-folder", "fa-solid fa-folder-open", "fa-solid fa-thumbs-up", "fa-solid fa-thumbs-down", "fa-solid fa-comments", "fa-solid fa-quote-left", "fa-solid fa-quote-right", "fa-solid fa-flask", "fa-solid fa-key", "fa-solid fa-wrench", "fa-solid fa-hammer", "fa-solid fa-terminal", "fa-solid fa-code", "fa-solid fa-gears", "fa-solid fa-gamepad", "fa-solid fa-robot", "fa-solid fa-map", "fa-solid fa-map-pin", "fa-solid fa-signs-post", "fa-solid fa-address-book", "fa-solid fa-address-card", "fa-solid fa-id-card", "fa-solid fa-id-badge", "fa-solid fa-calendar", "fa-solid fa-calendar-check", "fa-solid fa-keyboard", "fa-solid fa-computer-mouse", "fa-solid fa-mobile-screen", "fa-solid fa-tablet-screen-button", "fa-solid fa-laptop", "fa-solid fa-tv", "fa-solid fa-battery-full", "fa-solid fa-battery-half", "fa-solid fa-battery-quarter", "fa-solid fa-battery-empty", "fa-solid fa-plug", "fa-solid fa-lightbulb", "fa-solid fa-tree", "fa-solid fa-snowflake", "fa-solid fa-sun", "fa-solid fa-moon", "fa-solid fa-wind", "fa-solid fa-water", "fa-solid fa-earth-americas", "fa-solid fa-earth-europe", "fa-solid fa-earth-africa", "fa-solid fa-earth-asia", "fa-solid fa-earth-oceania", "fa-solid fa-money-bill", "fa-solid fa-money-bill-1", "fa-solid fa-money-check", "fa-solid fa-money-check-dollar", "fa-solid fa-credit-card", "fa-solid fa-wallet", "fa-solid fa-coins", "fa-solid fa-bitcoin-sign", "fa-brands fa-facebook", "fa-brands fa-twitter", "fa-brands fa-instagram", "fa-brands fa-tiktok", "fa-brands fa-linkedin", "fa-brands fa-github", "fa-brands fa-discord", "fa-brands fa-youtube", "fa-brands fa-wordpress", "fa-brands fa-slack", "fa-brands fa-figma", "fa-brands fa-apple", "fa-brands fa-google", "fa-brands fa-google-play", "fa-brands fa-android", "fa-brands fa-windows", "fa-brands fa-linux", "fa-brands fa-docker", "fa-brands fa-aws", "fa-brands fa-digital-ocean", "fa-brands fa-js", "fa-brands fa-node", "fa-brands fa-react", "fa-brands fa-vuejs", "fa-brands fa-angular", "fa-brands fa-html5", "fa-brands fa-css3", "fa-brands fa-sass", "fa-brands fa-less", "fa-brands fa-bootstrap", "fa-brands fa-php", "fa-brands fa-python", "fa-brands fa-java", "fa-brands fa-rust", "fa-brands fa-go", "fa-brands fa-swift", "fa-brands fa-kotlin", "fa-solid fa-user-tie", "fa-solid fa-user-graduate", "fa-solid fa-user-ninja", "fa-solid fa-user-astronaut", "fa-solid fa-user-doctor", "fa-solid fa-user-nurse", "fa-solid fa-user-secret"
+        ];
+        const remixIcons = [
+            "ri-home-line", "ri-home-fill", "ri-home-2-line", "ri-home-2-fill", "ri-home-3-line", "ri-home-3-fill", "ri-home-4-line", "ri-home-4-fill", "ri-home-5-line", "ri-home-5-fill", "ri-home-6-line", "ri-home-6-fill", "ri-home-7-line", "ri-home-7-fill", "ri-home-8-line", "ri-home-8-fill", "ri-home-gear-line", "ri-home-gear-fill", "ri-home-wifi-line", "ri-home-wifi-fill", "ri-home-smile-line", "ri-home-smile-fill", "ri-home-smile-2-line", "ri-home-smile-2-fill", "ri-home-heart-line", "ri-home-heart-fill", "ri-building-line", "ri-building-fill", "ri-building-2-line", "ri-building-2-fill", "ri-building-3-line", "ri-building-3-fill", "ri-building-4-line", "ri-building-4-fill", "ri-store-line", "ri-store-fill", "ri-store-2-line", "ri-store-2-fill", "ri-store-3-line", "ri-store-3-fill", "ri-bank-line", "ri-bank-fill", "ri-bank-card-line", "ri-bank-card-fill", "ri-bank-card-2-line", "ri-bank-card-2-fill", "ri-archive-line", "ri-archive-fill", "ri-archive-drawer-line", "ri-archive-drawer-fill", "ri-inbox-line", "ri-inbox-fill", "ri-inbox-archive-line", "ri-inbox-archive-fill", "ri-inbox-unarchive-line", "ri-inbox-unarchive-fill", "ri-cloud-line", "ri-cloud-fill", "ri-cloud-off-line", "ri-cloud-off-fill", "ri-cloud-windy-line", "ri-cloud-windy-fill", "ri-mail-line", "ri-mail-fill", "ri-mail-open-line", "ri-mail-open-fill", "ri-mail-send-line", "ri-mail-send-fill", "ri-mail-unread-line", "ri-mail-unread-fill", "ri-mail-add-line", "ri-mail-add-fill", "ri-mail-check-line", "ri-mail-check-fill", "ri-mail-close-line", "ri-mail-close-fill", "ri-mail-download-line", "ri-mail-download-fill", "ri-mail-forbid-line", "ri-mail-forbid-fill", "ri-mail-lock-line", "ri-mail-lock-fill", "ri-mail-star-line", "ri-mail-star-fill", "ri-mail-settings-line", "ri-mail-settings-fill", "ri-mail-volume-line", "ri-mail-volume-fill", "ri-attachment-line", "ri-attachment-fill", "ri-profile-line", "ri-profile-fill", "ri-archive-2-line", "ri-archive-2-fill", "ri-at-line", "ri-at-fill", "ri-award-line", "ri-award-fill", "ri-medal-line", "ri-medal-fill", "ri-medal-2-line", "ri-medal-2-fill", "ri-bar-chart-line", "ri-bar-chart-fill", "ri-bar-chart-horizontal-line", "ri-bar-chart-horizontal-fill", "ri-bar-chart-2-line", "ri-bar-chart-2-fill", "ri-bar-chart-box-line", "ri-bar-chart-box-fill", "ri-bar-chart-grouped-line", "ri-bar-chart-grouped-fill", "ri-bubble-chart-line", "ri-bubble-chart-fill", "ri-pie-chart-line", "ri-pie-chart-fill", "ri-pie-chart-2-line", "ri-pie-chart-2-fill", "ri-pie-chart-box-line", "ri-pie-chart-box-fill", "ri-donut-chart-line", "ri-donut-chart-fill", "ri-line-chart-line", "ri-line-chart-fill", "ri-pencil-line", "ri-pencil-fill", "ri-edit-line", "ri-edit-fill", "ri-edit-2-line", "ri-edit-2-fill", "ri-edit-box-line", "ri-edit-box-fill", "ri-edit-circle-line", "ri-edit-circle-fill", "ri-quill-pen-line", "ri-quill-pen-fill", "ri-pen-nib-line", "ri-pen-nib-fill", "ri-pantone-line", "ri-pantone-fill", "ri-palette-line", "ri-palette-fill", "ri-scissors-line", "ri-scissors-fill", "ri-scissors-cut-line", "ri-scissors-cut-fill", "ri-scissors-2-line", "ri-scissors-2-fill", "ri-slice-line", "ri-slice-fill", "ri-eraser-line", "ri-eraser-fill", "ri-ruler-line", "ri-ruler-fill", "ri-ruler-2-line", "ri-ruler-2-fill", "ri-paintbrush-line", "ri-paintbrush-fill", "ri-paintbrush-2-line", "ri-paintbrush-2-fill", "ri-paint-line", "ri-paint-fill", "ri-contrast-line", "ri-contrast-fill", "ri-contrast-2-line", "ri-contrast-2-fill", "ri-drop-line", "ri-drop-fill", "ri-blur-off-line", "ri-blur-off-fill", "ri-contrast-drop-line", "ri-contrast-drop-fill", "ri-compass-line", "ri-compass-fill", "ri-compass-2-line", "ri-compass-2-fill", "ri-compass-3-line", "ri-compass-3-fill", "ri-compass-4-line", "ri-compass-4-fill", "ri-compass-discover-line", "ri-compass-discover-fill", "ri-anchor-line", "ri-anchor-fill", "ri-china-railway-line", "ri-china-railway-fill", "ri-car-line", "ri-car-fill", "ri-car-washing-line", "ri-car-washing-fill", "ri-taxi-line", "ri-taxi-fill", "ri-taxi-wifi-line", "ri-taxi-wifi-fill", "ri-bus-line", "ri-bus-fill", "ri-bus-2-line", "ri-bus-2-fill", "ri-bus-wifi-line", "ri-bus-wifi-fill", "ri-truck-line", "ri-truck-fill", "ri-train-line", "ri-train-fill", "ri-train-wifi-line", "ri-train-wifi-fill", "ri-subway-line", "ri-subway-fill", "ri-subway-wifi-line", "ri-subway-wifi-fill", "ri-flight-takeoff-line", "ri-flight-takeoff-fill", "ri-flight-land-line", "ri-flight-land-fill", "ri-plane-line", "ri-plane-fill", "ri-rocket-line", "ri-rocket-fill", "ri-rocket-2-line", "ri-rocket-2-fill", "ri-ship-line", "ri-ship-fill", "ri-ship-2-line", "ri-ship-2-fill", "ri-bike-line", "ri-bike-fill", "ri-e-bike-line", "ri-e-bike-fill", "ri-e-bike-2-line", "ri-e-bike-2-fill", "ri-motorbike-line", "ri-motorbike-fill", "ri-caravan-line", "ri-caravan-fill", "ri-walk-line", "ri-walk-fill", "ri-run-line", "ri-run-fill", "ri-riding-line", "ri-riding-fill", "ri-user-line", "ri-user-fill", "ri-user-2-line", "ri-user-2-fill", "ri-user-3-line", "ri-user-3-fill", "ri-user-4-line", "ri-user-4-fill", "ri-user-5-line", "ri-user-5-fill", "ri-user-6-line", "ri-user-6-fill", "ri-user-smile-line", "ri-user-smile-fill", "ri-account-box-line", "ri-account-box-fill", "ri-account-circle-line", "ri-account-circle-fill", "ri-account-pin-box-line", "ri-account-pin-box-fill", "ri-account-pin-circle-line", "ri-account-pin-circle-fill", "ri-user-add-line", "ri-user-add-fill", "ri-user-follow-line", "ri-user-follow-fill", "ri-user-unfollow-line", "ri-user-unfollow-fill", "ri-user-shared-line", "ri-user-shared-fill", "ri-user-star-line", "ri-user-star-fill", "ri-user-settings-line", "ri-user-settings-fill", "ri-admin-line", "ri-admin-fill", "ri-user-search-line", "ri-user-search-fill", "ri-user-location-line", "ri-user-location-fill", "ri-user-voice-line", "ri-user-voice-fill", "ri-user-received-line", "ri-user-received-fill", "ri-user-heart-line", "ri-user-heart-fill", "ri-parent-line", "ri-parent-fill", "ri-team-line", "ri-team-fill", "ri-user-forbid-line", "ri-user-forbid-fill", "ri-contacts-line", "ri-contacts-fill", "ri-group-line", "ri-group-fill", "ri-group-2-line", "ri-group-2-fill", "ri-women-line", "ri-women-fill", "ri-men-line", "ri-men-fill", "ri-genderless-line", "ri-genderless-fill", "ri-travesti-line", "ri-travesti-fill", "ri-body-scan-line", "ri-body-scan-fill", "ri-parent-line", "ri-parent-fill", "ri-criminal-line", "ri-criminal-fill", "ri-emotion-line", "ri-emotion-fill", "ri-emotion-2-line", "ri-emotion-2-fill", "ri-emotion-happy-line", "ri-emotion-happy-fill", "ri-emotion-normal-line", "ri-emotion-normal-fill", "ri-emotion-unhappy-line", "ri-emotion-unhappy-fill", "ri-emotion-laugh-line", "ri-emotion-laugh-fill", "ri-emotion-sad-line", "ri-emotion-sad-fill", "ri-skull-line", "ri-skull-fill", "ri-skull-2-line", "ri-skull-2-fill"
+        ];
+
+        const ITEMS_PER_PAGE = 100; // Increased items per page for better overview
+        const appState = {
+            activeLib: 'bs',
+            searchQuery: '',
+            bs: { page: 1, data: bootstrapIcons, filtered: bootstrapIcons },
+            fa: { page: 1, data: fontAwesomeIcons, filtered: fontAwesomeIcons },
+            ri: { page: 1, data: remixIcons, filtered: remixIcons }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCurrentLib();
+
+            // Search Listener
+            document.getElementById('iconSearch').addEventListener('input', (e) => {
+                appState.searchQuery = e.target.value.toLowerCase();
+                filterData(appState.activeLib);
+            });
+
+            // Theme & Sidebar Logic
+            const body = document.body;
+            const sidebar = document.getElementById("sidebar");
+            const collapseBtn = document.getElementById("collapseBtn");
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            }
+
+            if (collapseBtn) {
+                collapseBtn.addEventListener("click", () => {
+                    sidebar.classList.toggle("collapsed");
+                    body.classList.toggle("sidebar-collapsed");
+                });
+            }
+
+            document.getElementById("mobileMenuBtn")?.addEventListener("click", () => {
+                sidebar.classList.add("active");
+                document.getElementById("sidebarOverlay").classList.add("show");
+            });
+            document.getElementById("sidebarOverlay")?.addEventListener("click", () => {
+                sidebar.classList.remove("active");
+                document.getElementById("sidebarOverlay").classList.remove("show");
+            });
+
+            themeToggle?.addEventListener("click", () => {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+            });
+        });
+
+        // --- FUNCTIONS ---
+
+        function switchLibrary(libName) {
+            appState.activeLib = libName;
+            filterData(libName);
+        }
+
+        function filterData(libName) {
+            const query = appState.searchQuery;
+            const source = appState[libName].data;
+
+            if (!query) {
+                appState[libName].filtered = source;
+            } else {
+                appState[libName].filtered = source.filter(icon => icon.toLowerCase().includes(query));
+            }
+
+            appState[libName].page = 1;
+            renderCurrentLib();
+        }
+
+        function renderCurrentLib() {
+            const lib = appState.activeLib;
+            const containerId = `${lib}-grid`;
+            const paginationId = `${lib}-pagination`;
+            const items = appState[lib].filtered;
+            const page = appState[lib].page;
+
+            const container = document.getElementById(containerId);
+            const pagContainer = document.getElementById(paginationId);
+            const emptyState = document.getElementById('emptyState');
+
+            if (items.length === 0) {
+                container.innerHTML = '';
+                pagContainer.innerHTML = '';
+                emptyState.classList.remove('d-none');
+                return;
+            } else {
+                emptyState.classList.add('d-none');
+            }
+
+            const start = (page - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            const pageItems = items.slice(start, end);
+            const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
+
+            // FIX: Use data attributes instead of putting full HTML in onclick to avoid quote errors
+            let html = '';
+            pageItems.forEach(iconClass => {
+                html += `
+                    <div class="icon-box" onclick="handleCopyClick('${iconClass}')" title="${iconClass}">
+                        <i class="${iconClass}"></i>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            if (totalPages > 1) {
+                let pagHtml = `
+                    <button class="page-btn ${page === 1 ? 'disabled' : ''}" onclick="changePage(-1)">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <div class="d-flex align-items-center px-3 pagination-info">
+                        Page ${page} of ${totalPages}
+                    </div>
+                    <button class="page-btn ${page === totalPages ? 'disabled' : ''}" onclick="changePage(1)">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                `;
+                pagContainer.innerHTML = pagHtml;
+            } else {
+                pagContainer.innerHTML = '';
+            }
+        }
+
+        function changePage(delta) {
+            const lib = appState.activeLib;
+            const current = appState[lib].page;
+            const total = Math.ceil(appState[lib].filtered.length / ITEMS_PER_PAGE);
+
+            const newPage = current + delta;
+            if (newPage >= 1 && newPage <= total) {
+                appState[lib].page = newPage;
+                renderCurrentLib();
+                document.querySelector('.widget-card').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function handleCopyClick(iconClass) {
+            let tagStr = '';
+            const lib = appState.activeLib;
+
+            if (lib === 'bs' || lib === 'ri') tagStr = `<i class="${iconClass}"></i>`;
+            else if (lib === 'fa') tagStr = `<i class="${iconClass}"></i>`; // FontAwesome uses <i> mostly now too
+
+            copyToClipboard(tagStr);
+        }
+
+        function copyToClipboard(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            const toast = document.getElementById('copyToast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>

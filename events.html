@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Admin - Events</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Fonts (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <!-- ApexCharts -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ======================================================================
+         GLOBAL ADDED: EVENTS SPECIFIC STYLES
+         ====================================================================== */
+
+    /* ANIMATIONS FOR WOW FACTOR */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-entry {
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+
+    /* Stagger delays */
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.3s;
+    }
+
+    .delay-4 {
+      animation-delay: 0.4s;
+    }
+
+    /* 1. GLOBAL CARD BASE */
+    .event-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .event-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      border-color: var(--accent-purple);
+    }
+
+    .event-img-wrapper {
+      position: relative;
+      height: 180px;
+      overflow: hidden;
+    }
+
+    .event-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .event-card:hover .event-img {
+      transform: scale(1.1);
+    }
+
+    .event-date-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(31, 41, 55, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 6px 12px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      z-index: 2;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-month {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      display: block;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .event-day {
+      font-size: 1.2rem;
+      font-weight: 800;
+      display: block;
+      line-height: 1;
+    }
+
+    .event-body {
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .event-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+      transition: color 0.3s;
+    }
+
+    .event-card:hover .event-title {
+      color: var(--accent-purple);
+    }
+
+    .event-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    /* 2. STYLE VARIATIONS */
+
+    /* Style A: Minimalist Outline */
+    .event-card-outline {
+      background: transparent;
+      border: 2px dashed var(--border-color);
+    }
+
+    .event-card-outline:hover {
+      border-style: solid;
+      background: rgba(99, 102, 241, 0.05);
+      transform: translateY(-4px);
+    }
+
+    /* Style B: Gradient Immersive */
+    .event-card-gradient {
+      border: none;
+      position: relative;
+    }
+
+    .event-card-gradient::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 100%);
+      z-index: 1;
+      transition: opacity 0.3s;
+    }
+
+    .event-card-gradient:hover::before {
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(99, 102, 241, 0.9) 100%);
+    }
+
+    .event-card-gradient .event-img-wrapper {
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .event-card-gradient .event-body {
+      position: relative;
+      z-index: 2;
+      justify-content: flex-end;
+      height: 300px;
+    }
+
+    .event-card-gradient .event-title,
+    .event-card-gradient .event-meta {
+      color: white !important;
+    }
+
+    /* Style C: Horizontal List */
+    .event-list-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 12px;
+      transition: all 0.3s;
+    }
+
+    .event-list-item:hover {
+      border-color: var(--accent-purple);
+      background: rgba(99, 102, 241, 0.05);
+      transform: translateX(5px);
+    }
+
+    .event-list-img {
+      width: 100px;
+      height: 80px;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-right: 16px;
+    }
+
+    /* Style D: Timeline Vertical */
+    .timeline-wrapper {
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .timeline-line {
+      position: absolute;
+      left: 7px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border-color);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -30px;
+      top: 5px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--bg-dark);
+      border: 3px solid var(--accent-purple);
+      z-index: 2;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .timeline-item:hover .timeline-dot {
+      transform: scale(1.3);
+      box-shadow: 0 0 10px var(--accent-purple);
+    }
+
+    .timeline-content {
+      background: var(--bg-card);
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s;
+    }
+
+    .timeline-content:hover {
+      border-color: var(--accent-purple);
+      transform: translateX(5px);
+    }
+
+    /* Style E: Neon/Glass */
+    .event-neon {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
+      transition: all 0.4s;
+    }
+
+    .event-neon:hover {
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+      border-color: var(--accent-purple);
+      transform: scale(1.02);
+    }
+
+    /* Style F: Icon Focused */
+    .event-icon-card {
+      text-align: center;
+      padding: 30px;
+    }
+
+    .event-icon-circle {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--accent-purple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      transition: all 0.4s;
+    }
+
+    .event-icon-card:hover .event-icon-circle {
+      background: var(--accent-purple);
+      color: white;
+      transform: rotateY(180deg);
+    }
+
+    /* Style G: Ticket Stub */
+    .event-ticket {
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+
+    .event-ticket:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .ticket-left {
+      width: 30%;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      padding: 20px;
+      border-right: 2px dashed rgba(255, 255, 255, 0.3);
+      position: relative;
+    }
+
+    /* Ticket punch holes */
+    .ticket-left::after,
+    .ticket-left::before {
+      content: '';
+      position: absolute;
+      right: -10px;
+      width: 20px;
+      height: 20px;
+      background-color: var(--bg-dark);
+      border-radius: 50%;
+    }
+
+    .ticket-left::after {
+      top: -10px;
+    }
+
+    .ticket-left::before {
+      bottom: -10px;
+    }
+
+    .ticket-right {
+      flex: 1;
+      padding: 20px;
+    }
+
+    /* Style H: Table FIX - PERFECT FOR DARK/LIGHT MODE */
+    .widget-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .table-custom {
+      --bs-table-bg: transparent;
+      --bs-table-color: var(--text-main);
+      --bs-table-border-color: var(--border-color);
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    .table-custom th {
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      border-bottom: 1px solid var(--border-color);
+      background-color: rgba(125, 125, 125, 0.05);
+      /* Adaptive header bg */
+      padding: 16px;
+      white-space: nowrap;
+    }
+
+    .table-custom td {
+      vertical-align: middle;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px;
+      transition: background 0.2s;
+    }
+
+    .table-custom tbody tr:hover td {
+      background-color: rgba(99, 102, 241, 0.05);
+      /* Slight purple tint on hover */
+    }
+
+    /* Last row no border */
+    .table-custom tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Utilities */
+    .text-gradient {
+      background: linear-gradient(90deg, #ec4899, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .avatar-group {
+      display: flex;
+      padding-left: 10px;
+    }
+
+    .avatar-group img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+      margin-left: -10px;
+      object-fit: cover;
+      transition: transform 0.2s;
+    }
+
+    .avatar-group img:hover {
+      transform: translateY(-3px) scale(1.1);
+      z-index: 5;
+    }
+
+    /* Search Input for Table */
+    .table-search-box {
+      position: relative;
+      max-width: 250px;
+    }
+
+    .table-search-input {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 8px;
+      padding: 8px 12px 8px 35px;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    .table-search-input:focus {
+      outline: none;
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .table-search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    /* Responsive Fixes */
+    @media (max-width: 768px) {
+      .event-list-item {
+        flex-direction: column;
+        text-align: left;
+        align-items: flex-start;
+      }
+
+      .event-list-img {
+        width: 100%;
+        height: 150px;
+        margin-right: 0;
+        margin-bottom: 12px;
+      }
+
+      .event-header-card {
+        grid-column: span 1;
+      }
+
+      .event-ticket {
+        flex-direction: column;
+      }
+
+      .ticket-left {
+        width: 100%;
+        border-right: none;
+        border-bottom: 2px dashed rgba(255, 255, 255, 0.3);
+        flex-direction: row;
+        gap: 10px;
+        padding: 15px;
+      }
+
+      .ticket-left::after,
+      .ticket-left::before {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body id="body-container">
+
+  <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div>
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+        <div class="brand-logo">
+          <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+          <span class="logo-text">Nexus</span>
+        </div>
+        <!-- [MODIFIED] Tombol Collapse -->
+        <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+      </div>
+      <!-- [MODIFIED] Divider lebih tebal -->
+      <div class="sidebar-divider"></div>
+
+      <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+      <div class="nav flex-column flex-nowrap nav-scrollable">
+        <div class="nav-category">UTAMA</div>
+        <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+          <span>Dashboard</span></a>
+        <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+          <span>Analytics</span></a>
+
+        <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+          <i class="bi bi-shop"></i>
+          <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+        </a>
+        <div class="collapse" id="menuBusiness">
+          <div class="nav-submenu">
+
+            <a href="/products.html" class="nav-link "><span>Produk & Stok</span></a>
+            <a href="/orders.html" class="nav-link "><span>Pesanan</span></a>
+            <a href="/customers.html" class="nav-link "><span>Pelanggan (CRM)</span></a>
+            <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+          </div>
+        </div>
+        <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+        <div class="nav-category">FINANSIAL & CRYPTO</div>
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+          <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuFinance">
+          <div class="nav-submenu">
+            <a href="wallet.html" class="nav-link "><span>Dompet Digital</span></a>
+            <a href="transactions.html" class="nav-link "><span>Riwayat Transaksi</span></a>
+            <a href="crypto-market.html" class="nav-link "><span>Crypto Market</span></a>
+            <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+          </div>
+        </div>
+
+
+        <!-- SEKTOR PENDIDIKAN -->
+        <div class="nav-category">PENDIDIKAN</div>
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+          <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse " id="menuEdu">
+          <div class="nav-submenu">
+            <a href="courses.html" class="nav-link "><span>Kelas / Kursus</span></a>
+            <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+            <a href="schedule.html" class="nav-link "><span>Jadwal Pelajaran</span></a>
+            <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+          </div>
+        </div>
+
+        <!-- SEKTOR MASYARAKAT & UMUM -->
+        <div class="nav-category">SOSIAL & KOMUNITAS</div>
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial" aria-expanded="true"><i
+            class="bi bi-people"></i>
+          <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse show" id="menuSocial">
+          <div class="nav-submenu">
+            <a href="members.html" class="nav-link "><span>Data Anggota</span></a>
+            <a href="events.html" class="nav-link active"><span>Event & Kegiatan</span></a>
+            <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+            <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+          </div>
+        </div>
+
+        <!-- TOOLS & SYSTEM (Generic) -->
+        <div class="nav-category">SYSTEM TOOLS</div>
+
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+          <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuApps">
+          <div class="nav-submenu">
+            <a href="email.html" class="nav-link"><span>Email</span></a>
+            <a href="chat.html" class="nav-link"><span>Chat</span></a>
+            <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+            <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+          </div>
+        </div>
+
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+          <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuUI">
+          <div class="nav-submenu">
+            <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+            <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+            <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+            <a href="modals.html" class="nav-link"><span>Modals</span></a>
+            <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+            <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+          </div>
+        </div>
+
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+          <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuForms">
+          <div class="nav-submenu">
+            <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+            <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+          </div>
+        </div>
+
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+          <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuPages">
+          <div class="nav-submenu">
+
+            <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+            <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+            <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+            <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+            <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+            <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+            <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+            <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+            <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+            <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+            <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+            <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+            <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+            <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+            <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+          </div>
+        </div>
+
+        <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+          <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuSettings">
+          <div class="nav-submenu">
+            <div class="nav-submenu-label">Platform & Identitas</div>
+            <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+            <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+            <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+            <div class="nav-submenu-divider"></div>
+
+            <div class="nav-submenu-label">Bisnis & Keuangan</div>
+            <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+            <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+            <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+            <div class="nav-submenu-divider"></div>
+
+            <div class="nav-submenu-label">Operasional</div>
+            <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+            <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+            <div class="nav-submenu-divider"></div>
+
+            <div class="nav-submenu-label">Sistem</div>
+            <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+            <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+            <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- [MODIFIED] MODERN PROFILE MENU -->
+      <div class="dropup profile-wrapper">
+        <!-- Trigger Button -->
+        <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+        <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+          data-bs-display="static">
+          <div class="avatar-container">
+            <div class="avatar-modern">A</div>
+            <div class="status-dot pulse"></div> <!-- Online Indicator -->
+          </div>
+          <div class="user-info-modern">
+            <div class="user-name-modern">Admin Pusat</div>
+            <div class="user-role-modern">Super Admin</div>
+          </div>
+          <i class="bi bi-chevron-up profile-chevron"></i>
+        </div>
+
+        <!-- Modern Dropdown Content -->
+        <ul class="dropdown-menu profile-dropdown-menu">
+          <div class="dropdown-header-modern">
+            <div class="menu-label">SIGNED IN AS</div>
+            <div class="menu-user-email">admin@nexus.com</div>
+          </div>
+
+          <li><a class="profile-menu-item" href="profile-me.html">
+              <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+            </a></li>
+          <li><a class="profile-menu-item" href="edit-profile.html">
+              <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+            </a></li>
+
+          <!-- Functional Dark Mode Switch inside Menu -->
+          <li>
+            <div class="profile-menu-item" style="cursor: default;">
+              <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+              </div>
+              <div class="form-check form-switch theme-switch-wrapper mb-0">
+                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+              </div>
+            </div>
+          </li>
+
+          <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+          <li><a class="profile-menu-item danger-item" href="login.html">
+              <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+              </div>
+            </a></li>
+        </ul>
+      </div>
+
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- Navbar -->
+      <div class="top-navbar-standalone">
+        <div class="search-standalone-box">
+          <i class="bi bi-search search-standalone-icon"></i>
+          <!-- [FIXED] ID ADDED HERE -->
+          <input type="text" id="globalSearch" class="search-standalone-input" placeholder="Cari sesuatu...">
+        </div>
+
+        <!-- Notification Bell -->
+        <div class="notification-wrapper dropdown">
+          <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-display="static">
+            <i class="bi bi-bell"></i>
+            <div class="notification-dot-red"></div>
+          </div>
+          <ul class="dropdown-menu notification-dropdown-menu">
+            <div
+              class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+              <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+              <span class="badge bg-danger rounded-pill">3 Baru</span>
+            </div>
+
+            <li><a class="notification-item" href="#">
+                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                </div>
+                <div class="notif-content">
+                  <h6>System Alert</h6>
+                  <p>CPU Usage above 90% detected.</p>
+                  <span class="notif-time">2 mins ago</span>
+                </div>
+              </a></li>
+
+            <li><a class="notification-item" href="#">
+                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                <div class="notif-content">
+                  <h6>New Order</h6>
+                  <p>Received order #ORD-248 from Budi.</p>
+                  <span class="notif-time">15 mins ago</span>
+                </div>
+              </a></li>
+
+            <li><a class="notification-item" href="#">
+                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                <div class="notif-content">
+                  <h6>Server Update</h6>
+                  <p>Server scheduled for maintenance.</p>
+                  <span class="notif-time">1 hour ago</span>
+                </div>
+              </a></li>
+
+            <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+          </ul>
+        </div>
+      </div>
+
+
+
+
+      <!-- START OF CONTENT HERE -->
+      <!-- Page Header -->
+      <div class="active-page-header">
+        <div class="row align-items-center justify-content-between">
+          <div class="col-lg-7 mb-3 mb-lg-0">
+            <h1 class="page-title-large">Exams & Grading</h1>
+            <p class="text-muted mb-0">Kelola jadwal ujian, input nilai, dan analisis performa siswa secara
+              real-time.</p>
+          </div>
+          <div class="col-lg-5 text-lg-end">
+            <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+              <span class="badge bg-soft-purple text-uppercase fw-bold px-3 py-2 rounded-pill"><i
+                  class="bi bi-calendar-check me-2"></i>Academic Year 2024/2025</span>
+              <nav class="breadcrumb-modern">
+                <a href="#" class="breadcrumb-item-custom"><i class="bi bi-house-door-fill"></i></a>
+                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                <span class="breadcrumb-item-custom">Akademik</span>
+                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                <span class="breadcrumb-item-custom active">Exams</span>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 1. STYLE: STANDARD GRID (Standard Card) -->
+      <h5 class="section-title-modern text-muted fw-bold mb-3 animate-entry delay-1"><i
+          class="bi bi-grid-fill me-2"></i>1. Standard Grid Cards</h5>
+      <div class="row g-4 mb-5 animate-entry delay-1">
+        <!-- Item 1 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="event-card">
+            <div class="event-img-wrapper">
+              <img src="https://placehold.co/600x400/1f2937/FFF?text=Tech+Meetup" class="event-img" alt="Event">
+              <div class="event-date-badge">
+                <span class="event-month">OCT</span>
+                <span class="event-day">24</span>
+              </div>
+            </div>
+            <div class="event-body">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="badge bg-soft-info text-info rounded-pill px-3">Technology</span>
+              </div>
+              <h4 class="event-title">Nexus Developer Summit 2024</h4>
+              <div class="event-meta"><i class="bi bi-geo-alt"></i> Jakarta Convention Center</div>
+              <div class="event-meta"><i class="bi bi-clock"></i> 09:00 AM - 05:00 PM</div>
+              <div
+                class="mt-auto pt-3 d-flex justify-content-between align-items-center border-top border-secondary border-opacity-25">
+                <div class="avatar-group">
+                  <img src="https://placehold.co/100" alt="User">
+                  <img src="https://placehold.co/100" alt="User">
+                  <img src="https://placehold.co/100" alt="User">
+                </div>
+                <button class="btn btn-sm btn-outline-light rounded-pill btn-action-join">Detail</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Item 2 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="event-card">
+            <div class="event-img-wrapper">
+              <img src="https://placehold.co/600x400/6366f1/FFF?text=Design" class="event-img" alt="Event">
+              <div class="event-date-badge bg-primary">
+                <span class="event-month">NOV</span>
+                <span class="event-day">12</span>
+              </div>
+            </div>
+            <div class="event-body">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="badge bg-soft-danger text-danger rounded-pill px-3">Design</span>
+              </div>
+              <h4 class="event-title">Creative UI/UX Workshop</h4>
+              <div class="event-meta"><i class="bi bi-geo-alt"></i> Online via Zoom</div>
+              <div class="mt-auto pt-3 border-top border-secondary border-opacity-25">
+                <button class="btn btn-primary w-100 rounded-pill btn-action-join"
+                  style="background: var(--accent-purple); border:none;">Daftar Sekarang</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Item 3 -->
+        <div class="col-md-6 col-lg-4">
+          <div class="event-card">
+            <div class="event-img-wrapper">
+              <img src="https://placehold.co/600x400/10b981/FFF?text=Charity" class="event-img" alt="Event">
+            </div>
+            <div class="event-body">
+              <h4 class="event-title">Charity Run 2024</h4>
+              <p class="text-muted small">Bergabunglah untuk berlari sejauh 5K dan berdonasi untuk pendidikan anak.</p>
+              <div class="progress mb-3" style="height: 6px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+              </div>
+              <div class="d-flex justify-content-between small text-muted">
+                <span>Target: Rp 50jt</span>
+                <span class="text-success fw-bold">75% Terkumpul</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. STYLE: HORIZONTAL LIST & OUTLINE (Mixed) -->
+      <h5 class="section-title-modern text-muted fw-bold mb-3 animate-entry delay-2"><i
+          class="bi bi-list-task me-2"></i>2. List & Outline Styles</h5>
+      <div class="row mb-5 animate-entry delay-2">
+        <div class="col-lg-8">
+          <!-- Style C: List Style -->
+          <div class="event-list-item">
+            <img src="https://placehold.co/150" class="event-list-img" alt="Thumb">
+            <div class="flex-grow-1">
+              <h5 class="event-title mb-1">Weekly Code Review</h5>
+              <div class="text-muted small mb-2">Every Friday • 14:00 PM • Google Meet</div>
+              <div class="d-flex gap-2">
+                <span class="badge border border-secondary text-muted">Internal</span>
+                <span class="badge border border-secondary text-muted">Engineering</span>
+              </div>
+            </div>
+            <div class="px-3">
+              <button class="btn btn-icon btn-sm btn-outline-secondary rounded-circle me-1"><i
+                  class="bi bi-bell"></i></button>
+              <button class="btn btn-icon btn-sm btn-outline-primary rounded-circle"><i
+                  class="bi bi-pencil"></i></button>
+            </div>
+          </div>
+
+          <div class="event-list-item">
+            <div class="d-flex flex-column align-items-center justify-content-center bg-dark rounded-3 me-3 p-2"
+              style="width: 80px; height: 80px; border: 1px solid var(--border-color);">
+              <span class="h3 fw-bold mb-0 text-warning">28</span>
+              <span class="small text-uppercase">Oct</span>
+            </div>
+            <div class="flex-grow-1">
+              <h5 class="event-title mb-1">Halloween Office Party</h5>
+              <div class="text-muted small">Main Hall, Lt 3 • Wajib kostum</div>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-soft-warning rounded-pill px-3 btn-action-join">Join</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Style A: Outline Card -->
+        <div class="col-lg-4">
+          <div class="event-card event-card-outline p-4 text-center d-flex flex-column justify-content-center h-100">
+            <div class="mb-3 text-muted display-4"><i class="bi bi-plus-circle-dotted"></i></div>
+            <h5 class="text-muted">Buat Event Kustom</h5>
+            <p class="small text-muted mb-4">Tambahkan event baru dengan parameter khusus.</p>
+            <button class="btn btn-outline-secondary rounded-pill w-100">Create New</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. STYLE: IMMERSIVE & NEON -->
+      <h5 class="section-title-modern text-muted fw-bold mb-3 animate-entry delay-3"><i class="bi bi-stars me-2"></i>3.
+        Immersive & Neon Styles</h5>
+      <div class="row g-4 mb-5 animate-entry delay-3">
+        <!-- Style B: Gradient Immersive -->
+        <div class="col-md-6">
+          <div class="event-card event-card-gradient">
+            <div class="event-img-wrapper">
+              <img src="https://placehold.co/800x500/3b82f6/FFF?text=Music+Fest" class="event-img" alt="BG">
+            </div>
+            <div class="event-body d-flex flex-column justify-content-end">
+              <span class="badge bg-warning text-dark mb-2 align-self-start">Featured</span>
+              <h3 class="event-title display-6 fw-bold">Neon Music Festival 2025</h3>
+              <div class="event-meta text-white opacity-75"><i class="bi bi-calendar-event me-2"></i> 31 Dec 2024 - New
+                Year Eve</div>
+              <button class="btn btn-light rounded-pill mt-3 fw-bold text-primary btn-action-join">Get Tickets</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Style E: Neon/Glass -->
+        <div class="col-md-6">
+          <div
+            class="h-100 p-4 rounded-4 event-neon d-flex flex-column justify-content-center text-center position-relative overflow-hidden">
+            <div
+              style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent-purple); filter: blur(80px); opacity: 0.5;">
+            </div>
+
+            <h2 class="fw-bold mb-2 text-gradient">Cyber Security Webinar</h2>
+            <p class="text-muted mb-4">Pelajari cara mengamankan infrastruktur cloud Anda dari serangan modern.</p>
+
+            <div class="d-flex justify-content-center gap-4 mb-4">
+              <div class="text-center">
+                <h4 class="mb-0 fw-bold">02</h4>
+                <small class="text-muted">Days</small>
+              </div>
+              <div class="text-center">
+                <h4 class="mb-0 fw-bold">:</h4>
+              </div>
+              <div class="text-center">
+                <h4 class="mb-0 fw-bold">14</h4>
+                <small class="text-muted">Hours</small>
+              </div>
+              <div class="text-center">
+                <h4 class="mb-0 fw-bold">:</h4>
+              </div>
+              <div class="text-center">
+                <h4 class="mb-0 fw-bold">30</h4>
+                <small class="text-muted">Mins</small>
+              </div>
+            </div>
+            <button class="btn btn-outline-light rounded-pill border-opacity-25 btn-action-join">Register Free</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. STYLE: TIMELINE (Timeline-style) -->
+      <h5 class="section-title-modern text-muted fw-bold mb-3 animate-entry delay-4"><i
+          class="bi bi-diagram-3 me-2"></i>4. Timeline Journey</h5>
+      <div class="row mb-5 animate-entry delay-4">
+        <div class="col-12">
+          <div class="timeline-wrapper">
+            <div class="timeline-line"></div>
+
+            <!-- Item 1 -->
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="d-flex justify-content-between align-items-start flex-wrap">
+                  <div>
+                    <span class="badge bg-soft-success text-success mb-2">Completed</span>
+                    <h5 class="fw-bold">Opening Ceremony</h5>
+                    <p class="text-muted small mb-0">Sambutan oleh CEO dan Pengenalan Visi 2025.</p>
+                  </div>
+                  <div class="text-muted small text-end mt-2 mt-md-0">
+                    <i class="bi bi-clock me-1"></i> 08:00 - 09:00
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="timeline-item">
+              <div class="timeline-dot" style="border-color: var(--accent-blue);"></div>
+              <div class="timeline-content" style="border-left: 4px solid var(--accent-blue);">
+                <div class="d-flex justify-content-between align-items-start flex-wrap">
+                  <div>
+                    <span class="badge bg-soft-primary text-primary mb-2">Live Now</span>
+                    <h5 class="fw-bold">Product Launch: Nexus V2</h5>
+                    <p class="text-muted small mb-0">Demo fitur terbaru dan sesi tanya jawab interaktif.</p>
+                    <div class="mt-2">
+                      <button class="btn btn-sm btn-primary rounded-pill btn-action-join">Join Stream</button>
+                    </div>
+                  </div>
+                  <div class="text-muted small text-end mt-2 mt-md-0">
+                    <i class="bi bi-clock me-1"></i> 09:15 - 11:30
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="timeline-item">
+              <div class="timeline-dot" style="border-color: var(--text-muted); background: var(--border-color);"></div>
+              <div class="timeline-content opacity-75">
+                <h5 class="fw-bold text-muted">Networking Lunch</h5>
+                <p class="text-muted small mb-0">Makan siang prasmanan di Hall B.</p>
+                <span class="small text-muted"><i class="bi bi-clock me-1"></i> 12:00 - 13:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. STYLE: TICKET & ICON CARDS -->
+      <h5 class="section-title-modern text-muted fw-bold mb-3 animate-entry delay-4"><i
+          class="bi bi-ticket-perforated me-2"></i>5. Ticket & Minimalist Styles</h5>
+      <div class="row g-4 mb-5 animate-entry delay-4">
+        <!-- Style H: Ticket Stub -->
+        <div class="col-lg-6">
+          <div class="event-ticket h-100">
+            <div class="ticket-left text-center">
+              <h3 class="fw-bold mb-0">24</h3>
+              <small class="text-uppercase">DEC</small>
+              <i class="bi bi-upc-scan mt-3 fs-3"></i>
+            </div>
+            <div class="ticket-right d-flex flex-column justify-content-center">
+              <div class="d-flex justify-content-between">
+                <h5 class="fw-bold">Christmas Gala Dinner</h5>
+                <span class="badge bg-dark border border-secondary">VIP</span>
+              </div>
+              <p class="text-muted small mb-3">Grand Ballroom Hotel Indonesia</p>
+              <div class="d-flex align-items-center gap-2 mt-auto">
+                <img src="https://placehold.co/30" class="rounded-circle" alt="H">
+                <small class="text-muted">Hosted by HR Dept</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Style G: Icon Minimalist -->
+        <div class="col-lg-3 col-md-6">
+          <div class="event-card event-icon-card h-100">
+            <div class="event-icon-circle">
+              <i class="bi bi-mic"></i>
+            </div>
+            <h6 class="fw-bold">Talkshow</h6>
+            <p class="small text-muted">Inspirasi karir</p>
+            <button class="btn btn-sm btn-light rounded-pill w-100 mt-2 btn-action-join">Detail</button>
+          </div>
+        </div>
+
+        <!-- Style G: Icon Minimalist Variant -->
+        <div class="col-lg-3 col-md-6">
+          <div class="event-card event-icon-card h-100">
+            <div class="event-icon-circle" style="background: rgba(16, 185, 129, 0.1); color: var(--accent-green);">
+              <i class="bi bi-trophy"></i>
+            </div>
+            <h6 class="fw-bold">Tournament</h6>
+            <p class="small text-muted">E-Sport Division</p>
+            <button class="btn btn-sm btn-light rounded-pill w-100 mt-2 btn-action-join">Detail</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. STYLE: DATA TABLE (Management) - UPGRADED WITH FUNCTIONALITY -->
+      <h5 class="section-title-modern text-muted fw-bold mb-3 animate-entry delay-4"><i class="bi bi-table me-2"></i>6.
+        Event Management Table</h5>
+      <div class="card widget-card border-0 shadow-sm mb-5 animate-entry delay-4">
+        <!-- Table Header with Search -->
+        <div
+          class="card-header-custom d-flex justify-content-between align-items-center bg-transparent border-bottom border-secondary border-opacity-10 p-3">
+          <h6 class="fw-bold mb-0">All Events List</h6>
+          <div class="table-search-box">
+            <i class="bi bi-search table-search-icon"></i>
+            <input type="text" id="tableSearch" class="table-search-input" placeholder="Search event...">
+          </div>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-custom mb-0" id="eventsTable">
+              <thead>
+                <tr>
+                  <th class="ps-4">Event Name</th>
+                  <th>Date</th>
+                  <th>Organizer</th>
+                  <th>Status</th>
+                  <th>Participants</th>
+                  <th class="text-end pe-4">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="rounded bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center me-3"
+                        style="width: 40px; height: 40px;">
+                        <i class="bi bi-code-square"></i>
+                      </div>
+                      <div>
+                        <div class="fw-bold event-name">Hackathon 2024</div>
+                        <div class="small text-muted">Coding Challenge</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Oct 15, 2024</td>
+                  <td>IT Dept</td>
+                  <td><span class="badge bg-soft-success text-success rounded-pill">Published</span></td>
+                  <td>
+                    <div class="avatar-group">
+                      <img src="https://placehold.co/100" alt="u">
+                      <img src="https://placehold.co/100" alt="u">
+                      <div class="small ms-2 align-self-center text-muted">+42</div>
+                    </div>
+                  </td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-icon btn-sm btn-danger btn-delete-row" title="Delete"><i
+                        class="bi bi-trash"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="rounded bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center me-3"
+                        style="width: 40px; height: 40px;">
+                        <i class="bi bi-easel"></i>
+                      </div>
+                      <div>
+                        <div class="fw-bold event-name">Design Sprint</div>
+                        <div class="small text-muted">Product Team</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Nov 01, 2024</td>
+                  <td>Design Team</td>
+                  <td><span class="badge bg-soft-warning text-warning rounded-pill">Draft</span></td>
+                  <td>-</td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-icon btn-sm btn-danger btn-delete-row" title="Delete"><i
+                        class="bi bi-trash"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center">
+                      <div
+                        class="rounded bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center me-3"
+                        style="width: 40px; height: 40px;">
+                        <i class="bi bi-basket"></i>
+                      </div>
+                      <div>
+                        <div class="fw-bold event-name">Bazaar Murah</div>
+                        <div class="small text-muted">Community</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Dec 20, 2024</td>
+                  <td>HR Dept</td>
+                  <td><span class="badge bg-soft-info text-info rounded-pill">Planning</span></td>
+                  <td>
+                    <div class="avatar-group">
+                      <img src="https://placehold.co/100" alt="u">
+                      <div class="small ms-2 align-self-center text-muted">+120</div>
+                    </div>
+                  </td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-icon btn-sm btn-danger btn-delete-row" title="Delete"><i
+                        class="bi bi-trash"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Empty State for Search -->
+          <div id="noResults" class="text-center p-5 d-none">
+            <i class="bi bi-search display-6 text-muted mb-3 d-block"></i>
+            <p class="text-muted">No events found matching your search.</p>
+          </div>
+        </div>
+        <div
+          class="card-footer-custom d-flex justify-content-between align-items-center border-top border-secondary border-opacity-10 bg-transparent p-3">
+          <small class="text-muted">Showing <span id="visibleCount">3</span> events</small>
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item disabled"><button
+                  class="page-link bg-transparent border-secondary text-muted">Prev</button></li>
+              <li class="page-item active"><button class="page-link border-primary bg-primary">1</button></li>
+              <li class="page-item"><button class="page-link bg-transparent border-secondary text-muted">Next</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- START OF COPYRIGHT FOOTER SECTION -->
+      <footer class=" footer-dashboard">
+        <div class="row align-items-center justify-content-between">
+          <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+            <p class="mb-0 small text-muted">Copyright &copy; 2025
+              <strong class="text-white">Nexus
+                Admin</strong>. All rights reserved.
+            </p>
+          </div>
+          <div class="col-md-6 text-center text-md-end">
+            <div class="d-flex justify-content-center justify-content-md-end gap-3">
+              <a href="#" class="footer-link">Kebijakan
+                Privasi</a>
+              <a href="#" class="footer-link">Syarat &
+                Ketentuan</a>
+              <a href="#" class="footer-link">Bantuan</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <!-- END OF COPYRIGHT FOOTER -->
+    </main>
+  </div>
+
+  <!-- Theme Toggle Floating (Maintained) -->
+  <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+
+  <!-- JS Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 1. Hover Depth Effect (Z-Index fix)
+      const cards = document.querySelectorAll('.event-card');
+      cards.forEach(card => {
+        card.addEventListener('mouseenter', function () { this.style.zIndex = '10'; });
+        card.addEventListener('mouseleave', function () { this.style.zIndex = '1'; });
+      });
+
+      // 2. Button "Join/Detail" Toggle Interaction
+      const joinButtons = document.querySelectorAll('.btn-action-join');
+      joinButtons.forEach(btn => {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          // Simple loading simulation
+          const originalText = this.innerText;
+          this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+          this.disabled = true;
+
+          setTimeout(() => {
+            this.disabled = false;
+            if (originalText.includes('Join') || originalText.includes('Daftar')) {
+              this.innerHTML = '<i class="bi bi-check2"></i> Registered';
+              this.classList.remove('btn-primary', 'btn-outline-light', 'btn-soft-warning');
+              this.classList.add('btn-success');
+            } else {
+              this.innerText = originalText; // Reset if it's just 'Detail'
+            }
+          }, 800);
+        });
+      });
+
+      // 3. TABLE FUNCTIONALITY: SEARCH
+      const searchInput = document.getElementById('tableSearch');
+      const tableRows = document.querySelectorAll('#eventsTable tbody tr');
+      const noResultsMsg = document.getElementById('noResults');
+      const visibleCountSpan = document.getElementById('visibleCount');
+
+      if (searchInput) {
+        searchInput.addEventListener('keyup', function (e) {
+          const term = e.target.value.toLowerCase();
+          let visibleCount = 0;
+
+          tableRows.forEach(row => {
+            const eventName = row.querySelector('.event-name').textContent.toLowerCase();
+            if (eventName.includes(term)) {
+              row.style.display = '';
+              visibleCount++;
+            } else {
+              row.style.display = 'none';
+            }
+          });
+
+          // Show "No Results" if needed
+          if (visibleCount === 0) {
+            noResultsMsg.classList.remove('d-none');
+            document.querySelector('#eventsTable').classList.add('d-none');
+          } else {
+            noResultsMsg.classList.add('d-none');
+            document.querySelector('#eventsTable').classList.remove('d-none');
+          }
+
+          // Update counter
+          if (visibleCountSpan) visibleCountSpan.textContent = visibleCount;
+        });
+      }
+
+      // 4. TABLE FUNCTIONALITY: DELETE ROW
+      const deleteButtons = document.querySelectorAll('.btn-delete-row');
+      deleteButtons.forEach(btn => {
+        btn.addEventListener('click', function () {
+          if (confirm('Are you sure you want to remove this event?')) {
+            const row = this.closest('tr');
+            row.style.transition = 'all 0.3s';
+            row.style.opacity = '0';
+            row.style.transform = 'translateX(20px)';
+
+            setTimeout(() => {
+              row.remove();
+              // Update count
+              if (visibleCountSpan) {
+                const current = parseInt(visibleCountSpan.textContent);
+                visibleCountSpan.textContent = Math.max(0, current - 1);
+              }
+            }, 300);
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+
+</html>

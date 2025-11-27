@@ -1,0 +1,598 @@
+<!-- 
+======================================================
+  WKNG TEMPLATE UNIVERSAL - ADMIN DASHBOARD
+  © 2025 Irvanscx (Irvansc)
+
+  Developer GitHub : https://github.com/irvansc
+  Template GitHub  : https://github.com/irvansc/wkng-template-universal
+  Instagram        : @irvansc
+
+  Dibuat menggunakan:
+  - HTML, CSS, JavaScript
+  - Bootstrap 5 & Bootstrap Icons
+  - Serta beberapa library open-source lainnya
+
+  Catatan:
+  Semua komponen dalam template ini berasal dari internet 
+  dan dikustomisasi ulang. Mohon tetap cantumkan kredit ini 
+  apabila menggunakan ulang atau memodifikasi template.
+
+======================================================
+-->
+
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WKNG Admin - Dashboard</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="assets/vendor/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="assets/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Fonts (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  
+</head>
+
+<body id="body-container">
+
+  <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div>
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+        <div class="brand-logo">
+          <img src="https://placehold.co/100x100/6366f1/ffffff?text=W" alt="WKNG Logo">
+          <span class="logo-text">WKNG ADMIN</span>
+        </div>
+        <!-- [MODIFIED] Tombol Collapse -->
+        <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+      </div>
+      <!-- [MODIFIED] Divider lebih tebal -->
+      <div class="sidebar-divider"></div>
+
+      <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+      <div class="nav flex-column flex-nowrap nav-scrollable">
+        <div class="nav-category">UTAMA</div>
+        <a href="home.html" class="nav-link active"><i class="bi bi-grid-1x2-fill"></i>
+          <span>Dashboard</span></a>
+        <a href="analytic.html" class="nav-link"><i class="bi bi-graph-up-arrow"></i> <span>Analytics</span></a>
+
+        <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+          <i class="bi bi-shop"></i>
+          <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+        </a>
+        <div class="collapse " id="menuBusiness">
+          <div class="nav-submenu">
+
+            <a href="products.html" class="nav-link "><span>Produk & Stok</span></a>
+            <a href="orders.html" class="nav-link"><span>Pesanan</span></a>
+            <a href="customers.html" class="nav-link"><span>Pelanggan (CRM)</span></a>
+            <a href="pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+          </div>
+        </div>
+        <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+        <div class="nav-category">FINANSIAL & CRYPTO</div>
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+          <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuFinance">
+          <div class="nav-submenu">
+            <a href="wallet.html" class="nav-link"><span>Dompet Digital</span></a>
+            <a href="transactions.html" class="nav-link"><span>Riwayat Transaksi</span></a>
+            <a href="crypto-market.html" class="nav-link"><span>Crypto Market</span></a>
+            <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+          </div>
+        </div>
+
+
+        <!-- SEKTOR PENDIDIKAN -->
+        <div class="nav-category">PENDIDIKAN</div>
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+          <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuEdu">
+          <div class="nav-submenu">
+            <a href="courses.html" class="nav-link"><span>Kelas / Kursus</span></a>
+            <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+            <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+            <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+          </div>
+        </div>
+
+        <!-- SEKTOR MASYARAKAT & UMUM -->
+        <div class="nav-category">SOSIAL & KOMUNITAS</div>
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+          <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuSocial">
+          <div class="nav-submenu">
+            <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+            <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+            <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+            <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+          </div>
+        </div>
+
+        <!-- TOOLS & SYSTEM (Generic) -->
+        <div class="nav-category">SYSTEM TOOLS</div>
+
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+          <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuApps">
+          <div class="nav-submenu">
+            <a href="email.html" class="nav-link"><span>Email</span></a>
+            <a href="chat.html" class="nav-link"><span>Chat</span></a>
+            <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+            <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+          </div>
+        </div>
+
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+          <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuUI">
+          <div class="nav-submenu">
+            <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+            <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+            <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+            <a href="modals.html" class="nav-link"><span>Modals</span></a>
+            <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+            <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+          </div>
+        </div>
+
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i> <span>Forms &
+            Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuForms">
+          <div class="nav-submenu">
+            <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+            <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+          </div>
+        </div>
+
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+          <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuPages">
+          <div class="nav-submenu">
+
+            <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+            <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+            <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+            <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+            <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+            <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+            <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+            <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+            <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+            <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+            <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+            <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+            <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+            <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+            <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+          </div>
+        </div>
+
+        <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+        <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+          <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+        <div class="collapse" id="menuSettings">
+          <div class="nav-submenu">
+            <div class="nav-submenu-label">Platform & Identitas</div>
+            <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+            <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+            <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+            <div class="nav-submenu-divider"></div>
+
+            <div class="nav-submenu-label">Bisnis & Keuangan</div>
+            <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+            <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+            <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+            <div class="nav-submenu-divider"></div>
+
+            <div class="nav-submenu-label">Operasional</div>
+            <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+            <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+            <div class="nav-submenu-divider"></div>
+
+            <div class="nav-submenu-label">Sistem</div>
+            <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+            <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+            <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- [MODIFIED] MODERN PROFILE MENU -->
+      <div class="dropup profile-wrapper">
+        <!-- Trigger Button -->
+        <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+        <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+          data-bs-display="static">
+          <div class="avatar-container">
+            <div class="avatar-modern">A</div>
+            <div class="status-dot pulse"></div> <!-- Online Indicator -->
+          </div>
+          <div class="user-info-modern">
+            <div class="user-name-modern">Admin Pusat</div>
+            <div class="user-role-modern">Super Admin</div>
+          </div>
+          <i class="bi bi-chevron-up profile-chevron"></i>
+        </div>
+
+        <!-- Modern Dropdown Content -->
+        <ul class="dropdown-menu profile-dropdown-menu">
+          <div class="dropdown-header-modern">
+            <div class="menu-label">SIGNED IN AS</div>
+            <div class="menu-user-email">admin@WKNG.com</div>
+          </div>
+
+          <li><a class="profile-menu-item" href="profile-me.html">
+              <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+            </a></li>
+          <li><a class="profile-menu-item" href="edit-profile.html">
+              <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+            </a></li>
+
+          <!-- Functional Dark Mode Switch inside Menu -->
+          <li>
+            <div class="profile-menu-item" style="cursor: default;">
+              <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+              </div>
+              <div class="form-check form-switch theme-switch-wrapper mb-0">
+                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+              </div>
+            </div>
+          </li>
+
+          <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+          <li><a class="profile-menu-item danger-item" href="login.html">
+              <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+              </div>
+            </a></li>
+        </ul>
+      </div>
+
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- [MODIFIED] Top Navbar with Search and Notification -->
+      <div class="top-navbar-standalone">
+        <div class="search-standalone-box">
+          <i class="bi bi-search search-standalone-icon"></i>
+          <input type="text" class="search-standalone-input" placeholder="Cari...">
+        </div>
+
+        <div class="notification-wrapper dropdown">
+          <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-display="static">
+            <i class="bi bi-bell"></i>
+            <div class="notification-dot-red"></div>
+          </div>
+          <ul class="dropdown-menu notification-dropdown-menu">
+            <div
+              class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+              <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+              <span class="badge bg-danger rounded-pill">3 Baru</span>
+            </div>
+            <li><a class="notification-item" href="#">
+                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                </div>
+                <div class="notif-content">
+                  <h6>System Alert</h6>
+                  <p>CPU Usage above 90% detected.</p><span class="notif-time">2 mins ago</span>
+                </div>
+              </a></li>
+            <li><a class="notification-item" href="#">
+                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                <div class="notif-content">
+                  <h6>New Order</h6>
+                  <p>Received order #ORD-248 from Budi.</p><span class="notif-time">15 mins ago</span>
+                </div>
+              </a></li>
+            <li><a class="notification-item" href="#">
+                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                <div class="notif-content">
+                  <h6>Server Update</h6>
+                  <p>Server scheduled for maintenance.</p><span class="notif-time">1 hour ago</span>
+                </div>
+              </a></li>
+            <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+          </ul>
+        </div>
+      </div>
+
+      <!-- WELCOME BANNER -->
+      <div class="welcome-banner">
+        <div class="welcome-shape shape-1"></div>
+        <div class="welcome-shape shape-2"></div>
+        <div class="position-relative z-2">
+          <h2 class="fw-bold mb-2">Halo, Admin Pusat! 👋</h2>
+          <p class="mb-4 opacity-75" style="max-width: 600px;">Berikut adalah ringkasan performa sistem dan
+            aktivitas terbaru Anda hari ini. Penjualan meningkat 12% dibandingkan minggu lalu.</p>
+          <button class="btn btn-light text-primary fw-bold px-4 rounded-pill shadow-sm">Lihat
+            Laporan</button>
+        </div>
+      </div>
+
+      <!-- KEY METRICS -->
+      <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="widget-card dash-stat-card h-100">
+            <div>
+              <p class="text-muted small mb-1">Total Penjualan</p>
+              <h3 class="fw-bold mb-1">Rp 124.5Jt</h3><span class="dash-trend-up"><i class="bi bi-arrow-up-right"></i>
+                +12.5%</span> <span class="small text-muted ms-1">vs lalu</span>
+            </div>
+            <div class="dash-icon-box bg-soft-primary text-primary"><i class="bi bi-wallet2"></i></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="widget-card dash-stat-card h-100">
+            <div>
+              <p class="text-muted small mb-1">Pengguna Baru</p>
+              <h3 class="fw-bold mb-1">1,240</h3><span class="dash-trend-up"><i class="bi bi-arrow-up-right"></i>
+                +8.2%</span> <span class="small text-muted ms-1">vs lalu</span>
+            </div>
+            <div class="dash-icon-box bg-soft-success text-success"
+              style="background: rgba(16,185,129,0.15); color:#10b981;"><i class="bi bi-people"></i></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="widget-card dash-stat-card h-100">
+            <div>
+              <p class="text-muted small mb-1">Pesanan</p>
+              <h3 class="fw-bold mb-1">845</h3><span class="dash-trend-down"><i class="bi bi-arrow-down-right"></i>
+                -2.4%</span> <span class="small text-muted ms-1">vs lalu</span>
+            </div>
+            <div class="dash-icon-box bg-soft-warning text-warning"
+              style="background: rgba(245,158,11,0.15); color:#f59e0b;"><i class="bi bi-bag-check"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="widget-card dash-stat-card h-100">
+            <div>
+              <p class="text-muted small mb-1">Tiket Support</p>
+              <h3 class="fw-bold mb-1">24</h3><span class="small text-muted">5 Perlu respon</span>
+            </div>
+            <div class="dash-icon-box bg-soft-danger text-danger"
+              style="background: rgba(239,68,68,0.15); color:#ef4444;"><i class="bi bi-ticket-perforated"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN CHARTS & ACTIVITY -->
+      <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+          <div class="widget-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h5 class="fw-bold mb-0">Analisis Pendapatan</h5>
+              <select class="form-select form-select-sm" style="width: auto;">
+                <option>Tahun Ini</option>
+                <option>Bulan Ini</option>
+              </select>
+            </div>
+            <div style="height: 300px;"><canvas id="revenueChart"></canvas></div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="widget-card h-100">
+            <h5 class="fw-bold mb-4">Aktivitas Terbaru</h5>
+            <div class="activity-feed">
+              <div class="activity-item">
+                <div class="activity-dot bg-primary border-primary"></div><span class="activity-time">Baru saja</span>
+                <p class="mb-0 small"><strong>Andi</strong> membuat pesanan baru #ORD-245.</p>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot bg-success border-success"></div><span class="activity-time">25
+                  Menit lalu</span>
+                <p class="mb-0 small">Pembayaran diterima dari <strong>PT. Maju Jaya</strong>.</p>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot bg-warning border-warning"></div><span class="activity-time">2
+                  Jam lalu</span>
+                <p class="mb-0 small">Server mengalami lonjakan trafik (85%).</p>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot bg-info border-info"></div><span class="activity-time">Kemarin</span>
+                <p class="mb-0 small">Backup database harian berhasil.</p>
+              </div>
+            </div>
+            <button class="btn btn-outline-secondary btn-sm w-100 mt-4">Lihat Semua</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT ORDERS TABLE (FIXED) -->
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="widget-card h-100 p-0">
+            <!-- Fixed Header -->
+            <div class="card-header-custom">
+              <h5 class="fw-bold mb-0">Pesanan Terbaru</h5>
+              <button class="btn btn-primary btn-sm">Lihat Semua</button>
+            </div>
+            <div class="table-responsive px-4 pb-4">
+              <table class="table-dashboard">
+                <thead>
+                  <tr>
+                    <th>ID Pesanan</th>
+                    <th>Pelanggan</th>
+                    <th>Tanggal</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-end">Total</th> <!-- Rata kanan -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#ORD-001</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="avatar bg-primary text-white me-2" style="width:28px;height:28px;font-size:0.7rem;">
+                          B</div>Budi Santoso
+                      </div>
+                    </td>
+                    <td>24 Nov 2025</td>
+                    <td class="text-center"><span class="badge bg-success bg-opacity-10 text-success">Selesai</span>
+                    </td>
+                    <td class="text-end">Rp 450.000</td> <!-- Rata kanan -->
+                  </tr>
+                  <tr>
+                    <td>#ORD-002</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="avatar bg-warning text-dark me-2" style="width:28px;height:28px;font-size:0.7rem;">S
+                        </div>Siti Aminah
+                      </div>
+                    </td>
+                    <td>24 Nov 2025</td>
+                    <td class="text-center"><span class="badge bg-warning bg-opacity-10 text-warning">Proses</span></td>
+                    <td class="text-end">Rp 1.200.000</td>
+                  </tr>
+                  <tr>
+                    <td>#ORD-003</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="avatar bg-info text-white me-2" style="width:28px;height:28px;font-size:0.7rem;">R
+                        </div>Rina Wati
+                      </div>
+                    </td>
+                    <td>23 Nov 2025</td>
+                    <td class="text-center"><span class="badge bg-danger bg-opacity-10 text-danger">Batal</span></td>
+                    <td class="text-end">Rp 75.000</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Selling Products -->
+        <div class="col-lg-4">
+          <div class="widget-card h-100">
+            <h5 class="fw-bold mb-4">Produk Terlaris</h5>
+            <div class="d-flex align-items-center mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+              <img src="https://placehold.co/60x60/6366f1/FFF?text=P1" class="product-img-sm rounded">
+              <div class="flex-grow-1">
+                <h6 class="fw-bold mb-0 small">Wireless Headphone</h6><small class="text-muted">Elektronik</small>
+              </div>
+              <div class="text-end">
+                <h6 class="fw-bold mb-0 small">124</h6><small class="text-success small">+12%</small>
+              </div>
+            </div>
+            <div class="d-flex align-items-center mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+              <img src="https://placehold.co/60x60/10b981/FFF?text=P2" class="product-img-sm rounded">
+              <div class="flex-grow-1">
+                <h6 class="fw-bold mb-0 small">Smart Watch Gen 5</h6><small class="text-muted">Aksesoris</small>
+              </div>
+              <div class="text-end">
+                <h6 class="fw-bold mb-0 small">98</h6><small class="text-success small">+5%</small>
+              </div>
+            </div>
+            <div class="d-flex align-items-center">
+              <img src="https://placehold.co/60x60/f59e0b/FFF?text=P3" class="product-img-sm rounded">
+              <div class="flex-grow-1">
+                <h6 class="fw-bold mb-0 small">Mechanical Keyboard</h6><small class="text-muted">Komputer</small>
+              </div>
+              <div class="text-end">
+                <h6 class="fw-bold mb-0 small">75</h6><small class="text-danger small">-2%</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [ADDED] COPYRIGHT FOOTER SECTION -->
+      <footer class="footer-dashboard">
+        <div class="row align-items-center justify-content-between">
+          <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+            <p class="mb-0 small text-muted">Copyright &copy; 2025 <strong class="text-white">WKNG
+                Admin</strong>. All rights reserved.</p>
+          </div>
+          <div class="col-md-6 text-center text-md-end">
+            <div class="d-flex justify-content-center justify-content-md-end gap-3">
+              <a href="#" class="footer-link">Kebijakan Privasi</a>
+              <a href="#" class="footer-link">Syarat & Ketentuan</a>
+              <a href="#" class="footer-link">Bantuan</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+  <!-- JS Scripts -->
+  <script src="assets/vendor/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/chart.js"></script>
+  <script src="assets/js/script.js"></script>
+  <script>
+      /* ======================================================================
+         SPECIFIC JS: WIDGETS PAGE (Mini Chart)
+         ====================================================================== */
+      const ctx1 = document.getElementById('miniChart1');
+      if (ctx1) {
+        new Chart(ctx1, {
+          type: 'line',
+          data: {
+            labels: [1, 2, 3, 4, 5],
+            datasets: [{
+              data: [10, 15, 8, 12, 20],
+              borderColor: '#3b82f6',
+              borderWidth: 2, pointRadius: 0, tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { display: false }, y: { display: false } }
+          }
+        });
+      }
+
+      /* ======================================================================
+         SPECIFIC JS: DASHBOARD PAGE (Revenue Chart)
+         ====================================================================== */
+      const ctxRev = document.getElementById('revenueChart');
+      if (ctxRev) {
+        const isLight = body.classList.contains("light-mode");
+        const gridColor = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+        window.revenueChartInstance = new Chart(ctxRev, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+              label: 'Pendapatan (Juta)',
+              data: [12, 19, 15, 25, 22, 30, 28, 35, 40, 45, 42, 50],
+              borderColor: '#6366f1',
+              backgroundColor: 'rgba(99, 102, 241, 0.1)',
+              borderWidth: 2, tension: 0.4, fill: true, pointRadius: 3, pointBackgroundColor: '#6366f1'
+            }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { color: gridColor, drawBorder: false }, ticks: { color: '#9ca3af' } },
+              y: { grid: { color: gridColor, drawBorder: false }, ticks: { color: '#9ca3af' }, beginAtZero: true }
+            }
+          }
+        });
+      }
+
+  </script>
+</body>
+
+</html>

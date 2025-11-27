@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>506 Variant Also Negotiates - Nexus Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. CORE STYLES (KONSISTEN)
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-mint: #2dd4bf;
+            --accent-indigo: #4f46e5;
+            --border-color: #374151;
+            --gradient-primary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            
+            /* Text Gradients */
+            --text-gradient-dark: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            --text-gradient-light: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+            
+            /* Variant Gradient (Mint/Indigo for 506) */
+            --gradient-variant: linear-gradient(135deg, #2dd4bf 0%, #6366f1 100%);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        /* ======================================================================
+           2. BACKGROUND SHAPES
+           ====================================================================== */
+        .shape {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            animation: floatShape 10s infinite ease-in-out;
+            opacity: 0.5;
+        }
+
+        .shape-1 { width: 400px; height: 400px; background: #2dd4bf; border-radius: 50%; top: -100px; left: -100px; } /* Mint */
+        .shape-2 { width: 300px; height: 300px; background: #6366f1; border-radius: 50%; bottom: -50px; right: -50px; animation-delay: 2s; } /* Purple */
+        .shape-3 { width: 200px; height: 200px; background: #ec4899; border-radius: 50%; top: 40%; left: 40%; animation-delay: 4s; opacity: 0.3; }
+
+        @keyframes floatShape {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, -20px); }
+        }
+
+        /* ======================================================================
+           3. CONTENT CONTAINER & RESPONSIVE
+           ====================================================================== */
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 60px 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+        
+        body.light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 576px) {
+            .glass-card { padding: 40px 20px; }
+            .error-code { font-size: 3.5rem !important; }
+            .error-title { font-size: 1.25rem; }
+            .blob-container { transform: scale(0.8); margin-bottom: 10px; }
+        }
+
+        /* ======================================================================
+           4. MORPHING BLOB ANIMATION (PURE CSS)
+           ====================================================================== */
+        .blob-container {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            margin: 0 auto 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* The Morphing Body */
+        .blob-body {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #2dd4bf 0%, #6366f1 100%);
+            box-shadow: inset 10px 10px 20px rgba(255,255,255,0.2), 0 15px 30px rgba(45, 212, 191, 0.4);
+            animation: morphing 8s ease-in-out infinite, floatBlob 4s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s;
+            cursor: pointer; /* Interaktif */
+        }
+
+        /* Interactive State: Hover */
+        .blob-body:hover {
+            animation: morphing 2s ease-in-out infinite, shakeBlob 0.5s ease-in-out infinite; /* Cepat & Getar */
+            background: linear-gradient(135deg, #ec4899 0%, #f97316 100%); /* Berubah warna jadi warning */
+            box-shadow: 0 0 40px rgba(236, 72, 153, 0.6);
+        }
+
+        /* Face */
+        .blob-face {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 60px;
+        }
+
+        .blob-eyes {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .eye {
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            position: relative;
+            animation: blink 3s infinite;
+        }
+        
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #111827;
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s;
+        }
+
+        /* Mata membesar saat hover */
+        .blob-body:hover .eye {
+            height: 16px;
+            width: 16px;
+        }
+        .blob-body:hover .eye::after {
+            width: 2px; height: 2px; /* Pupil mengecil kaget */
+        }
+
+        .blob-mouth {
+            width: 10px;
+            height: 4px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        /* Mulut jadi 'O' saat hover */
+        .blob-body:hover .blob-mouth {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+        }
+
+        /* Floating Particles (Variants) */
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: floatParticle 3s infinite ease-in-out;
+        }
+        .p1 { width: 10px; height: 10px; top: 0; right: 0; animation-delay: 0s; background: #2dd4bf; }
+        .p2 { width: 15px; height: 15px; bottom: 10px; left: -10px; animation-delay: 1s; background: #6366f1; }
+        .p3 { width: 8px; height: 8px; bottom: -10px; right: 20px; animation-delay: 2s; background: #ec4899; }
+
+        /* Animations */
+        @keyframes morphing {
+            0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            50% { border-radius: 60% 40% 30% 70% / 30% 30% 70% 70%; } /* Lebih kotak */
+            75% { border-radius: 40% 60% 70% 30% / 60% 40% 60% 40%; }
+            100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        }
+
+        @keyframes floatBlob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes shakeBlob {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        @keyframes floatParticle {
+            0%, 100% { transform: translate(0, 0); opacity: 0.6; }
+            50% { transform: translate(10px, -15px); opacity: 0.2; }
+        }
+
+        @keyframes blink {
+            0%, 96%, 100% { transform: scaleY(1); }
+            98% { transform: scaleY(0.1); }
+        }
+
+        /* ======================================================================
+           5. TYPOGRAPHY & BUTTONS
+           ====================================================================== */
+        .error-code {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            background: var(--gradient-variant);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .error-desc {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-home {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+            color: white;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-fixed {
+            position: absolute; top: 20px; right: 20px; z-index: 100;
+            background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted);
+            width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .theme-toggle-fixed:hover { color: var(--accent-purple); border-color: var(--accent-purple); transform: rotate(15deg); }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle-fixed" id="themeToggle" title="Ganti Tema">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="error-container">
+        <div class="glass-card">
+            
+            <!-- Morphing Blob Animation -->
+            <div class="blob-container">
+                <!-- Floating Variant Particles -->
+                <div class="particle p1"></div>
+                <div class="particle p2"></div>
+                <div class="particle p3"></div>
+
+                <!-- Main Blob Body -->
+                <div class="blob-body" title="Sentuh aku! (Hover Me)">
+                    <div class="blob-face">
+                        <div class="blob-eyes">
+                            <div class="eye"></div>
+                            <div class="eye"></div>
+                        </div>
+                        <div class="blob-mouth"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Content -->
+            <h1 class="error-code">506</h1>
+            <h2 class="error-title">Varian Juga Bernegosiasi</h2>
+            <p class="error-desc">
+                Server mengalami kebingungan konfigurasi internal. Varian yang dipilih dikonfigurasi untuk melakukan negosiasi konten sendiri, menciptakan lingkaran tak berujung.
+            </p>
+
+            <!-- Action Button -->
+            <a href="home.html" class="btn-home">
+                <i class="bi bi-house-door"></i> Kembali ke Halaman Utama
+            </a>
+            
+        </div>
+        
+        <div class="mt-4 text-muted small opacity-50">
+            Error Code: 506_VARIANT_ALSO_NEGOTIATES | Nexus System
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const body = document.body;
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            // Initial Theme Load
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            }
+
+            // Theme Toggle Logic
+            themeToggle?.addEventListener("click", () => {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+            });
+        });
+    </script>
+</body>
+
+</html>

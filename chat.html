@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Powerful Chat</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* ======================================================================
+           2. SPECIFIC: CHAT PAGE STYLES (POWERFUL & RESPONSIVE)
+           ====================================================================== */
+
+        /* [NEW] UNIVERSAL PAGE HEADER STYLE */
+        .active-page-header {
+            padding: 30px;
+            border-radius: 24px;
+            background-color: var(--bg-card);
+            position: relative;
+            margin-bottom: 3.5rem;
+            border: 2px solid transparent;
+            background-image: linear-gradient(var(--bg-card), var(--bg-card)), linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15);
+        }
+
+        .page-title-large {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        body.light-mode .page-title-large {
+            background: none;
+            -webkit-text-fill-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            white-space: nowrap;
+        }
+
+        .breadcrumb-modern {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        body.light-mode .breadcrumb-modern {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-color: var(--border-color);
+        }
+
+        .breadcrumb-item-custom {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item-custom:hover {
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-item-custom.active {
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .breadcrumb-home-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-sep {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* [NEW] CHAT FILTER TABS (SIDEBAR) */
+        .chat-filter-tabs {
+            display: flex;
+            padding: 12px 16px;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .chat-filter-tabs::-webkit-scrollbar {
+            height: 0;
+        }
+
+        .filter-tab-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .filter-tab-btn.active,
+        .filter-tab-btn:hover {
+            background: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+
+        /* [NEW] SUPPORT TICKET BADGES */
+        .ticket-badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: auto;
+        }
+
+        .badge-urgent {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-normal {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .badge-draft {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        /* --- CHAT CONTAINER STYLES --- */
+        .chat-container {
+            display: flex;
+            height: calc(100vh - 250px);
+            min-height: 600px;
+            background: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+            /* Needed for mobile overlay */
+        }
+
+        /* Left Sidebar (Chat List) */
+        .chat-sidebar {
+            width: 320px;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            transition: transform 0.3s ease;
+            z-index: 2;
+        }
+
+        .chat-search-bar {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chat-search-input {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 16px 10px 40px;
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .chat-search-icon {
+            position: absolute;
+            left: 28px;
+            top: 28px;
+            color: var(--text-muted);
+        }
+
+        .chat-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            margin-bottom: 4px;
+        }
+
+        .chat-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        body.light-mode .chat-item:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .chat-item.active {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 3px solid var(--accent-purple);
+        }
+
+        .chat-avatar-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .chat-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .chat-status-dot {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+        }
+
+        .status-online {
+            background: var(--accent-green);
+        }
+
+        .status-offline {
+            background: var(--text-muted);
+        }
+
+        .chat-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .chat-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+
+        .chat-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .chat-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .chat-preview-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-preview {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+
+        .chat-preview.typing-text {
+            color: var(--accent-purple);
+            font-style: italic;
+        }
+
+        .chat-preview.draft-text {
+            color: #f59e0b;
+            font-style: italic;
+        }
+
+        .unread-badge {
+            background: var(--accent-purple);
+            color: white;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        /* Right Content (Chat Area) */
+        .chat-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            position: relative;
+            /* Background Pattern */
+            background-image: radial-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .chat-header {
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            z-index: 3;
+        }
+
+        /* [NEW] Back Button for Mobile */
+        .btn-back-mobile {
+            display: none;
+            margin-right: 12px;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            background: transparent;
+            border: none;
+        }
+
+        .chat-dropdown-menu {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 0 !important;
+            top: 100% !important;
+            right: 0 !important;
+            animation: slideDownFade 0.2s ease-out;
+            transform: none !important;
+        }
+
+        body.light-mode .chat-dropdown-menu {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-dropdown-item {
+            color: var(--text-muted);
+            padding: 10px 16px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .chat-dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        body.light-mode .chat-dropdown-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            position: relative;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .message-in {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border-bottom-left-radius: 4px;
+        }
+
+        body.light-mode .message-in {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .message-out {
+            align-self: flex-end;
+            background: var(--accent-purple);
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 4px;
+            display: block;
+            text-align: right;
+        }
+
+        .chat-input-area {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .btn-chat-action {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            background: transparent;
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+
+        .btn-chat-action:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-purple);
+        }
+
+        body.light-mode .btn-chat-action:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-input-field {
+            flex-grow: 1;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 10px 20px;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .chat-input-field:focus {
+            border-color: var(--accent-purple);
+        }
+
+        .btn-send {
+            background: var(--accent-purple);
+            color: white;
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .btn-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Emoji Picker Popup */
+        .emoji-picker-popup {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px;
+            display: none;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            width: 280px;
+        }
+
+        .emoji-btn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            text-align: center;
+            padding: 4px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .emoji-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.2);
+        }
+
+        /* [NEW] MOBILE RESPONSIVE CHAT UX */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-120%);
+                width: 260px !important;
+                padding-right: 16px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-navbar-standalone {
+                justify-content: flex-end;
+                padding-left: 70px;
+                margin-bottom: 20px;
+                gap: 10px;
+            }
+
+            .chat-container {
+                position: relative;
+                overflow: hidden;
+                /* Hide overflow for slide effect */
+            }
+
+            /* Sidebar takes full width initially */
+            .chat-sidebar {
+                width: 100%;
+                border-right: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                transition: transform 0.3s ease-in-out;
+                z-index: 2;
+            }
+
+            /* Chat Area initially hidden off-screen to right */
+            .chat-area {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transform: translateX(100%);
+                transition: transform 0.3s ease-in-out;
+                z-index: 3;
+            }
+
+            /* Active State: Sidebar moves left, Chat Area moves in */
+            .chat-container.chat-open .chat-sidebar {
+                transform: translateX(-100%);
+            }
+
+            .chat-container.chat-open .chat-area {
+                transform: translateX(0);
+            }
+
+            /* Show Back Button */
+            .btn-back-mobile {
+                display: block;
+            }
+
+            /* Mobile Adjustments */
+            .chat-header {
+                padding: 10px 16px;
+            }
+
+            .chat-input-area {
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link"><i class="bi bi-graph-up-arrow"></i> <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse " id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="orders.html" class="nav-link"><span>Pesanan</span></a>
+                        <a href="customers.html" class="nav-link"><span>Pelanggan (CRM)</span></a>
+                        <a href="pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link"><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link"><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link"><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link"><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps" aria-expanded="true"><i
+                        class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link "><span>Email</span></a>
+                        <a href="chat.html" class="nav-link active"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT (CHAT PAGE) -->
+        <main class="main-content">
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari pesan...">
+                </div>
+
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p><span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p><span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p><span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER (Unified Style) -->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Chat & Support</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">Pusat komunikasi
+                            terpadu untuk tim dan pelanggan.</p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-chat-quote-fill"></i> MESSENGER</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><span class="breadcrumb-home-icon"><i
+                                            class="bi bi-house-door-fill"></i></span></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Aplikasi</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Chat</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAT APP CONTAINER -->
+            <div class="chat-container" id="chatAppContainer">
+                <!-- 1. Sidebar Chat List -->
+                <div class="chat-sidebar">
+                    <!-- [NEW] Filter Tabs -->
+                    <div class="chat-filter-tabs">
+                        <button class="filter-tab-btn active" onclick="filterChatTab('all', this)">All</button>
+                        <button class="filter-tab-btn" onclick="filterChatTab('ticket', this)">Tickets</button>
+                        <button class="filter-tab-btn" onclick="filterChatTab('internal', this)">Internal</button>
+                        <button class="filter-tab-btn" onclick="filterChatTab('draft', this)">Draft</button>
+                    </div>
+
+                    <div class="chat-search-bar position-relative">
+                        <i class="bi bi-search chat-search-icon"></i>
+                        <input type="text" class="chat-search-input" id="contactSearch" placeholder="Cari kontak..."
+                            onkeyup="filterContacts()">
+                    </div>
+
+                    <div class="chat-list" id="contactList">
+                        <!-- Contact 1 (Internal - Active) -->
+                        <div class="chat-item active" data-category="internal"
+                            onclick="loadChat('Sarah Wilson', 'online', this)">
+                            <div class="chat-avatar-wrapper">
+                                <div class="chat-avatar"
+                                    style="background-image: url('https://placehold.co/100x100/6366f1/FFF?text=S');">
+                                </div>
+                                <div class="chat-status-dot status-online"></div>
+                            </div>
+                            <div class="chat-info">
+                                <div class="chat-header-row">
+                                    <div class="chat-name">Sarah Wilson</div>
+                                    <span class="chat-time">10:42</span>
+                                </div>
+                                <div class="chat-preview-row">
+                                    <div class="chat-preview typing-text">sedang mengetik...</div>
+                                    <span class="unread-badge">2</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact 2 (Ticket Urgent) -->
+                        <div class="chat-item" data-category="ticket"
+                            onclick="loadChat('Budi Santoso', 'offline', this)">
+                            <div class="chat-avatar-wrapper">
+                                <div class="chat-avatar"
+                                    style="background-image: url('https://placehold.co/100x100/10b981/FFF?text=B');">
+                                </div>
+                                <div class="chat-status-dot status-offline"></div>
+                            </div>
+                            <div class="chat-info">
+                                <div class="chat-header-row">
+                                    <div class="chat-name">Budi Santoso</div>
+                                    <span class="chat-time">Kemarin</span>
+                                </div>
+                                <div class="chat-preview-row">
+                                    <div class="chat-preview">Komplain mengenai invoice #INV-202</div>
+                                    <span class="ticket-badge badge-urgent">URGENT</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact 3 (Internal) -->
+                        <div class="chat-item" data-category="internal"
+                            onclick="loadChat('Tim Marketing', 'online', this)">
+                            <div class="chat-avatar-wrapper">
+                                <div class="chat-avatar"
+                                    style="background-image: url('https://placehold.co/100x100/f59e0b/FFF?text=M');">
+                                </div>
+                                <div class="chat-status-dot status-online"></div>
+                            </div>
+                            <div class="chat-info">
+                                <div class="chat-header-row">
+                                    <div class="chat-name">Tim Marketing</div>
+                                    <span class="chat-time">Selasa</span>
+                                </div>
+                                <div class="chat-preview-row">
+                                    <div class="chat-preview">Rina: Banner promo sudah siap.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact 4 (Draft) -->
+                        <div class="chat-item" data-category="draft"
+                            onclick="loadChat('Vendor IT', 'offline', this, true)">
+                            <div class="chat-avatar-wrapper">
+                                <div class="chat-avatar"
+                                    style="background-image: url('https://placehold.co/100x100/ef4444/FFF?text=V');">
+                                </div>
+                                <div class="chat-status-dot status-offline"></div>
+                            </div>
+                            <div class="chat-info">
+                                <div class="chat-header-row">
+                                    <div class="chat-name">Vendor IT</div>
+                                    <span class="chat-time">Senin</span>
+                                </div>
+                                <div class="chat-preview-row">
+                                    <div class="chat-preview draft-text">Draft: Halo, untuk penawaran...</div>
+                                    <span class="ticket-badge badge-draft">DRAFT</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact 5 (Ticket Normal) -->
+                        <div class="chat-item" data-category="ticket" onclick="loadChat('Customer A', 'online', this)">
+                            <div class="chat-avatar-wrapper">
+                                <div class="chat-avatar"
+                                    style="background-image: url('https://placehold.co/100x100/3b82f6/FFF?text=C');">
+                                </div>
+                                <div class="chat-status-dot status-online"></div>
+                            </div>
+                            <div class="chat-info">
+                                <div class="chat-header-row">
+                                    <div class="chat-name">Customer A</div>
+                                    <span class="chat-time">12:30</span>
+                                </div>
+                                <div class="chat-preview-row">
+                                    <div class="chat-preview">Bagaimana cara reset password?</div>
+                                    <span class="ticket-badge badge-normal">OPEN</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Main Chat Area -->
+                <div class="chat-area">
+                    <!-- Header -->
+                    <div class="chat-header">
+                        <div class="d-flex align-items-center gap-3">
+                            <!-- [NEW] Back Button for Mobile -->
+                            <button class="btn-back-mobile" onclick="closeMobileChat()"><i
+                                    class="bi bi-chevron-left"></i></button>
+
+                            <div class="chat-avatar-wrapper">
+                                <div class="chat-avatar" id="activeAvatar"
+                                    style="background-image: url('https://placehold.co/100x100/6366f1/FFF?text=S'); width: 40px; height: 40px;">
+                                </div>
+                                <div class="chat-status-dot status-online" id="activeStatus"
+                                    style="width: 10px; height: 10px;"></div>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold" id="activeName">Sarah Wilson</h6>
+                                <small class="text-muted" id="activeStatusText">Online</small>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-icon text-muted" onclick="alert('Calling...')"><i
+                                    class="bi bi-telephone"></i></button>
+                            <button class="btn btn-icon text-muted" onclick="alert('Video Calling...')"><i
+                                    class="bi bi-camera-video"></i></button>
+
+                            <!-- Dropdown Menu -->
+                            <div class="dropdown">
+                                <button class="btn btn-icon text-muted" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false" data-bs-display="static"><i
+                                        class="bi bi-three-dots-vertical"></i></button>
+                                <ul class="dropdown-menu chat-dropdown-menu dropdown-menu-end">
+                                    <li><a class="chat-dropdown-item" href="#"><i class="bi bi-person"></i> View
+                                            Profile</a></li>
+                                    <li><a class="chat-dropdown-item" href="#"><i class="bi bi-bell-slash"></i> Mute
+                                            Notifications</a></li>
+                                    <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 6px 0;"></div>
+                                    <li><a class="chat-dropdown-item text-danger" href="#"><i
+                                                class="bi bi-slash-circle"></i> Block User</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    <div class="chat-messages" id="messageContainer">
+                        <div class="text-center mb-3"><span
+                                class="badge bg-secondary bg-opacity-10 text-muted fw-normal">Hari Ini</span></div>
+
+                        <div class="message-bubble message-in">
+                            Halo Admin, apakah ada update terbaru mengenai proyek Nexus?
+                            <span class="message-time">10:30 AM</span>
+                        </div>
+
+                        <div class="message-bubble message-out">
+                            Halo Sarah! Ya, kami baru saja merilis versi 2.0 dengan fitur dark mode yang lebih baik.
+                            <span class="message-time">10:32 AM</span>
+                        </div>
+
+                        <div class="message-bubble message-in">
+                            Wah keren sekali! Saya akan segera mencobanya. Apakah dokumentasinya sudah diupdate?
+                            <span class="message-time">10:35 AM</span>
+                        </div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="chat-input-area">
+                        <button class="btn-chat-action" onclick="document.getElementById('fileInputChat').click()"><i
+                                class="bi bi-paperclip"></i></button>
+                        <input type="file" id="fileInputChat" hidden
+                            onchange="alert('File ' + this.files[0].name + ' attached!')">
+
+                        <button class="btn-chat-action" onclick="toggleEmojiPicker()"><i
+                                class="bi bi-emoji-smile"></i></button>
+
+                        <!-- Emoji Picker Popup -->
+                        <div class="emoji-picker-popup" id="emojiPopup">
+                            <div class="emoji-btn" onclick="insertEmoji('😀')">😀</div>
+                            <div class="emoji-btn" onclick="insertEmoji('😂')">😂</div>
+                            <div class="emoji-btn" onclick="insertEmoji('😍')">😍</div>
+                            <div class="emoji-btn" onclick="insertEmoji('😎')">😎</div>
+                            <div class="emoji-btn" onclick="insertEmoji('🥳')">🥳</div>
+                            <div class="emoji-btn" onclick="insertEmoji('😭')">😭</div>
+                            <div class="emoji-btn" onclick="insertEmoji('👍')">👍</div>
+                            <div class="emoji-btn" onclick="insertEmoji('👎')">👎</div>
+                            <div class="emoji-btn" onclick="insertEmoji('🎉')">🎉</div>
+                            <div class="emoji-btn" onclick="insertEmoji('❤️')">❤️</div>
+                            <div class="emoji-btn" onclick="insertEmoji('🔥')">🔥</div>
+                            <div class="emoji-btn" onclick="insertEmoji('✅')">✅</div>
+                        </div>
+
+                        <input type="text" class="chat-input-field" id="messageInput" placeholder="Ketik pesan..."
+                            onkeypress="handleEnter(event)">
+                        <button class="btn-chat-action"><i class="bi bi-mic"></i></button>
+                        <button class="btn-send" onclick="sendMessage()"><i class="bi bi-send-fill"></i></button>
+                    </div>
+                </div>
+            </div>
+            <!-- START OF COPYRIGHT FOOTER SECTION -->
+            <footer class=" footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025
+                            <strong class="text-white">Nexus
+                                Admin</strong>. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan
+                                Privasi</a>
+                            <a href="#" class="footer-link">Syarat &
+                                Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- END OF COPYRIGHT FOOTER -->
+        </main>
+    </div>
+
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>\
+    <script src="assets/js/script.js"></script>
+    <script>
+
+
+        /* ======================================================================
+           SPECIFIC JS: CHAT FUNCTIONALITY (POWERFUL & RESPONSIVE)
+           ====================================================================== */
+
+        // 1. Send Message Function
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const messageText = input.value.trim();
+            const container = document.getElementById('messageContainer');
+
+            if (messageText) {
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble message-out';
+
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                bubble.innerHTML = `${messageText} <span class="message-time">${timeString}</span>`;
+
+                container.appendChild(bubble);
+                container.scrollTop = container.scrollHeight;
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
+
+        // 2. Load Chat (Switch Contact) & Mobile UX
+        function loadChat(name, status, el, isDraft = false) {
+            // UI Updates
+            document.querySelectorAll('.chat-item').forEach(item => item.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            document.getElementById('activeName').innerText = name;
+            const statusText = status === 'online' ? 'Online' : 'Terakhir dilihat kemarin';
+            document.getElementById('activeStatusText').innerText = statusText;
+
+            const dot = document.getElementById('activeStatus');
+            dot.classList.remove('status-online', 'status-offline');
+            dot.classList.add(`status-${status}`);
+
+            const avatar = document.getElementById('activeAvatar');
+            // Mock avatar selection
+            if (name === 'Sarah Wilson') avatar.style.backgroundImage = "url('https://placehold.co/100x100/6366f1/FFF?text=S')";
+            else if (name === 'Budi Santoso') avatar.style.backgroundImage = "url('https://placehold.co/100x100/10b981/FFF?text=B')";
+            else if (name === 'Vendor IT') avatar.style.backgroundImage = "url('https://placehold.co/100x100/ef4444/FFF?text=V')";
+            else avatar.style.backgroundImage = "url('https://placehold.co/100x100/f59e0b/FFF?text=M')";
+
+            // Content Update
+            const container = document.getElementById('messageContainer');
+            const input = document.getElementById('messageInput');
+
+            if (isDraft) {
+                container.innerHTML = `<div class="text-center mb-3"><span class="badge bg-warning bg-opacity-10 text-warning fw-normal">Draft tersimpan</span></div>`;
+                input.value = "Halo, untuk penawaran harga server apakah bisa dikirim ulang?";
+            } else {
+                container.innerHTML = `<div class="text-center mb-3"><span class="badge bg-secondary bg-opacity-10 text-muted fw-normal">Obrolan dengan ${name} dimulai</span></div>`;
+                input.value = "";
+            }
+
+            // [MOBILE UX] Slide Effect
+            if (window.innerWidth <= 768) {
+                document.getElementById('chatAppContainer').classList.add('chat-open');
+            }
+        }
+
+        // 3. Mobile: Close Chat (Back to List)
+        function closeMobileChat() {
+            document.getElementById('chatAppContainer').classList.remove('chat-open');
+        }
+
+        // 4. Filter Chat Tabs
+        function filterChatTab(category, btn) {
+            // Active Tab
+            document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Filter Logic
+            const items = document.querySelectorAll('.chat-item');
+            items.forEach(item => {
+                if (category === 'all' || item.getAttribute('data-category') === category) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // 5. Filter Contacts (Search)
+        function filterContacts() {
+            const input = document.getElementById('contactSearch');
+            const filter = input.value.toUpperCase();
+            const items = document.querySelectorAll('.chat-item');
+
+            items.forEach(item => {
+                const name = item.querySelector(".chat-name").innerText;
+                if (name.toUpperCase().indexOf(filter) > -1) {
+                    item.style.display = "flex"; // Use flex to maintain layout
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        }
+
+        // 6. Emoji Picker
+        function toggleEmojiPicker() {
+            const popup = document.getElementById('emojiPopup');
+            popup.style.display = popup.style.display === 'grid' ? 'none' : 'grid';
+        }
+
+        function insertEmoji(emoji) {
+            const input = document.getElementById('messageInput');
+            input.value += emoji;
+            input.focus();
+            document.getElementById('emojiPopup').style.display = 'none';
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Customers</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+<style>
+     /* =========================================
+           2. CRM SPECIFIC STYLES (NEW ADDITIONS)
+           ========================================= */
+
+        /* --- Global CRM Utils --- */
+        .avatar-xxl { width: 100px; height: 100px; }
+        .avatar-xl { width: 80px; height: 80px; }
+        .avatar-lg { width: 60px; height: 60px; }
+        .avatar-md { width: 48px; height: 48px; }
+        
+        .crm-avatar-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--bg-card);
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem;
+            border: 2px solid var(--bg-card);
+        }
+
+        /* --- Style 1: CRM Gradient Premium (Wajib) --- */
+        .crm-card-gradient {
+            background: var(--bg-card);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .crm-card-gradient:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent-purple);
+        }
+
+        .crm-gradient-header {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            position: relative;
+        }
+
+        .crm-card-gradient .avatar-wrapper {
+            margin-top: -50px;
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .crm-content-gradient {
+            padding: 0 24px 24px;
+            width: 100%;
+        }
+
+        .crm-name-gradient {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+            color: var(--text-main);
+        }
+
+        .crm-role-gradient {
+            font-size: 0.8rem;
+            color: var(--accent-purple);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .crm-stats-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 12px 0;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        
+        body.light-mode .crm-stats-row {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .crm-stat-item h5 { margin: 0; font-weight: 700; font-size: 1rem; }
+        .crm-stat-item span { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+
+        .btn-crm-gradient {
+            width: 100%;
+            padding: 10px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+        .btn-crm-gradient:hover { opacity: 0.9; color: white; }
+
+        /* --- Style 2: CRM Outline Technical (Wajib) --- */
+        .crm-card-outline {
+            background: transparent;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            transition: all 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .crm-card-outline:hover {
+            border-color: var(--accent-purple);
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .crm-outline-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .crm-outline-id {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .crm-contact-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .crm-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .crm-contact-icon {
+            color: var(--accent-purple);
+            opacity: 0.7;
+        }
+
+        .crm-tags-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .crm-tag {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        /* --- Style 3: CRM Loyalty Card (Gamification) --- */
+        .crm-card-loyalty {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .crm-card-loyalty:hover { transform: translateY(-5px); }
+
+        .loyalty-bg-shape {
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, var(--accent-orange) 0%, transparent 70%);
+            opacity: 0.1;
+            border-radius: 50%;
+        }
+
+        .tier-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .tier-gold { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .tier-silver { background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+        .tier-platinum { background: rgba(236, 72, 153, 0.1); color: #ec4899; border: 1px solid rgba(236, 72, 153, 0.3); }
+
+        .xp-progress {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin: 10px 0 6px;
+            overflow: hidden;
+        }
+        
+        body.light-mode .xp-progress { background: rgba(0,0,0,0.1); }
+
+        .xp-bar { height: 100%; border-radius: 10px; }
+
+        /* --- Style 4: Glassmorphism Floating (New) --- */
+        .crm-card-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s;
+        }
+        
+        body.light-mode .crm-card-glass {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0,0,0,0.05);
+        }
+
+        .crm-card-glass:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--accent-info);
+            transform: scale(1.02);
+        }
+
+        .glass-socials {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .glass-btn {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+        
+        body.light-mode .glass-btn { background: rgba(0,0,0,0.05); }
+
+        .glass-btn:hover { background: var(--accent-purple); color: white; }
+
+        /* --- Style 5: Minimal List Row (Compact) --- */
+        .crm-row-minimal {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: 0.2s;
+        }
+        
+        .crm-row-minimal:first-child { border-top-left-radius: 16px; border-top-right-radius: 16px; }
+        .crm-row-minimal:last-child { border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; border-bottom: none; }
+        
+        .crm-row-minimal:hover { background: rgba(255,255,255,0.02); }
+        body.light-mode .crm-row-minimal:hover { background: rgba(0,0,0,0.02); }
+
+        /* =========================================
+           3. COPIED CORE STYLES (SIDEBAR ETC)
+           ========================================= */
+        /* (Mempertahankan style Sidebar, Navbar, dll dari code.txt) */
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            height: calc(100vh - 32px);
+            position: fixed;
+            top: 16px;
+            left: var(--sidebar-left-pos);
+            padding: 24px 0 24px var(--sidebar-padding-x);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            overflow: visible;
+        }
+        
+        /* Mobile & Collapse logic styles */
+        .mobile-menu-btn { position: fixed; top: 20px; left: 20px; z-index: 999; width: 44px; height: 44px; border-radius: 12px; display: none; align-items: center; justify-content: center; background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); border: none; color: white; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4); }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; backdrop-filter: blur(2px); }
+        .sidebar-overlay.show { opacity: 1; visibility: visible; }
+        .sidebar-header { margin-bottom: 20px; padding-left: 10px; display: flex; align-items: center; min-height: 40px; flex-shrink: 0; position: relative; }
+        .brand-logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.2rem; color: var(--text-main); width: 100%; }
+        .brand-logo img { height: 32px; width: auto; }
+        .sidebar-divider { height: 3px; background-color: rgba(255, 255, 255, 0.15); margin: 0 -16px 20px; flex-shrink: 0; border-radius: 2px; }
+        .nav-scrollable { flex-grow: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; display: flex; flex-direction: column; padding-right: 4px; margin-bottom: 20px; }
+        .nav-category { font-size: 0.68rem; padding: 0 16px; margin: 28px 0 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: #64748b; position: relative; }
+        .nav-category::before { content: ""; position: absolute; left: 16px; bottom: -5px; width: 18px; height: 2px; background: #475569; opacity: 0.4; border-radius: 100px; }
+        
+        .nav-link { color: var(--text-muted); padding: 10px 12px; border-radius: 12px; display: flex; align-items: center; gap: 12px; margin-bottom: 4px; margin-right: 12px; transition: all 0.2s; font-weight: 500; white-space: nowrap; flex-shrink: 0; border: 1px solid transparent; }
+        .nav-link:hover { color: var(--text-main); background-color: rgba(255, 255, 255, 0.03); }
+        .nav-link i:not(.arrow-icon) { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background-color: rgba(255, 255, 255, 0.03); border-radius: 10px; color: var(--text-muted); flex-shrink: 0; transition: all 0.3s; }
+        .arrow-icon { margin-left: auto; font-size: 0.8rem; transition: transform 0.3s ease; color: var(--text-muted); }
+        
+        .nav-link.active:not([data-bs-toggle="collapse"]), .nav-link.active-btn:not([data-bs-toggle="collapse"]) { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); color: white !important; box-shadow: 0 4px 10px rgba(236, 72, 153, 0.4); border-color: transparent; }
+        .nav-link.active:not([data-bs-toggle="collapse"]) i:not(.arrow-icon) { color: white !important; background-color: rgba(255, 255, 255, 0.2) !important; }
+        
+        /* Submenu */
+        .nav-link[data-bs-toggle="collapse"][aria-expanded="true"] .arrow-icon { transform: rotate(90deg); color: var(--text-main) !important; }
+        .nav-submenu { padding-left: 0; list-style: none; margin: 0; display: flex; flex-direction: column; gap: 2px; padding-top: 4px; padding-bottom: 4px; }
+        .nav-submenu .nav-link { padding-left: 50px; height: 40px; font-size: 0.85rem; margin: 0; margin-right: 12px; background: transparent !important; box-shadow: none !important; color: var(--text-muted) !important; opacity: 0.7; }
+        .collapse.show .nav-submenu .nav-link { opacity: 1; }
+        .nav-submenu .nav-link:hover { color: var(--text-main) !important; background-color: rgba(255, 255, 255, 0.05) !important; padding-left: 53px; opacity: 1; }
+        .nav-submenu .nav-link.active { background: rgba(255, 255, 255, 0.05) !important; font-weight: 700; opacity: 1; }
+        .nav-submenu .nav-link.active span { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Profile & Collapse */
+        .profile-wrapper { margin-top: auto; width: 100%; padding: 0 16px 16px 0px; flex-shrink: 0; position: relative; }
+        .user-profile-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 8px; border-radius: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; width: 100%; transition: all 0.3s; position: relative; overflow: hidden; }
+        .user-profile-btn:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(99, 102, 241, 0.5); transform: translateY(-2px); }
+        .avatar-modern { width: 42px; height: 42px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; }
+        .status-dot { position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; background-color: var(--accent-green); border: 3px solid var(--bg-sidebar); border-radius: 50%; z-index: 2; }
+        .user-info-modern { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .user-name-modern { font-size: 0.9rem; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-role-modern { font-size: 0.75rem; color: var(--text-muted); }
+        .sidebar-collapse-btn { position: absolute; top: 22px; right: -15px; width: 32px; height: 32px; background: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; z-index: 1001; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2); }
+        .sidebar.collapsed { width: var(--sidebar-width-collapsed); padding: 24px 12px; }
+        .sidebar.collapsed .logo-text, .sidebar.collapsed .nav-link span, .sidebar.collapsed .nav-category, .sidebar.collapsed .arrow-icon, .sidebar.collapsed .user-info-modern, .sidebar.collapsed .profile-chevron { display: none; }
+        .sidebar.collapsed .sidebar-header { justify-content: center; padding-left: 0; }
+        .sidebar.collapsed .nav-link, .sidebar.collapsed .user-profile-btn { justify-content: center; padding: 8px; margin-right: 0; }
+        .sidebar.collapsed .collapse { display: none !important; }
+        
+        /* Main Content */
+        .main-content { margin-left: calc(var(--sidebar-left-pos) + var(--sidebar-width) + 24px); width: calc(100% - (var(--sidebar-left-pos) + var(--sidebar-width) + 24px)); padding: 30px 30px 20px; transition: all 0.3s ease; flex-grow: 1; display: flex; flex-direction: column; }
+        body.sidebar-collapsed .main-content { margin-left: calc(var(--sidebar-left-pos) + var(--sidebar-width-collapsed) + 24px); width: calc(100% - (var(--sidebar-left-pos) + var(--sidebar-width-collapsed) + 24px)); }
+        
+        /* Topbar & Search */
+        .top-navbar-standalone { display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-bottom: 10px; }
+        .search-standalone-box { position: relative; width: 300px; }
+        .search-standalone-input { width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px 20px 12px 48px; color: var(--text-main); }
+        .search-standalone-input:focus { outline: none; border-color: var(--accent-purple); }
+        .search-standalone-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--accent-purple); }
+        .notification-btn { width: 46px; height: 46px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; position: relative; }
+        .notification-btn:hover { background: rgba(255, 255, 255, 0.05); color: var(--accent-purple); border-color: var(--accent-purple); }
+        .notification-dot-red { position: absolute; top: 10px; right: 12px; width: 8px; height: 8px; background-color: var(--accent-red); border-radius: 50%; }
+
+        /* Page Header */
+        .active-page-header { padding: 30px; border-radius: 24px; background-color: var(--bg-card); position: relative; margin-bottom: 3.5rem; border: 2px solid transparent; background-image: linear-gradient(var(--bg-card), var(--bg-card)), linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%); background-origin: border-box; background-clip: padding-box, border-box; box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15); }
+        .page-title-large { font-size: 2rem; margin-bottom: 0.5rem; font-weight: 800; background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
+        body.light-mode .page-title-large { background: none; -webkit-text-fill-color: var(--text-main); color: var(--text-main); }
+        .header-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; background: rgba(99, 102, 241, 0.1); color: var(--accent-purple); font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.2); white-space: nowrap; }
+        .breadcrumb-modern { display: inline-flex; align-items: center; background-color: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); padding: 6px 16px; border-radius: 50px; gap: 8px; font-size: 0.85rem; }
+        body.light-mode .breadcrumb-modern { background-color: rgba(0, 0, 0, 0.03); border-color: var(--border-color); }
+        .breadcrumb-item-custom { color: var(--text-muted); font-weight: 500; }
+        .breadcrumb-item-custom.active { color: var(--text-main); font-weight: 600; }
+        .breadcrumb-sep { font-size: 0.7rem; color: var(--text-muted); opacity: 0.6; }
+
+        /* Stats & Utils */
+        .analytic-box { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; height: 100%; transition: transform 0.2s; }
+        .analytic-box:hover { border-color: var(--accent-purple); }
+        .bg-soft-primary { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .bg-soft-success { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .bg-soft-danger { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        
+        .section-title-modern { font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 40px 0 20px; padding-left: 12px; border-left: 4px solid var(--accent-purple); letter-spacing: 0.5px; text-transform: uppercase; padding-bottom: 10px; }
+        .floating-btn { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: #6366f1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.5); cursor: pointer; z-index: 900; }
+        .footer-dashboard { padding-top: 2rem; margin-bottom: 0.5rem; border-top: 1px solid var(--border-color); }
+        .footer-link { color: var(--text-muted); font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-120%); width: 260px !important; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; width: 100%; padding: 20px; }
+            .mobile-menu-btn { display: flex; }
+            .top-navbar-standalone { padding-left: 70px; }
+            .search-standalone-box { width: 100%; }
+        }
+</style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness" aria-expanded="true">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse show" id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="/products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link "><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link active"><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link"><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link"><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link"><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link"><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Navbar -->
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari sesuatu...">
+                </div>
+
+                <!-- [NEW] Notification Bell with Red Dot -->
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p>
+                                    <span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p>
+                                    <span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p>
+                                    <span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER -->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Customers Management</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">
+                            Mengelola informasi pelanggan, memantau aktivitas, dan memperkuat strategi CRM
+                        </p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-people-fill"></i> CRM SYSTEM V.2.0</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><i class="bi bi-house-door-fill"></i></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">E-Commerce</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">CRM</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATS OVERVIEW -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><p class="text-muted small mb-1">Total Pelanggan</p><h3 class="fw-bold mb-0">8,245</h3></div>
+                            <div class="badge bg-soft-primary p-2 rounded-3"><i class="bi bi-people"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><p class="text-muted small mb-1">Pelanggan Baru</p><h3 class="fw-bold mb-0 text-success">+125</h3></div>
+                            <div class="badge bg-soft-success p-2 rounded-3"><i class="bi bi-graph-up-arrow"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div><p class="text-muted small mb-1">Churn Rate</p><h3 class="fw-bold mb-0 text-danger">2.4%</h3></div>
+                            <div class="badge bg-soft-danger p-2 rounded-3"><i class="bi bi-person-x"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3 bg-soft-primary border-primary border-opacity-25">
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <div><h6 class="fw-bold text-primary mb-1">Tambah Member</h6><small class="text-muted">Formulir Manual</small></div>
+                            <button class="btn btn-primary rounded-circle" style="width: 40px; height: 40px;"><i class="bi bi-plus-lg"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STYLE 1: GRADIENT CARD (WAJIB - MODIFIKASI UNTUK ORANG) -->
+            <div class="d-flex align-items-center justify-content-between mt-2">
+                <div class="section-title-modern mt-0 mb-3">Style 1: Premium Member Card (Gradient)</div>
+                <button class="btn btn-sm btn-outline-secondary rounded-pill">Lihat Semua</button>
+            </div>
+            <p class="text-muted small mb-4">Kartu visual tinggi untuk menampilkan pelanggan VIP atau Top Spender.</p>
+
+            <div class="row g-4">
+                <!-- Card 1 -->
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="crm-card-gradient">
+                        <div class="crm-gradient-header"></div>
+                        <div class="avatar-wrapper">
+                            <div class="avatar-xl position-relative">
+                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" class="crm-avatar-img" alt="User">
+                                <div class="verified-badge"><i class="bi bi-check-lg"></i></div>
+                            </div>
+                        </div>
+                        <div class="crm-content-gradient">
+                            <h5 class="crm-name-gradient">Sarah Jenkins</h5>
+                            <span class="crm-role-gradient">VIP Platinum</span>
+                            
+                            <div class="crm-stats-row">
+                                <div class="crm-stat-item">
+                                    <h5>45</h5><span>Orders</span>
+                                </div>
+                                <div class="crm-stat-item">
+                                    <h5>$8.2k</h5><span>Spent</span>
+                                </div>
+                                <div class="crm-stat-item">
+                                    <h5>4.9</h5><span>Rating</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button class="btn-crm-gradient"><i class="bi bi-chat-text-fill"></i> Hubungi</button>
+                                <button class="btn btn-dark border border-secondary rounded-3"><i class="bi bi-three-dots"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="crm-card-gradient">
+                        <div class="crm-gradient-header" style="background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);"></div>
+                        <div class="avatar-wrapper">
+                            <div class="avatar-xl position-relative">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" class="crm-avatar-img" alt="User">
+                            </div>
+                        </div>
+                        <div class="crm-content-gradient">
+                            <h5 class="crm-name-gradient">Michael Chen</h5>
+                            <span class="crm-role-gradient text-success">Reseller Gold</span>
+                            
+                            <div class="crm-stats-row">
+                                <div class="crm-stat-item">
+                                    <h5>128</h5><span>Orders</span>
+                                </div>
+                                <div class="crm-stat-item">
+                                    <h5>$15k</h5><span>Spent</span>
+                                </div>
+                                <div class="crm-stat-item">
+                                    <h5>2th</h5><span>Active</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button class="btn-crm-gradient" style="background: linear-gradient(90deg, #3b82f6, #10b981);"><i class="bi bi-chat-text-fill"></i> Hubungi</button>
+                                <button class="btn btn-dark border border-secondary rounded-3"><i class="bi bi-three-dots"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="crm-card-gradient">
+                        <div class="crm-gradient-header" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);"></div>
+                        <div class="avatar-wrapper">
+                            <div class="avatar-xl position-relative">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" class="crm-avatar-img" alt="User">
+                            </div>
+                        </div>
+                        <div class="crm-content-gradient">
+                            <h5 class="crm-name-gradient">Amelia Wilson</h5>
+                            <span class="crm-role-gradient text-warning">Dropshipper</span>
+                            
+                            <div class="crm-stats-row">
+                                <div class="crm-stat-item">
+                                    <h5>22</h5><span>Orders</span>
+                                </div>
+                                <div class="crm-stat-item">
+                                    <h5>$1.2k</h5><span>Spent</span>
+                                </div>
+                                <div class="crm-stat-item">
+                                    <h5>5hr</h5><span>Last Seen</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button class="btn-crm-gradient" style="background: linear-gradient(90deg, #f59e0b, #ef4444);"><i class="bi bi-chat-text-fill"></i> Hubungi</button>
+                                <button class="btn btn-dark border border-secondary rounded-3"><i class="bi bi-three-dots"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 (New User) -->
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="crm-card-gradient">
+                        <div class="crm-gradient-header" style="background: linear-gradient(135deg, #64748b 0%, #334155 100%); opacity: 0.8;"></div>
+                        <div class="avatar-wrapper">
+                            <div class="avatar-xl position-relative">
+                                <div class="crm-avatar-img d-flex align-items-center justify-content-center bg-secondary text-white fs-3 fw-bold">JP</div>
+                            </div>
+                        </div>
+                        <div class="crm-content-gradient">
+                            <h5 class="crm-name-gradient">James Potter</h5>
+                            <span class="crm-role-gradient text-muted">New Member</span>
+                            
+                            <div class="crm-stats-row">
+                                <div class="crm-stat-item">
+                                    <h5>1</h5><span>Orders</span>
+                                </div>
+                                <div class="crm-stat-item">
+                                    <h5>$50</h5><span>Spent</span>
+                                </div>
+                                <div class="crm-stat-item">
+                                    <h5>Now</h5><span>Active</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button class="btn-crm-gradient" style="background: var(--border-color);"><i class="bi bi-envelope-fill"></i> Welcome</button>
+                                <button class="btn btn-dark border border-secondary rounded-3"><i class="bi bi-three-dots"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STYLE 2: OUTLINE CARD (WAJIB - TEKNIS/DATA) -->
+            <div class="section-title-modern">Style 2: Technical Outline (Data Focused)</div>
+            <p class="text-muted small mb-4">Layout bersih dengan fokus pada data kontak dan label, cocok untuk admin/CS.</p>
+
+            <div class="row g-4">
+                <!-- Outline 1 -->
+                <div class="col-xl-3 col-md-6">
+                    <div class="crm-card-outline">
+                        <span class="crm-outline-id">#CUST-8821</span>
+                        <div class="crm-outline-top">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80" class="rounded-3" width="60" height="60" style="object-fit: cover;">
+                            <div>
+                                <h6 class="fw-bold mb-1">Robert Fox</h6>
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1">Active User</span>
+                            </div>
+                        </div>
+                        
+                        <ul class="crm-contact-list">
+                            <li class="crm-contact-item"><i class="bi bi-envelope crm-contact-icon"></i> robert.fox@example.com</li>
+                            <li class="crm-contact-item"><i class="bi bi-telephone crm-contact-icon"></i> +1 (555) 002-341</li>
+                            <li class="crm-contact-item"><i class="bi bi-geo-alt crm-contact-icon"></i> Jakarta Selatan, ID</li>
+                        </ul>
+
+                        <div class="crm-tags-wrapper">
+                            <span class="crm-tag">Wholesale</span>
+                            <span class="crm-tag">Tech</span>
+                            <button class="btn btn-sm btn-light ms-auto py-0 px-2 border" title="Edit"><i class="bi bi-pencil small"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outline 2 -->
+                <div class="col-xl-3 col-md-6">
+                    <div class="crm-card-outline">
+                        <span class="crm-outline-id">#CUST-9902</span>
+                        <div class="crm-outline-top">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=100&q=80" class="rounded-3" width="60" height="60" style="object-fit: cover;">
+                            <div>
+                                <h6 class="fw-bold mb-1">Jenny Wilson</h6>
+                                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-2 py-1">Pending Review</span>
+                            </div>
+                        </div>
+                        
+                        <ul class="crm-contact-list">
+                            <li class="crm-contact-item"><i class="bi bi-envelope crm-contact-icon"></i> jenny.w@example.com</li>
+                            <li class="crm-contact-item"><i class="bi bi-telephone crm-contact-icon"></i> +62 812-3333-0000</li>
+                            <li class="crm-contact-item"><i class="bi bi-geo-alt crm-contact-icon"></i> Bandung, ID</li>
+                        </ul>
+
+                        <div class="crm-tags-wrapper">
+                            <span class="crm-tag">Retail</span>
+                            <button class="btn btn-sm btn-light ms-auto py-0 px-2 border" title="Edit"><i class="bi bi-pencil small"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outline 3 -->
+                <div class="col-xl-3 col-md-6">
+                    <div class="crm-card-outline" style="border-style: dashed; border-color: var(--text-muted); opacity: 0.6;">
+                        <span class="crm-outline-id">#DRAFT</span>
+                        <div class="crm-outline-top">
+                            <div class="bg-secondary bg-opacity-25 rounded-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-person text-muted"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-muted">Unknown User</h6>
+                                <span class="badge bg-secondary bg-opacity-10 text-muted rounded-pill px-2 py-1">Inactive</span>
+                            </div>
+                        </div>
+                        
+                        <ul class="crm-contact-list">
+                            <li class="crm-contact-item">No email provided</li>
+                            <li class="crm-contact-item">No phone provided</li>
+                            <li class="crm-contact-item">No address</li>
+                        </ul>
+
+                        <div class="crm-tags-wrapper">
+                            <span class="crm-tag">Lead</span>
+                            <button class="btn btn-sm btn-light ms-auto py-0 px-2 border" title="Edit"><i class="bi bi-pencil small"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STYLE 3: LOYALTY CARD (GAMIFICATION) -->
+            <div class="section-title-modern">Style 3: Loyalty & Gamification</div>
+            <p class="text-muted small mb-4">Menampilkan progres pelanggan, poin, dan tier keanggotaan.</p>
+
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="crm-card-loyalty">
+                        <div class="loyalty-bg-shape"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="d-flex gap-3 align-items-center">
+                                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" class="rounded-circle border border-2 border-warning" width="50" height="50" alt="u">
+                                <div>
+                                    <h6 class="fw-bold mb-0">Eleanor Pena</h6>
+                                    <span class="small text-muted">Bergabung 2023</span>
+                                </div>
+                            </div>
+                            <div class="tier-badge tier-gold"><i class="bi bi-star-fill"></i> GOLD</div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between small fw-bold">
+                                <span>XP Points: 8,450</span>
+                                <span class="text-warning">Target: 10,000</span>
+                            </div>
+                            <div class="xp-progress">
+                                <div class="xp-bar bg-warning" style="width: 84%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2 align-items-center">
+                                <span class="small text-muted">Next Tier: Platinum</span>
+                                <button class="btn btn-sm btn-ghost text-warning p-0" style="font-size: 0.8rem;">View Perks <i class="bi bi-arrow-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="crm-card-loyalty">
+                        <div class="loyalty-bg-shape" style="background: radial-gradient(circle, #ec4899 0%, transparent 70%);"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="d-flex gap-3 align-items-center">
+                                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&q=80" class="rounded-circle border border-2 border-white" width="50" height="50" alt="u">
+                                <div>
+                                    <h6 class="fw-bold mb-0">Jane Cooper</h6>
+                                    <span class="small text-muted">Bergabung 2021</span>
+                                </div>
+                            </div>
+                            <div class="tier-badge tier-platinum"><i class="bi bi-trophy-fill"></i> PLATINUM</div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between small fw-bold">
+                                <span>XP Points: 25,000</span>
+                                <span class="text-pink">Max Level</span>
+                            </div>
+                            <div class="xp-progress">
+                                <div class="xp-bar bg-primary" style="background: linear-gradient(90deg, #ec4899, #8b5cf6); width: 100%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2 align-items-center">
+                                <span class="small text-muted">VIP Access Unlocked</span>
+                                <button class="btn btn-sm btn-ghost text-primary p-0" style="font-size: 0.8rem;">Rewards <i class="bi bi-gift"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="crm-card-loyalty">
+                        <div class="loyalty-bg-shape" style="background: radial-gradient(circle, #94a3b8 0%, transparent 70%);"></div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="d-flex gap-3 align-items-center">
+                                <div class="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="bi bi-person"></i></div>
+                                <div>
+                                    <h6 class="fw-bold mb-0">Guest User</h6>
+                                    <span class="small text-muted">Belum terdaftar</span>
+                                </div>
+                            </div>
+                            <div class="tier-badge tier-silver"><i class="bi bi-shield"></i> SILVER</div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between small fw-bold">
+                                <span>XP Points: 120</span>
+                                <span class="text-muted">Target: 1,000</span>
+                            </div>
+                            <div class="xp-progress">
+                                <div class="xp-bar bg-secondary" style="width: 12%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2 align-items-center">
+                                <span class="small text-muted">Complete profile to earn XP</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STYLE 4: GLASSMORPHISM & STYLE 5: COMPACT LIST (NEW VARIATIONS) -->
+            <div class="row mt-5">
+                <div class="col-lg-6">
+                    <div class="section-title-modern mt-0">Style 4: Glassmorphism Floating</div>
+                    <p class="text-muted small mb-4">Gaya modern, mengambang, dengan aksi sosial cepat.</p>
+                    
+                    <div class="d-flex flex-column gap-3">
+                        <!-- Glass Item 1 -->
+                        <div class="crm-card-glass">
+                            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=100&q=80" class="rounded-circle" width="56" height="56" style="object-fit: cover;">
+                            <div>
+                                <h6 class="fw-bold mb-0 text-main">Dianne Russell</h6>
+                                <span class="small text-muted">Influencer</span>
+                            </div>
+                            <div class="glass-socials">
+                                <a href="#" class="glass-btn"><i class="bi bi-instagram"></i></a>
+                                <a href="#" class="glass-btn"><i class="bi bi-twitter"></i></a>
+                                <a href="#" class="glass-btn"><i class="bi bi-whatsapp"></i></a>
+                            </div>
+                        </div>
+
+                        <!-- Glass Item 2 -->
+                        <div class="crm-card-glass">
+                            <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=100&q=80" class="rounded-circle" width="56" height="56" style="object-fit: cover;">
+                            <div>
+                                <h6 class="fw-bold mb-0 text-main">Esther Howard</h6>
+                                <span class="small text-muted">Brand Partner</span>
+                            </div>
+                            <div class="glass-socials">
+                                <a href="#" class="glass-btn"><i class="bi bi-linkedin"></i></a>
+                                <a href="#" class="glass-btn"><i class="bi bi-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="section-title-modern mt-0">Style 5: Compact List (Detailed)</div>
+                    <p class="text-muted small mb-4">Daftar baris yang efisien untuk menampilkan banyak data.</p>
+                    
+                    <div class="bg-card border border-color rounded-4 overflow-hidden">
+                        <!-- Row 1 -->
+                        <div class="crm-row-minimal">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="avatar-md bg-primary bg-opacity-25 text-primary d-flex align-items-center justify-content-center rounded-circle fw-bold">AR</div>
+                                <div>
+                                    <div class="fw-bold small">Albert Robertson</div>
+                                    <div class="text-muted" style="font-size: 0.7rem;">albert@mail.com</div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="badge bg-success bg-opacity-10 text-success rounded-pill px-2">Paid</div>
+                            </div>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div class="crm-row-minimal">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&q=80" class="avatar-md rounded-circle object-fit-cover">
+                                <div>
+                                    <div class="fw-bold small">Floyd Miles</div>
+                                    <div class="text-muted" style="font-size: 0.7rem;">floyd@mail.com</div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-2">Unpaid</div>
+                            </div>
+                        </div>
+
+                        <!-- Row 3 -->
+                        <div class="crm-row-minimal">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" class="avatar-md rounded-circle object-fit-cover">
+                                <div>
+                                    <div class="fw-bold small">Savannah Nguyen</div>
+                                    <div class="text-muted" style="font-size: 0.7rem;">savannah@mail.com</div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2">Churned</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025 <strong class="text-white">Nexus Admin</strong>. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan Privasi</a>
+                            <a href="#" class="footer-link">Syarat & Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Theme Toggle Floating (Maintained) -->
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/script.js"></script>
+
+</body>
+
+</html>

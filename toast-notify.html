@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Toast Notifications</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- 1. Toastify CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- 2. Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- 3. SweetAlert2 is JS only for CSS typically, but we ensure theme compatibility via JS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* ======================================================================
+           4. TOAST SPECIFIC STYLES
+           ====================================================================== */
+
+        /* Code Snippet Box Styling */
+        .code-preview {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-preview pre {
+            margin: 0;
+            color: #d1d5db;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            color: #9ca3af;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-bottom-left-radius: 8px;
+        }
+
+        /* Toastify Custom Override for Theme Compatibility */
+        .toastify {
+            border-radius: 12px !important;
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 500 !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        /* Toastr Custom Override */
+        #toast-container>.toast {
+            background-image: none !important;
+            /* Remove default icons to stick to theme if wanted, but we'll keep icons */
+            opacity: 1 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+            border-radius: 12px !important;
+        }
+
+        /* Dark Mode fix for Toastr default white text usually ok, but bg needs tweaking */
+        #toast-container>.toast-success {
+            background-color: var(--accent-green) !important;
+        }
+
+        #toast-container>.toast-error {
+            background-color: var(--accent-red) !important;
+        }
+
+        #toast-container>.toast-info {
+            background-color: var(--accent-info) !important;
+        }
+
+        #toast-container>.toast-warning {
+            background-color: var(--accent-orange) !important;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-120%);
+                width: 260px !important;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-navbar-standalone {
+                justify-content: flex-start;
+                padding-left: 55px;
+            }
+
+            .search-standalone-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse" id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="/products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link "><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link "><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link "><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link "><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link "><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse " id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link "><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link "><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link "><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI" aria-expanded="true"><i
+                        class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link "><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link "><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link "><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link "><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link "><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link active"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari...">
+                </div>
+
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p><span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p><span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p><span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Toast Notify</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">Notifikasi mengambang
+                            yang ringan dan non-blokir untuk memberikan umpan balik kepada pengguna.</p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-bell"></i> ALERTS</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><span class="breadcrumb-home-icon"><i
+                                            class="bi bi-house-door-fill"></i></span></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Komponen UI</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Toasts</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 1: TOASTIFY JS -->
+            <h6 class="section-title-modern">Toastify JS (Modern & Lightweight)</h6>
+            <div class="row g-4 mb-5">
+                <div class="col-lg-6">
+                    <div class="widget-card h-100">
+                        <div class="card-header-custom border-0 p-0 mb-3">
+                            <h5 class="fw-bold">Gradient & Basic Styles</h5>
+                            <p class="text-muted small">Gaya modern menggunakan vanilla JS tanpa dependensi.</p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button class="btn text-white btn-sm" onclick="showToastifySuccess()"
+                                style="background: linear-gradient(135deg, #10b981, #3b82f6);">Success Gradient</button>
+                            <button class="btn text-white btn-sm" onclick="showToastifyError()"
+                                style="background: linear-gradient(135deg, #ef4444, #f59e0b);">Error Gradient</button>
+                            <button class="btn btn-dark btn-sm" onclick="showToastifyDark()">Dark Mode</button>
+                        </div>
+                        <div class="code-preview">
+                            <span class="code-label">JS Code</span>
+                            <pre>Toastify({
+  text: "Data berhasil disimpan!",
+  duration: 3000,
+  gravity: "top", // top or bottom
+  position: "right", // left, center or right
+  style: {
+    background: "linear-gradient(135deg, #10b981, #3b82f6)",
+  }
+}).showToast();</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="widget-card h-100">
+                        <div class="card-header-custom border-0 p-0 mb-3">
+                            <h5 class="fw-bold">Positioning</h5>
+                            <p class="text-muted small">Posisi fleksibel di layar.</p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button class="btn btn-outline-secondary btn-sm" onclick="showToastifyTopLeft()">Top
+                                Left</button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="showToastifyTopCenter()">Top
+                                Center</button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="showToastifyBottomRight()">Bottom
+                                Right</button>
+                        </div>
+                        <div class="code-preview">
+                            <span class="code-label">JS Code</span>
+                            <pre>Toastify({
+  text: "Notifikasi di kiri atas",
+  gravity: "top", 
+  position: "left",
+  style: { background: "#3b82f6" }
+}).showToast();</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: SWEETALERT2 (TOAST MODE) -->
+            <h6 class="section-title-modern">SweetAlert2 (Toast Mode)</h6>
+            <div class="row g-4 mb-5">
+                <div class="col-12">
+                    <div class="widget-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="fw-bold">SweetAlert Mixin</h5>
+                                <p class="text-muted small mb-0">Menggunakan SweetAlert2 sebagai toast notification yang
+                                    elegan.</p>
+                            </div>
+                            <img src="https://sweetalert2.github.io/images/SweetAlert2.png" height="30" alt="SA2">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <button class="btn btn-success btn-sm text-white"
+                                        onclick="showSwalSuccess()">Success Toast</button>
+                                    <button class="btn btn-warning btn-sm text-white"
+                                        onclick="showSwalWarning()">Warning Toast</button>
+                                    <button class="btn btn-danger btn-sm text-white" onclick="showSwalError()">Error
+                                        Toast</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="code-preview mt-0 h-100">
+                                    <span class="code-label">JS Configuration</span>
+                                    <pre>const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  background: '#1f2937', // Sesuaikan tema
+  color: '#fff'
+});
+
+Toast.fire({
+  icon: 'success',
+  title: 'Signed in successfully'
+})</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: TOASTR (CLASSIC JQUERY) -->
+            <h6 class="section-title-modern">Toastr (jQuery Required)</h6>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="widget-card h-100">
+                        <h5 class="fw-bold mb-3">Info & Success</h5>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-info text-white btn-sm"
+                                onclick="toastr.info('Ada pesan baru masuk.', 'Informasi')">Info Message</button>
+                            <button class="btn btn-success text-white btn-sm"
+                                onclick="toastr.success('Data profile telah diperbarui.', 'Berhasil')">Success
+                                Message</button>
+                        </div>
+                        <div class="code-preview">
+                            <pre>toastr.success('Pesan', 'Judul');
+toastr.info('Pesan', 'Judul');</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="widget-card h-100">
+                        <h5 class="fw-bold mb-3">Warning & Error</h5>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-warning text-white btn-sm"
+                                onclick="toastr.warning('Koneksi internet tidak stabil.', 'Peringatan')">Warning
+                                Message</button>
+                            <button class="btn btn-danger text-white btn-sm"
+                                onclick="toastr.error('Gagal menghubungi server.', 'Error 500')">Error Message</button>
+                        </div>
+                        <div class="code-preview">
+                            <pre>toastr.warning('Pesan', 'Judul');
+toastr.error('Pesan', 'Judul');</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="widget-card h-100">
+                        <h5 class="fw-bold mb-3">Configuration</h5>
+                        <p class="text-muted small">Contoh pengaturan global untuk Toastr.</p>
+                        <div class="code-preview mt-0">
+                            <pre>toastr.options = {
+  "closeButton": true,
+  "progressBar": true,
+  "positionClass": "toast-top-right",
+  "timeOut": "5000"
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025 <strong class="text-white">Nexus
+                                Admin</strong>. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan Privasi</a>
+                            <a href="#" class="footer-link">Syarat & Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <!-- 1. jQuery (Required for Toastr) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- 2. Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 3. Toastify JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <!-- 4. Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- 5. SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="assets/js/script.js"></script>
+    <script>
+        // --- TOASTIFY FUNCTIONS ---
+        function showToastifySuccess() {
+            Toastify({
+                text: "Data berhasil disimpan!",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+                style: {
+                    background: "linear-gradient(135deg, #10b981, #3b82f6)",
+                }
+            }).showToast();
+        }
+
+        function showToastifyError() {
+            Toastify({
+                text: "Terjadi kesalahan sistem!",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "linear-gradient(135deg, #ef4444, #f59e0b)",
+                }
+            }).showToast();
+        }
+
+        function showToastifyDark() {
+            Toastify({
+                text: "Dark mode notification",
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "#1f2937",
+                    border: "1px solid #374151",
+                    color: "#fff"
+                }
+            }).showToast();
+        }
+
+        function showToastifyTopLeft() {
+            Toastify({ text: "Notifikasi di Kiri Atas", gravity: "top", position: "left", style: { background: "#6366f1" } }).showToast();
+        }
+        function showToastifyTopCenter() {
+            Toastify({ text: "Notifikasi di Tengah Atas", gravity: "top", position: "center", style: { background: "#8b5cf6" } }).showToast();
+        }
+        function showToastifyBottomRight() {
+            Toastify({ text: "Notifikasi di Kanan Bawah", gravity: "bottom", position: "right", style: { background: "#ec4899" } }).showToast();
+        }
+
+        // --- SWEETALERT2 FUNCTIONS ---
+        // Mixin Config
+        const SwalToast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        function showSwalSuccess() {
+            // Determine background based on current theme for best look
+            const isLight = document.body.classList.contains('light-mode');
+            SwalToast.fire({
+                icon: 'success',
+                title: 'Login berhasil!',
+                background: isLight ? '#fff' : '#1f2937',
+                color: isLight ? '#1f2937' : '#fff'
+            })
+        }
+
+        function showSwalWarning() {
+            const isLight = document.body.classList.contains('light-mode');
+            SwalToast.fire({
+                icon: 'warning',
+                title: 'Periksa koneksi Anda',
+                background: isLight ? '#fff' : '#1f2937',
+                color: isLight ? '#1f2937' : '#fff'
+            })
+        }
+
+        function showSwalError() {
+            const isLight = document.body.classList.contains('light-mode');
+            SwalToast.fire({
+                icon: 'error',
+                title: 'Gagal menghapus data',
+                background: isLight ? '#fff' : '#1f2937',
+                color: isLight ? '#1f2937' : '#fff'
+            })
+        }
+
+        // --- TOASTR CONFIG ---
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+
+    </script>
+</body>
+
+</html>

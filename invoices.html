@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - invoices</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* ======================================================================
+           GLOBAL ADDON: INVOICE VARIATIONS & SWITCHER
+           ====================================================================== */
+
+        /* Demo Toolbar Control */
+        .demo-toolbar {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px dashed var(--accent-purple);
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .demo-toolbar-label {
+            font-weight: 700;
+            color: var(--accent-purple);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-select-custom {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            min-width: 250px;
+        }
+
+        /* --- UTILITIES --- */
+        .text-purple {
+            color: var(--accent-purple) !important;
+        }
+
+        .text-green {
+            color: var(--accent-green) !important;
+        }
+
+        .text-red {
+            color: var(--accent-red) !important;
+        }
+
+        .bg-soft-purple {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+        }
+
+        .bg-soft-green {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+        }
+
+        .bg-soft-red {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        .bg-soft-orange {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent-orange);
+        }
+
+        /* Badge Status Global (Digunakan di semua variasi) */
+        .badge-status {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-paid {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-unpaid {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-orange);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        /* --- VAR 1: Clean Outline --- */
+        .table-outline {
+            border: 1px solid var(--border-color);
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table-outline th {
+            background: transparent;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            padding: 16px;
+            text-align: left;
+        }
+
+        .table-outline td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            color: var(--text-main);
+        }
+
+        .table-outline tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-outline tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        body.light-mode .table-outline tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        /* --- VAR 2: Premium Gradient Header --- */
+        .thead-gradient th {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue)) !important;
+            color: white !important;
+            border: none;
+            padding: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .thead-gradient th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .thead-gradient th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        /* --- VAR 3: Modern Card Stack --- */
+        .invoice-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .invoice-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-purple);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-stack-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+
+        /* --- VAR 4: Table Professional --- */
+        .table-pro {
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .table-pro th {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+            color: var(--text-muted);
+        }
+
+        body.light-mode .table-pro th {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .table-pro td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        .table-pro tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+
+        body.light-mode .table-pro tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        /* --- VAR 5: Minimalist --- */
+        .table-minimal th {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 20px 10px;
+            text-align: left;
+        }
+
+        .table-minimal td {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 10px;
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        .table-minimal tr:last-child td {
+            border: none;
+        }
+
+        /* --- VAR 6: Compact Mobile Friendly --- */
+        .mobile-list-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- VAR 7: Floating Glass Panel --- */
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        body.light-mode .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- VAR 8: Sidebar Detail Layout --- */
+        .split-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 24px;
+            height: 600px;
+        }
+
+        .split-list {
+            overflow-y: auto;
+            padding-right: 10px;
+            height: 100%;
+        }
+
+        .split-detail {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            overflow-y: auto;
+            height: 100%;
+            position: relative;
+        }
+
+        .split-item {
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: var(--bg-card);
+        }
+
+        .split-item:hover,
+        .split-item.active {
+            border-color: var(--accent-purple);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        /* --- VAR 10: Print Ready --- */
+        .print-sheet {
+            background: white;
+            color: #1f2937;
+            padding: 50px;
+            border-radius: 4px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            margin: 0 auto 30px;
+            position: relative;
+            font-family: 'Times New Roman', serif;
+        }
+
+        body.light-mode .print-sheet {
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .print-sheet h1,
+        .print-sheet h2,
+        .print-sheet h3 {
+            color: #111827;
+        }
+
+        .print-sheet .table td,
+        .print-sheet .table th {
+            color: #374151;
+            border-color: #e5e7eb;
+        }
+
+        /* --- VAR 11: Dashboard Combo --- */
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+
+        /* --- VAR 12: Invoice Manager (Filter) --- */
+        .filter-sidebar {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-check-custom {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-check-custom input {
+            background: var(--bg-dark);
+            border-color: var(--border-color);
+        }
+
+        /* Animation Utils */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.4s ease forwards;
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse" id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="/products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link "><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link "><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance" aria-expanded="true"><i
+                        class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link "><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link "><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link "><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link active"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link"><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Navbar -->
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari sesuatu...">
+                </div>
+
+                <!-- [NEW] Notification Bell with Red Dot -->
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p>
+                                    <span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p>
+                                    <span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p>
+                                    <span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER-->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">invoices</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">
+                            Kelola invoice, kontrol arus pembayaran, dan tingkatkan efisiensi keuangan
+
+                        </p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-box-seam"></i>invoices</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><i
+                                        class="bi bi-house-door-fill"></i></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">E-Commerce</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">invoices</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END OF PAGE HEADER -->
+            <!-- DEMO CONTROL BAR (TERPISAH DARI UI APLIKASI) -->
+            <div class="demo-toolbar">
+                <div class="demo-toolbar-label">
+                    <i class="bi bi-code-square"></i> Developer Preview: Invoice Style
+                </div>
+                <select id="styleSwitcher" class="form-select-custom" onchange="toggleView(this.value)">
+                    <option value="view1">1. Clean Outline</option>
+                    <option value="view2">2. Premium Gradient Header</option>
+                    <option value="view3">3. Modern Card Stack</option>
+                    <option value="view4">4. Table Professional</option>
+                    <option value="view5">5. Minimalist White/Dark</option>
+                    <option value="view6">6. Compact Mobile Friendly</option>
+                    <option value="view7">7. Floating Glass Panel</option>
+                    <option value="view8">8. Sidebar Detail Layout</option>
+                    <option value="view9">9. Analytical Summary</option>
+                    <option value="view10">10. Print-Ready Full Page</option>
+                    <option value="view11">11. Dashboard Combo</option>
+                    <option value="view12" selected>12. Invoice Manager (Pro)</option>
+                </select>
+            </div>
+
+            <!-- START OF CONTENT HERE -->
+            <!-- CONTAINER VARIATION (HTML STATIC - COPY PASTE READY) -->
+            <div id="demoContainer">
+
+                <!-- VIEW 1: Clean Outline -->
+                <div id="view1" class="invoice-view d-none">
+                    <div class="card"
+                        style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;">
+                        <div class="card-header-custom">
+                            <h5 class="mb-0 fw-bold">Invoice List</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table-outline">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice ID</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold text-purple">INV-2025-001</td>
+                                        <td>PT. Digital Solusi</td>
+                                        <td class="text-muted">12/01/2025</td>
+                                        <td class="fw-bold">Rp 4.500.000</td>
+                                        <td><span class="badge badge-status badge-paid">Paid</span></td>
+                                        <td class="text-end"><button class="btn btn-sm btn-outline-secondary"><i
+                                                    class="bi bi-three-dots"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-purple">INV-2025-002</td>
+                                        <td>CV. Maju Jaya</td>
+                                        <td class="text-muted">14/01/2025</td>
+                                        <td class="fw-bold">Rp 2.100.000</td>
+                                        <td><span class="badge badge-status badge-pending">Pending</span></td>
+                                        <td class="text-end"><button class="btn btn-sm btn-outline-secondary"><i
+                                                    class="bi bi-three-dots"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: Premium Gradient -->
+                <div id="view2" class="invoice-view d-none">
+                    <div class="card border-0 shadow-lg"
+                        style="background: var(--bg-card); border-radius: 16px; overflow: hidden;">
+                        <div class="table-responsive">
+                            <table class="table mb-0" style="width:100%">
+                                <thead class="thead-gradient">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>CLIENT</th>
+                                        <th>ISSUED DATE</th>
+                                        <th>TOTAL</th>
+                                        <th>STATUS</th>
+                                        <th class="text-end">OPTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-main);">
+                                        <td class="p-3 fw-bold">INV-001</td>
+                                        <td class="p-3">Global Tech Inc</td>
+                                        <td class="p-3 text-muted">20/01/2025</td>
+                                        <td class="p-3 fw-bold">Rp 15.000.000</td>
+                                        <td class="p-3"><span class="badge badge-status badge-paid">Paid</span></td>
+                                        <td class="p-3 text-end"><i class="bi bi-three-dots-vertical text-muted"></i>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-main);">
+                                        <td class="p-3 fw-bold">INV-002</td>
+                                        <td class="p-3">StartUp Kita</td>
+                                        <td class="p-3 text-muted">22/01/2025</td>
+                                        <td class="p-3 fw-bold">Rp 8.750.000</td>
+                                        <td class="p-3"><span class="badge badge-status badge-unpaid">Unpaid</span></td>
+                                        <td class="p-3 text-end"><i class="bi bi-three-dots-vertical text-muted"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: Modern Card Stack -->
+                <div id="view3" class="invoice-view d-none">
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="invoice-card">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="card-stack-icon bg-soft-purple"><i
+                                            class="bi bi-receipt text-purple"></i></div>
+                                    <span class="badge badge-status badge-paid">Paid</span>
+                                </div>
+                                <h5 class="fw-bold text-main mb-1">Rp 4.500.000</h5>
+                                <p class="text-muted small mb-3">INV-2025-001</p>
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <div
+                                        style="width:24px; height:24px; background:var(--accent-purple); border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:10px;">
+                                        A</div>
+                                    <span class="small text-main">PT. Digital Solusi</span>
+                                </div>
+                                <div class="border-top"
+                                    style="border-color: var(--border-color) !important; opacity: 0.5; margin: 15px 0;">
+                                </div>
+                                <button class="btn btn-sm w-100 btn-outline-primary"
+                                    style="border-color: var(--border-color); color: var(--text-muted);">View
+                                    Details</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="invoice-card">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div class="card-stack-icon bg-soft-orange"><i
+                                            class="bi bi-receipt text-orange"></i></div>
+                                    <span class="badge badge-status badge-pending">Pending</span>
+                                </div>
+                                <h5 class="fw-bold text-main mb-1">Rp 2.100.000</h5>
+                                <p class="text-muted small mb-3">INV-2025-002</p>
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <div
+                                        style="width:24px; height:24px; background:var(--accent-blue); border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:10px;">
+                                        B</div>
+                                    <span class="small text-main">CV. Maju Jaya</span>
+                                </div>
+                                <div class="border-top"
+                                    style="border-color: var(--border-color) !important; opacity: 0.5; margin: 15px 0;">
+                                </div>
+                                <button class="btn btn-sm w-100 btn-outline-primary"
+                                    style="border-color: var(--border-color); color: var(--text-muted);">View
+                                    Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: Table Professional -->
+                <div id="view4" class="invoice-view d-none">
+                    <div class="card"
+                        style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;">
+                        <div class="table-responsive">
+                            <table class="table-pro">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice ID</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold text-purple">INV-PRO-001</td>
+                                        <td>PT. Sinar Mas</td>
+                                        <td class="text-muted">10/01/2025</td>
+                                        <td class="fw-bold">Rp 12.000.000</td>
+                                        <td><span class="badge badge-status badge-paid">Paid</span></td>
+                                        <td class="text-end"><button class="btn btn-sm btn-outline-secondary"><i
+                                                    class="bi bi-three-dots"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-purple">INV-PRO-002</td>
+                                        <td>Toko Sejahtera</td>
+                                        <td class="text-muted">11/01/2025</td>
+                                        <td class="fw-bold">Rp 3.500.000</td>
+                                        <td><span class="badge badge-status badge-unpaid">Unpaid</span></td>
+                                        <td class="text-end"><button class="btn btn-sm btn-outline-secondary"><i
+                                                    class="bi bi-three-dots"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 5: Minimalist -->
+                <div id="view5" class="invoice-view d-none">
+                    <div class="card"
+                        style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;">
+                        <div class="table-responsive">
+                            <table class="table-minimal">
+                                <thead>
+                                    <tr>
+                                        <th>INVOICE</th>
+                                        <th>CLIENT</th>
+                                        <th>DATE</th>
+                                        <th>AMOUNT</th>
+                                        <th>STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold text-main">#001</td>
+                                        <td>Studio Design</td>
+                                        <td class="text-muted">Jan 12</td>
+                                        <td class="fw-bold">Rp 5.000.000</td>
+                                        <td><span class="badge badge-status badge-paid">Paid</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-main">#002</td>
+                                        <td>Agency One</td>
+                                        <td class="text-muted">Jan 14</td>
+                                        <td class="fw-bold">Rp 7.200.000</td>
+                                        <td><span class="badge badge-status badge-pending">Pending</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 6: Compact Mobile -->
+                <div id="view6" class="invoice-view d-none">
+                    <div class="row">
+                        <div class="col-md-6 mx-auto">
+                            <div class="mobile-list-item">
+                                <div>
+                                    <div class="fw-bold text-main">PT. Digital Solusi</div><small
+                                        class="text-muted">INV-2025-001</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold text-main">Rp 4.500.000</div><span
+                                        class="badge badge-status badge-paid">Paid</span>
+                                </div>
+                            </div>
+                            <div class="mobile-list-item">
+                                <div>
+                                    <div class="fw-bold text-main">CV. Maju Jaya</div><small
+                                        class="text-muted">INV-2025-002</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold text-main">Rp 2.100.000</div><span
+                                        class="badge badge-status badge-pending">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 7: Glass Panel -->
+                <div id="view7" class="invoice-view d-none">
+                    <div class="glass-panel p-4">
+                        <h4 class="text-white mb-4"><i class="bi bi-stars text-warning me-2"></i>Glass Mode</h4>
+                        <div class="table-responsive">
+                            <table class="table-outline" style="border:none;">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Client</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold text-white">#001</td>
+                                        <td class="text-white">Glass Client Inc</td>
+                                        <td class="fw-bold text-white">Rp 9.000.000</td>
+                                        <td><span class="badge badge-status badge-paid">Paid</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 8: Sidebar Detail -->
+                <div id="view8" class="invoice-view d-none">
+                    <div class="split-layout">
+                        <div class="split-list custom-scroll">
+                            <div class="split-item active">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="fw-bold" style="color:var(--text-main)">PT. Digital Solusi</span>
+                                    <span class="small text-muted">12/01/2025</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-purple small">INV-2025-001</span>
+                                    <span class="fw-bold" style="color:var(--text-main)">Rp 4.500.000</span>
+                                </div>
+                            </div>
+                            <div class="split-item">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="fw-bold" style="color:var(--text-main)">CV. Maju Jaya</span>
+                                    <span class="small text-muted">14/01/2025</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-purple small">INV-2025-002</span>
+                                    <span class="fw-bold" style="color:var(--text-main)">Rp 2.100.000</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="split-detail d-flex flex-column justify-content-center align-items-center text-center">
+                            <div class="bg-soft-purple p-4 rounded-circle mb-3 d-inline-block"><i
+                                    class="bi bi-receipt fs-1 text-purple"></i></div>
+                            <h4 style="color:var(--text-main)">INV-2025-001 Details</h4>
+                            <p class="text-muted">Preview tagihan lengkap di sini.</p>
+                            <button class="btn btn-primary mt-3"
+                                style="background: var(--accent-purple); border:none;">Download PDF</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 9: Analytical Summary -->
+                <div id="view9" class="invoice-view d-none">
+                    <div class="row mb-4">
+                        <div class="col-3">
+                            <div class="card p-3 bg-soft-purple text-center border-0 rounded-4">
+                                <h3 class="fw-bold">24</h3><small>Total</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="card p-3 bg-soft-green text-center border-0 rounded-4">
+                                <h3 class="fw-bold">12</h3><small>Paid</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="card p-3 bg-soft-orange text-center border-0 rounded-4">
+                                <h3 class="fw-bold">8</h3><small>Pending</small>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="card p-3 bg-soft-red text-center border-0 rounded-4">
+                                <h3 class="fw-bold">4</h3><small>Overdue</small>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Reuse Clean Outline Structure -->
+                    <div class="card"
+                        style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;">
+                        <div class="table-responsive">
+                            <table class="table-outline">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice ID</th>
+                                        <th>Client</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold text-purple">INV-001</td>
+                                        <td>Client A</td>
+                                        <td class="fw-bold">Rp 1.000.000</td>
+                                        <td><span class="badge badge-status badge-paid">Paid</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold text-purple">INV-002</td>
+                                        <td>Client B</td>
+                                        <td class="fw-bold">Rp 2.500.000</td>
+                                        <td><span class="badge badge-status badge-pending">Pending</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 10: Print Ready -->
+                <div id="view10" class="invoice-view d-none">
+                    <div class="print-sheet">
+                        <div class="d-flex justify-content-between mb-5">
+                            <h1>INVOICE</h1>
+                            <div class="text-end">
+                                <h4>Nexus Corp</h4>
+                                <p>Jl. Sudirman No.1, Jakarta</p>
+                            </div>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Web Development Service</td>
+                                    <td>1</td>
+                                    <td>Rp 5.000.000</td>
+                                    <td>Rp 5.000.000</td>
+                                </tr>
+                                <tr>
+                                    <td>Hosting 1 Year</td>
+                                    <td>1</td>
+                                    <td>Rp 1.000.000</td>
+                                    <td>Rp 1.000.000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW 11: Dashboard Combo -->
+                <div id="view11" class="invoice-view d-none">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card"
+                                style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;">
+                                <div class="table-responsive">
+                                    <table class="table-outline">
+                                        <thead>
+                                            <tr>
+                                                <th>Invoice ID</th>
+                                                <th>Client</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="fw-bold text-purple">INV-001</td>
+                                                <td>Client A</td>
+                                                <td class="fw-bold">Rp 1.000.000</td>
+                                                <td><span class="badge badge-status badge-paid">Paid</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold text-purple">INV-002</td>
+                                                <td>Client B</td>
+                                                <td class="fw-bold">Rp 2.500.000</td>
+                                                <td><span class="badge badge-status badge-pending">Pending</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card p-4"
+                                style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px;">
+                                <h5 class="text-main mb-4">Analytics</h5>
+                                <canvas id="invoiceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 12: Invoice Manager (DEFAULT VISIBLE) -->
+                <div id="view12" class="invoice-view">
+                    <div class="row">
+                        <div class="col-lg-3 mb-4">
+                            <div class="filter-sidebar">
+                                <h6 class="fw-bold text-main mb-3">FILTERS</h6>
+                                <label class="small text-muted mb-2">Status</label>
+                                <div class="form-check-custom"><input type="checkbox" checked> <label
+                                        class="text-main">All Status</label></div>
+                                <div class="form-check-custom"><input type="checkbox"> <label
+                                        class="text-main">Paid</label></div>
+                                <div class="form-check-custom"><input type="checkbox"> <label
+                                        class="text-main">Pending</label></div>
+                                <hr style="border-color: var(--border-color)">
+                                <label class="small text-muted mb-2">Client</label>
+                                <input type="text" class="form-control mb-3 text-muted" placeholder="Search client...">
+                                <button class="btn btn-primary w-100"
+                                    style="background:var(--accent-purple); border:none">Apply Filter</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="card"
+                                style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px;">
+                                <div class="p-3 border-bottom d-flex justify-content-between align-items-center"
+                                    style="border-color:var(--border-color)!important">
+                                    <span class="text-main fw-bold">Search Results</span>
+                                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download"></i>
+                                        Export</button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table-pro">
+                                        <thead>
+                                            <tr>
+                                                <th>Invoice</th>
+                                                <th>Date</th>
+                                                <th>Client</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><span class="fw-bold text-purple">INV-2025-001</span></td>
+                                                <td class="text-muted">12/01/2025</td>
+                                                <td>PT. Digital Solusi</td>
+                                                <td class="fw-bold">Rp 4.500.000</td>
+                                                <td><span class="badge badge-status badge-paid">Paid</span></td>
+                                                <td><button class="btn btn-sm text-muted" ">Manage</button></td>
+                                </tr>
+                                <tr>
+                                    <td><span class=" fw-bold text-purple">INV-2025-002</span></td>
+                                                <td class="text-muted">14/01/2025</td>
+                                                <td>CV. Maju Jaya</td>
+                                                <td class="fw-bold">Rp 2.100.000</td>
+                                                <td><span class="badge badge-status badge-pending">Pending</span></td>
+                                                <td><button class="btn btn-sm text-muted" ">Manage</button></td>
+                                </tr>
+                                 <tr>
+                                    <td><span class=" fw-bold text-purple">INV-2025-003</span></td>
+                                                <td class="text-muted">15/01/2025</td>
+                                                <td>StartUp Kita</td>
+                                                <td class="fw-bold">Rp 8.750.000</td>
+                                                <td><span class="badge badge-status badge-unpaid">Unpaid</span></td>
+                                                <td><button class="btn btn-sm text-muted" ">Manage</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+            <!-- END OF CONTENT HERE -->
+
+
+            <!-- START OF COPYRIGHT FOOTER SECTION -->
+            <footer class=" footer-dashboard">
+                                                        <div class="row align-items-center justify-content-between">
+                                                            <div
+                                                                class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                                                                <p class="mb-0 small text-muted">Copyright &copy; 2025
+                                                                    <strong class="text-white">Nexus
+                                                                        Admin</strong>. All rights reserved.</p>
+                                                            </div>
+                                                            <div class="col-md-6 text-center text-md-end">
+                                                                <div
+                                                                    class="d-flex justify-content-center justify-content-md-end gap-3">
+                                                                    <a href="#" class="footer-link">Kebijakan
+                                                                        Privasi</a>
+                                                                    <a href="#" class="footer-link">Syarat &
+                                                                        Ketentuan</a>
+                                                                    <a href="#" class="footer-link">Bantuan</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        </footer>
+                                                        <!-- END OF COPYRIGHT FOOTER -->
+        </main>
+    </div>
+
+    <!-- Theme Toggle Floating (Maintained) -->
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+
+        /* ======================================================================
+           GLOBAL ADDON: INVOICE VARIATION LOGIC (VISIBILITY ONLY)
+           ====================================================================== */
+
+        function toggleView(viewId) {
+            // Hide all views
+            document.querySelectorAll('.invoice-view').forEach(el => el.classList.add('d-none'));
+
+            // Show selected view
+            const selected = document.getElementById(viewId);
+            if (selected) {
+                selected.classList.remove('d-none');
+                selected.classList.add('animate-fade');
+            }
+
+            // Init Chart ONLY if View 11 selected and not initialized
+            if (viewId === 'view11' && !window.invoiceChartInstance) {
+                const ctx = document.getElementById('invoiceChart');
+                window.invoiceChartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Paid', 'Pending', 'Overdue'],
+                        datasets: [{ data: [12, 8, 4], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderWidth: 0 }]
+                    },
+                    options: {
+                        plugins: { legend: { position: 'bottom', labels: { color: body.classList.contains('light-mode') ? '#000' : '#fff' } } },
+                        responsive: true
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

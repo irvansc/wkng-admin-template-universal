@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Profil Saya</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. GLOBAL VARIABLES & RESET
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-sidebar: #1f2937;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-blue: #3b82f6;
+            --border-color: #374151;
+
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-info: #0ea5e9;
+
+            --sidebar-width: 260px;
+            --sidebar-width-collapsed: 90px;
+            --sidebar-left-pos: 16px;
+            --sidebar-padding-x: 16px;
+
+            --input-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-bg: #ffffff;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+            border-radius: 10px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* UTILITY CLASSES FOR THEME COLORS */
+        .text-main {
+            color: var(--text-main) !important;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        /* ======================================================================
+           2. LAYOUT & SIDEBAR 
+           ====================================================================== */
+        .mobile-menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+            transition: all 0.2s;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            height: calc(100vh - 32px);
+            position: fixed;
+            top: 16px;
+            left: var(--sidebar-left-pos);
+            padding: 24px 0 24px var(--sidebar-padding-x);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            overflow: visible;
+        }
+
+        .sidebar-header {
+            margin-bottom: 20px;
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            min-height: 40px;
+            position: relative;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin: 0 -16px 20px;
+        }
+
+        .nav-scrollable {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            padding-right: 4px;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 10px 0 12px;
+            padding: 0 10px;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            padding: 10px 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+            margin-right: 12px;
+            transition: all 0.2s;
+            font-weight: 500;
+            white-space: nowrap;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-link i:not(.arrow-icon) {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .arrow-icon {
+            margin-left: auto;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .nav-link.active-btn {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(236, 72, 153, 0.4);
+            border-color: transparent;
+        }
+
+        .nav-link.active-btn i:not(.arrow-icon) {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .nav-link[aria-expanded="true"] {
+            background: transparent !important;
+            color: var(--text-main) !important;
+            box-shadow: none !important;
+        }
+
+        .nav-link[aria-expanded="true"] i:not(.arrow-icon) {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%) !important;
+        }
+
+        .nav-link[aria-expanded="true"] .arrow-icon {
+            transform: rotate(90deg);
+            color: var(--text-main) !important;
+        }
+
+        .nav-submenu {
+            padding-left: 0;
+            list-style: none;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-top: 4px;
+        }
+
+        .nav-submenu .nav-link {
+            padding-left: 50px;
+            height: 40px;
+            font-size: 0.85rem;
+            background: transparent !important;
+            box-shadow: none !important;
+            opacity: 0.7;
+        }
+
+        .nav-submenu .nav-link:hover {
+            color: var(--text-main) !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            opacity: 1;
+        }
+
+        .nav-submenu .nav-link.active {
+            background: rgba(255, 255, 255, 0.05) !important;
+            font-weight: 700;
+            opacity: 1;
+        }
+
+        .nav-submenu .nav-link.active span {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-collapse-btn {
+            position: absolute;
+            top: 28px;
+            right: -15px;
+            width: 32px;
+            height: 32px;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+            padding: 24px 12px;
+        }
+
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .nav-category,
+        .sidebar.collapsed .arrow-icon,
+        .sidebar.collapsed .user-info {
+            display: none;
+        }
+
+        .sidebar.collapsed .collapse {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding-left: 0;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .nav-link,
+        .sidebar.collapsed .user-profile {
+            justify-content: center;
+            padding: 10px;
+            margin-right: 0;
+        }
+
+        .sidebar.collapsed .sidebar-collapse-btn i {
+            transform: rotate(180deg);
+        }
+
+        .profile-wrapper {
+            margin-top: auto;
+            width: 100%;
+            padding-right: 16px;
+            padding-top: 10px;
+        }
+
+        .user-profile {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white !important;
+            padding: 12px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            width: 100%;
+            border: none;
+            box-shadow: 0 8px 20px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        .main-content {
+            margin-left: calc(var(--sidebar-left-pos) + var(--sidebar-width) + 24px);
+            width: calc(100% - (var(--sidebar-left-pos) + var(--sidebar-width) + 24px));
+            padding: 30px 30px 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.sidebar-collapsed .main-content {
+            margin-left: calc(var(--sidebar-left-pos) + var(--sidebar-width-collapsed) + 24px);
+            width: calc(100% - (var(--sidebar-left-pos) + var(--sidebar-width-collapsed) + 24px));
+        }
+
+        .top-navbar-standalone {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .search-standalone-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-standalone-input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px 20px 12px 48px;
+            color: var(--text-main);
+        }
+
+        .search-standalone-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .search-standalone-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-purple);
+        }
+
+        .active-page-header {
+            padding: 30px;
+            border-radius: 24px;
+            background-color: var(--bg-card);
+            position: relative;
+            margin-bottom: 3.5rem;
+            border: 2px solid transparent;
+            background-image: linear-gradient(var(--bg-card), var(--bg-card)), linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15);
+        }
+
+        .page-title-large {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .breadcrumb-modern {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .breadcrumb-item-custom {
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item-custom:hover {
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-item-custom.active {
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .breadcrumb-sep {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .widget-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            overflow: hidden;
+            transition: 0.3s;
+            color: var(--text-main);
+        }
+
+        .card-header-custom {
+            border-bottom: 1px solid var(--border-color);
+            margin: 0;
+            padding: 20px 24px;
+            background-color: rgba(0, 0, 0, 0.02);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: #6366f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.5);
+            cursor: pointer;
+            z-index: 900;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* ======================================================================
+           4. ADMIN PROFILE SPECIFIC STYLES (NEW)
+           ====================================================================== */
+
+        /* Profile Banner & Header */
+        .admin-profile-cover {
+            height: 250px;
+            width: 100%;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated Background Pattern */
+        .admin-profile-cover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+            animation: pulse 5s infinite;
+        }
+
+        .admin-avatar-container {
+            position: relative;
+            margin-top: -75px;
+            margin-left: 40px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .admin-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid var(--bg-card);
+            object-fit: cover;
+            background-color: var(--bg-card);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .admin-avatar-edit {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: var(--accent-purple);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border: 3px solid var(--bg-card);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .admin-avatar-edit:hover {
+            transform: scale(1.1);
+        }
+
+        /* Form Styling */
+        .form-control-plaintext-custom {
+            color: var(--text-main);
+            font-weight: 600;
+            padding: 0.5rem 0;
+            border: none;
+            background: transparent;
+            width: 100%;
+        }
+
+        .form-control-edit {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 10px;
+            padding: 10px 15px;
+        }
+
+        .form-control-edit:focus {
+            background-color: var(--input-bg);
+            border-color: var(--accent-purple);
+            color: var(--text-main);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Read-only state styling */
+        .view-mode .form-control-edit {
+            display: none;
+        }
+
+        .edit-mode .form-control-plaintext-custom {
+            display: none;
+        }
+
+        /* Info Cards */
+        .info-stat-card {
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            height: 100%;
+            transition: all 0.3s;
+        }
+
+        .info-stat-card:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* ======================================================================
+           5. ACTIVITY TABLE SPECIFIC STYLES
+           ====================================================================== */
+
+        .activity-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            /* Memberikan jarak antar baris */
+        }
+
+        /* Header Table Style - Kontras lebih tinggi */
+        .activity-table thead th {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 700;
+            padding: 0 16px 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Body Row Style */
+        .activity-table tbody tr {
+            background-color: rgba(255, 255, 255, 0.02);
+            transition: transform 0.2s ease, background-color 0.2s;
+            cursor: default;
+        }
+
+        body.light-mode .activity-table tbody tr {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .activity-table tbody tr:hover {
+            transform: scale(1.01);
+            background-color: rgba(99, 102, 241, 0.08) !important;
+            /* Efek hover ungu tipis */
+        }
+
+        .activity-table td {
+            padding: 16px;
+            vertical-align: middle;
+            color: var(--text-main);
+            /* Memastikan warna teks mengikuti tema */
+            border-top: 1px solid transparent;
+            border-bottom: 1px solid transparent;
+        }
+
+        .activity-table td:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        .activity-table td:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        /* IP Badge Style - Code look */
+        .ip-badge {
+            font-family: 'Courier New', Courier, monospace;
+            background: rgba(124, 58, 237, 0.1);
+            color: var(--accent-purple);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+
+        /* Status Dot Animation */
+        .status-dot-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .status-dot-pulse {
+            position: relative;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: currentColor;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .status-dot-pulse::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            border: 1px solid currentColor;
+            opacity: 0;
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-120%);
+                width: 260px !important;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-navbar-standalone {
+                justify-content: flex-start;
+                padding-left: 55px;
+            }
+
+            .search-standalone-box {
+                width: 100%;
+            }
+
+            .admin-avatar-container {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .admin-profile-header-text {
+                text-align: center;
+                margin-top: 10px;
+            }
+
+            .action-buttons-header {
+                justify-content: center !important;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo"><i class="bi bi-hexagon-fill"
+                        style="font-size: 1.5rem; color: #6366f1;"></i><span class="logo-text">Nexus</span></div>
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <div class="sidebar-divider"></div>
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link"><i class="bi bi-grid-1x2-fill"></i> <span>Dashboard</span></a>
+                <a href="#" class="nav-link"><i class="bi bi-graph-up-arrow"></i> <span>Analytics</span></a>
+
+                <div class="nav-category">APLIKASI</div>
+                <a href="#" class="nav-link"><i class="bi bi-envelope"></i> <span>Email</span></a>
+                <a href="#" class="nav-link"><i class="bi bi-chat-dots"></i> <span>Chat</span></a>
+                <a href="#" class="nav-link"><i class="bi bi-calendar3"></i> <span>Calendar</span></a>
+
+                <div class="nav-category">ANTARMUKA</div>
+                <a class="nav-link collapsed" data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers-fill"></i>
+                    <span>Komponen UI</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="#" class="nav-link">Alerts</a>
+                        <a href="buttons.html" class="nav-link">Buttons</a>
+                        <a href="cards.html" class="nav-link">Cards & Widgets</a>
+                        <a href="wizard.html" class="nav-link">Wizard & Steps</a>
+                        <a href="icons.html" class="nav-link">Icons</a>
+                        <a href="toasts.html" class="nav-link">Toast Notify</a>
+                        <a href="#" class="nav-link">Modals</a>
+                    </div>
+                </div>
+
+                <a class="nav-link collapsed" data-bs-toggle="collapse" href="#menuForms"><i
+                        class="bi bi-file-text"></i> <span>Forms & Tables</span> <i
+                        class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="#" class="nav-link">Form Elements</a>
+                        <a href="tables.html" class="nav-link">Data Tables</a>
+                    </div>
+                </div>
+
+                <div class="nav-category">HALAMAN</div>
+                <a class="nav-link collapsed" data-bs-toggle="collapse" href="#menuPages"><i
+                        class="bi bi-file-lock"></i> <span>Otentikasi</span> <i
+                        class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+                        <a href="login.html" class="nav-link">Login</a>
+                        <a href="register.html" class="nav-link">Register</a>
+                        <a href="profile.html" class="nav-link">Profil Pengguna</a>
+                        <a href="#" class="nav-link">404 Error</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-link"><i class="bi bi-gear"></i> <span>Pengaturan</span></a>
+            </div>
+            <div class="dropup profile-wrapper">
+                <div class="user-profile dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="avatar">A</div>
+                    <div class="user-info" style="flex: 1; min-width: 0;">
+                        <div style="font-size: 0.9rem; font-weight: 600;">Admin Pusat</div>
+                        <div class="text-muted"
+                            style="font-size: 0.75rem; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                            admin@nexus.com</div>
+                    </div>
+                </div>
+                <ul class="dropdown-menu custom-dropdown-menu w-100">
+                    <li><a class="dropdown-item" href="admin-profile.html">Profil</a></li> <!-- Redirects here -->
+                    <li><a class="dropdown-item text-danger" href="login.html">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Cover Section -->
+            <div class="admin-profile-cover mb-3">
+                <div class="text-center text-white opacity-50">
+                    <i class="bi bi-code-slash fs-1"></i>
+                </div>
+            </div>
+
+            <!-- Profile Header Info -->
+            <div class="d-flex flex-column flex-md-row align-items-start mb-5 position-relative px-2">
+                <div class="admin-avatar-container">
+                    <img src="https://placehold.co/150x150/6366f1/FFF?text=A" class="admin-avatar" id="profileImage">
+                    <div class="admin-avatar-edit" onclick="triggerFileInput()">
+                        <i class="bi bi-camera-fill small"></i>
+                    </div>
+                    <input type="file" id="fileInput" class="d-none" accept="image/*">
+                </div>
+
+                <div class="ms-md-4 mt-2 flex-grow-1 admin-profile-header-text">
+                    <h2 class="fw-bold mb-1 d-flex align-items-center gap-2">
+                        Admin Pusat
+                        <i class="bi bi-patch-check-fill text-primary fs-5" title="Verified Admin"></i>
+                    </h2>
+                    <p class="text-muted mb-2">Super Administrator • Technology Dept.</p>
+                    <div class="d-flex gap-3 text-muted small align-items-center">
+                        <span><i class="bi bi-geo-alt me-1"></i> Jakarta, Indonesia</span>
+                        <span class="d-none d-sm-inline">•</span>
+                        <span><i class="bi bi-shield-check me-1"></i> Akses Level: Tertinggi</span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-3 mt-md-2 ms-auto action-buttons-header">
+                    <button class="btn btn-outline-danger btn-sm"><i class="bi bi-power me-2"></i>Log Out</button>
+                    <button class="btn btn-primary btn-sm shadow-lg" id="globalEditBtn" onclick="toggleEditMode()">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Profil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="row g-4">
+                <!-- Left Column: Personal Info -->
+                <div class="col-xl-4 col-lg-5">
+                    <div class="widget-card h-100">
+                        <h5 class="fw-bold mb-4 border-bottom border-secondary border-opacity-25 pb-3">Informasi Pribadi
+                        </h5>
+
+                        <form id="adminProfileForm" class="view-mode">
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Nama
+                                    Lengkap</label>
+                                <div class="form-control-plaintext-custom">Admin Pusat</div>
+                                <input type="text" class="form-control form-control-edit" value="Admin Pusat">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Email
+                                    Resmi</label>
+                                <div class="form-control-plaintext-custom">admin@nexus.com</div>
+                                <input type="email" class="form-control form-control-edit" value="admin@nexus.com">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Nomor
+                                    Telepon</label>
+                                <div class="form-control-plaintext-custom">+62 812-3456-7890</div>
+                                <input type="tel" class="form-control form-control-edit" value="+62 812-3456-7890">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="text-muted small text-uppercase fw-bold" style="font-size: 0.7rem;">Bio
+                                    Singkat</label>
+                                <div class="form-control-plaintext-custom" style="font-weight: 400; font-size: 0.9rem;">
+                                    Mengelola infrastruktur sistem dan memastikan keamanan data pengguna.</div>
+                                <textarea class="form-control form-control-edit"
+                                    rows="3">Mengelola infrastruktur sistem dan memastikan keamanan data pengguna.</textarea>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                                <label class="text-muted small text-uppercase fw-bold mb-3"
+                                    style="font-size: 0.7rem;">Sosial Media</label>
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                                class="bi bi-linkedin"></i></span>
+                                        <input type="text" class="form-control bg-dark border-secondary text-white"
+                                            value="linkedin.com/in/admin" disabled>
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-dark border-secondary text-muted"><i
+                                                class="bi bi-github"></i></span>
+                                        <input type="text" class="form-control bg-dark border-secondary text-white"
+                                            value="github.com/nexus-admin" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right Column: Stats & Security -->
+                <div class="col-xl-8 col-lg-7">
+                    <!-- Stats Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="info-stat-card">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="fs-3 text-primary"><i class="bi bi-shield-lock-fill"></i></div>
+                                    <div>
+                                        <div class="h5 fw-bold mb-0">99.9%</div>
+                                        <small class="text-muted">Uptime Sistem</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-stat-card">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="fs-3 text-success"><i class="bi bi-people-fill"></i></div>
+                                    <div>
+                                        <div class="h5 fw-bold mb-0">12.5K</div>
+                                        <small class="text-muted">Users Managed</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-stat-card">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="fs-3 text-warning"><i class="bi bi-bug-fill"></i></div>
+                                    <div>
+                                        <div class="h5 fw-bold mb-0">0</div>
+                                        <small class="text-muted">Critical Issues</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Settings (FIXED VISIBILITY) -->
+                    <div class="widget-card mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Keamanan Akun</h5>
+                            <span
+                                class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Secure</span>
+                        </div>
+
+                        <div class="list-group list-group-flush bg-transparent">
+                            <div class="list-group-item bg-transparent border-secondary border-opacity-25 px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <!-- Fixed Text Class -->
+                                        <div class="fw-bold text-main">Ganti Password</div>
+                                        <small class="text-muted">Terakhir diganti 3 bulan yang lalu</small>
+                                    </div>
+                                    <button class="btn btn-outline-secondary btn-sm">Update</button>
+                                </div>
+                            </div>
+                            <div class="list-group-item bg-transparent border-secondary border-opacity-25 px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <!-- Fixed Text Class -->
+                                        <div class="fw-bold text-main">Two-Factor Authentication (2FA)</div>
+                                        <small class="text-muted">Tambahkan lapisan keamanan ekstra</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" checked>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list-group-item bg-transparent border-secondary border-opacity-25 px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <!-- Fixed Text Class -->
+                                        <div class="fw-bold text-main">Session Management</div>
+                                        <small class="text-muted">Log out dari semua perangkat lain</small>
+                                    </div>
+                                    <button class="btn btn-outline-danger btn-sm">Log Out All</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="widget-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Log Aktivitas Terakhir</h5>
+                            <button class="btn btn-sm btn-outline-light border-secondary text-muted"><i
+                                    class="bi bi-download me-1"></i> Export</button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="activity-table">
+                                <thead>
+                                    <tr>
+                                        <th>Aktivitas</th>
+                                        <th>IP Address</th>
+                                        <th class="text-end">Waktu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="status-dot-container">
+                                                    <span class="status-dot-pulse text-success"></span>
+                                                </div>
+                                                <span class="fw-medium">Login berhasil</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="ip-badge">192.168.1.10</span></td>
+                                        <td class="text-end text-muted small"><i class="bi bi-clock me-1"></i>Baru saja
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="status-dot-container">
+                                                    <span class="status-dot-pulse text-primary"></span>
+                                                </div>
+                                                <span class="fw-medium">Update konfigurasi sistem</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="ip-badge">192.168.1.10</span></td>
+                                        <td class="text-end text-muted small"><i class="bi bi-clock me-1"></i>2 jam lalu
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="status-dot-container">
+                                                    <span class="status-dot-pulse text-warning"></span>
+                                                </div>
+                                                <span class="fw-medium">Reset password user #445</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="ip-badge">192.168.1.10</span></td>
+                                        <td class="text-end text-muted small"><i class="bi bi-clock me-1"></i>Kemarin
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- EDIT MODE LOGIC ---
+        let isEditMode = false;
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const form = document.getElementById('adminProfileForm');
+            const btn = document.getElementById('globalEditBtn');
+
+            if (isEditMode) {
+                // Switch to Edit
+                form.classList.remove('view-mode');
+                form.classList.add('edit-mode');
+
+                // Enable Social Inputs
+                const socialInputs = form.querySelectorAll('.input-group input');
+                socialInputs.forEach(input => input.removeAttribute('disabled'));
+
+                // Change Button Style
+                btn.innerHTML = '<i class="bi bi-save me-2"></i>Simpan Perubahan';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-success');
+            } else {
+                // Save Logic (Simulation)
+                // Here you would normally send data to backend
+
+                // Update Plaintext values from Inputs
+                const inputs = form.querySelectorAll('input:not([type="file"]), textarea');
+                inputs.forEach(input => {
+                    // Find corresponding plaintext div (previous sibling usually in this structure)
+                    const plaintext = input.previousElementSibling;
+                    if (plaintext && plaintext.classList.contains('form-control-plaintext-custom')) {
+                        plaintext.textContent = input.value;
+                    }
+                });
+
+                // Switch back to View
+                form.classList.remove('edit-mode');
+                form.classList.add('view-mode');
+
+                // Disable Social Inputs
+                const socialInputs = form.querySelectorAll('.input-group input');
+                socialInputs.forEach(input => input.setAttribute('disabled', 'true'));
+
+                // Reset Button
+                btn.innerHTML = '<i class="bi bi-pencil-square me-2"></i>Edit Profil';
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-primary');
+            }
+        }
+
+        // --- IMAGE UPLOAD SIMULATION ---
+        function triggerFileInput() {
+            document.getElementById('fileInput').click();
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // --- STANDARD THEME LOGIC ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const body = document.body;
+            const sidebar = document.getElementById("sidebar");
+            const collapseBtn = document.getElementById("collapseBtn");
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            // Theme Logic
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            }
+
+            if (collapseBtn) {
+                collapseBtn.addEventListener("click", () => {
+                    sidebar.classList.toggle("collapsed");
+                    body.classList.toggle("sidebar-collapsed");
+                });
+            }
+
+            document.getElementById("mobileMenuBtn")?.addEventListener("click", () => {
+                sidebar.classList.add("active");
+                document.getElementById("sidebarOverlay").classList.add("show");
+            });
+            document.getElementById("sidebarOverlay")?.addEventListener("click", () => {
+                sidebar.classList.remove("active");
+                document.getElementById("sidebarOverlay").classList.remove("show");
+            });
+
+            themeToggle?.addEventListener("click", () => {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                if (isLight) {
+                    themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+                } else {
+                    themeIcon.classList.replace("bi-sun-fill", "bi-moon-fill");
+                }
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+            });
+        });
+    </script>
+</body>
+
+</html>

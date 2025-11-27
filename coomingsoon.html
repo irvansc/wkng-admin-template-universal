@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Coming Soon & Roadmap</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. GLOBAL STYLES (DIGUNAKAN DI SEMUA HALAMAN - TIDAK DIUBAH)
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-sidebar: #1f2937;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-blue: #3b82f6;
+            --border-color: #374151;
+
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-info: #0ea5e9;
+
+            --sidebar-width: 260px;
+            --sidebar-width-collapsed: 90px;
+            --sidebar-left-pos: 16px;
+            --sidebar-padding-x: 16px;
+
+            --anim-speed: 0.3s;
+            --scrollbar-thumb: #4b5563;
+            --scrollbar-track: transparent;
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --icon-box-light: rgba(0, 0, 0, 0.03);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-bg: #ffffff;
+            --scrollbar-thumb: #cbd5e1;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-thumb);
+            border-radius: 10px;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* --- GLOBAL: SIDEBAR LAYOUT --- */
+        .mobile-menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+            transition: all 0.2s;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(2px);
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            height: calc(100vh - 32px);
+            position: fixed;
+            top: 16px;
+            left: var(--sidebar-left-pos);
+            padding: 24px 0 24px var(--sidebar-padding-x);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            overflow: visible;
+        }
+
+        .sidebar-header {
+            margin-bottom: 20px;
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            min-height: 40px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .brand-logo img {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .sidebar-divider {
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.15);
+            margin: 0 -16px 20px;
+            flex-shrink: 0;
+            border-radius: 2px;
+        }
+
+        .nav-scrollable {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            padding-right: 4px;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 10px 0 12px;
+            padding: 0 10px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        /* --- GLOBAL: MENU ITEMS --- */
+        .nav-link {
+            color: var(--text-muted);
+            padding: 10px 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+            margin-right: 12px;
+            transition: all 0.2s;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-link i:not(.arrow-icon) {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .arrow-icon {
+            margin-left: auto;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .nav-link.active-btn {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(236, 72, 153, 0.4);
+            border-color: transparent;
+        }
+
+        .nav-link.active-btn i:not(.arrow-icon) {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .nav-link[aria-expanded="true"] {
+            background: transparent !important;
+            color: var(--text-main) !important;
+            box-shadow: none !important;
+        }
+
+        .nav-link[aria-expanded="true"] i:not(.arrow-icon) {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%) !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+        }
+
+        .nav-link[aria-expanded="true"] .arrow-icon {
+            transform: rotate(90deg);
+            color: var(--text-main) !important;
+        }
+
+        .nav-submenu {
+            padding-left: 0;
+            list-style: none;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+
+        .nav-submenu .nav-link {
+            padding-left: 50px;
+            height: 40px;
+            font-size: 0.85rem;
+            margin: 0;
+            margin-right: 12px;
+            background: transparent !important;
+            box-shadow: none !important;
+            color: var(--text-muted) !important;
+            transition: all 0.2s ease-in-out;
+            opacity: 0.7;
+        }
+
+        .collapse.show .nav-submenu .nav-link {
+            opacity: 1;
+        }
+
+        .nav-submenu .nav-link:hover {
+            color: var(--text-main) !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            padding-left: 53px;
+            opacity: 1;
+        }
+
+        .collapsing {
+            transition: height 0.25s ease-out;
+        }
+
+        .nav-submenu .nav-link.active {
+            background: rgba(255, 255, 255, 0.05) !important;
+            font-weight: 700;
+            opacity: 1;
+        }
+
+        .nav-submenu .nav-link.active span {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- GLOBAL: MODERN PROFILE MENU --- */
+        .profile-wrapper {
+            margin-top: auto;
+            width: 100%;
+            padding: 0 12px 16px 12px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .user-profile-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-profile-btn.dropdown-toggle::after {
+            display: none !important;
+        }
+
+        .user-profile-btn:hover,
+        .user-profile-btn[aria-expanded="true"] {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-profile-btn[aria-expanded="true"] .profile-chevron {
+            transform: rotate(180deg);
+            color: var(--text-main);
+        }
+
+        .avatar-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .avatar-modern {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            background-color: var(--accent-green);
+            border: 3px solid var(--bg-sidebar);
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .status-dot.pulse {
+            animation: statusPulse 2s infinite;
+        }
+
+        @keyframes statusPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .user-info-modern {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .user-name-modern {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role-modern {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-chevron {
+            color: var(--text-muted);
+            transition: transform 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .profile-dropdown-menu {
+            position: absolute;
+            bottom: 100% !important;
+            left: 0;
+            width: 100%;
+            margin-bottom: 12px !important;
+            padding: 8px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 -10px 40px -10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(31, 41, 55, 0.95);
+            animation: slideUpFade 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-origin: bottom center;
+            transform: none !important;
+        }
+
+        body.light-mode .profile-dropdown-menu {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .dropdown-header-modern {
+            padding: 12px 16px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 6px;
+        }
+
+        body.light-mode .dropdown-header-modern {
+            border-bottom-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .menu-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .menu-user-email {
+            font-size: 0.8rem;
+            color: var(--text-main);
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .profile-menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        body.light-mode .profile-menu-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-menu-item.danger-item:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .item-icon {
+            font-size: 1.1rem;
+        }
+
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-check-input.custom-switch {
+            width: 36px;
+            height: 20px;
+            cursor: pointer;
+            background-color: var(--border-color);
+            border-color: transparent;
+        }
+
+        .form-check-input.custom-switch:checked {
+            background-color: var(--accent-purple);
+            border-color: transparent;
+        }
+
+        /* --- GLOBAL: COLLAPSE BUTTON --- */
+        .sidebar-collapse-btn {
+            position: absolute;
+            top: 22px;
+            right: -15px;
+            width: 32px;
+            height: 32px;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-collapse-btn:hover {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            box-shadow: 2px 2px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* --- GLOBAL: SIDEBAR COLLAPSED STATE --- */
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+            padding: 24px 12px;
+        }
+
+        .sidebar.collapsed .brand-logo {
+            justify-content: center;
+            padding-left: 0;
+            width: 100%;
+        }
+
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .nav-category,
+        .sidebar.collapsed .arrow-icon,
+        .sidebar.collapsed .user-info,
+        .sidebar.collapsed .user-info-modern,
+        .sidebar.collapsed .profile-chevron {
+            display: none;
+        }
+
+        .sidebar.collapsed .collapse {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding-left: 0;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .nav-link,
+        .sidebar.collapsed .user-profile-btn {
+            justify-content: center;
+            padding: 8px;
+            margin-right: 0;
+        }
+
+        .sidebar.collapsed .sidebar-collapse-btn i {
+            transform: rotate(180deg);
+        }
+
+        /* --- GLOBAL: MAIN CONTENT WRAPPER --- */
+        .main-content {
+            margin-left: calc(var(--sidebar-left-pos) + var(--sidebar-width) + 24px);
+            width: calc(100% - (var(--sidebar-left-pos) + var(--sidebar-width) + 24px));
+            padding: 30px 30px 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.sidebar-collapsed .main-content {
+            margin-left: calc(var(--sidebar-left-pos) + var(--sidebar-width-collapsed) + 24px);
+            width: calc(100% - (var(--sidebar-left-pos) + var(--sidebar-width-collapsed) + 24px));
+        }
+
+        /* --- GLOBAL: TOP NAVBAR & SEARCH & NOTIFICATIONS --- */
+        .top-navbar-standalone {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .search-standalone-box {
+            position: relative;
+            width: 300px;
+            transition: width 0.3s ease;
+        }
+
+        .search-standalone-input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px 20px 12px 48px;
+            color: var(--text-main);
+        }
+
+        .search-standalone-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .search-standalone-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-purple);
+        }
+
+        /* Notification Styling */
+        .notification-wrapper {
+            position: relative;
+        }
+
+        .notification-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .notification-btn:hover,
+        .notification-btn[aria-expanded="true"] {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            transform: translateY(-1px);
+        }
+
+        body.light-mode .notification-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-dot-red {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-red);
+            border-radius: 50%;
+            z-index: 2;
+            animation: notifPulse 1.5s infinite;
+        }
+
+        @keyframes notifPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        .notification-dropdown-menu {
+            position: absolute;
+            top: 100% !important;
+            right: 0 !important;
+            left: auto !important;
+            margin-top: 12px !important;
+            width: 320px;
+            padding: 8px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(31, 41, 55, 0.95);
+            animation: slideDownFade 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform: none !important;
+        }
+
+        body.light-mode .notification-dropdown-menu {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        @keyframes slideDownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .notification-item {
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: start;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: background 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .notification-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+        }
+
+        body.light-mode .notification-item:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .notif-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .bg-soft-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        .bg-soft-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .bg-soft-info {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .notif-content h6 {
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .notif-content p {
+            font-size: 0.75rem;
+            margin-bottom: 0;
+            opacity: 0.8;
+        }
+
+        .notif-time {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: #6366f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.5);
+            cursor: pointer;
+            z-index: 900;
+        }
+
+        /* --- GLOBAL: PAGE TITLE & WIDGET CARD --- */
+        .active-page-header {
+            padding: 30px;
+            border-radius: 24px;
+            background-color: var(--bg-card);
+            position: relative;
+            margin-bottom: 3.5rem;
+            border: 2px solid transparent;
+            background-image: linear-gradient(var(--bg-card), var(--bg-card)),
+                linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15);
+        }
+
+        .page-title-large {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        body.light-mode .page-title-large {
+            background: none;
+            -webkit-text-fill-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            white-space: nowrap;
+        }
+
+        .breadcrumb-modern {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        body.light-mode .breadcrumb-modern {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-color: var(--border-color);
+        }
+
+        .breadcrumb-item-custom {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item-custom:hover {
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-item-custom.active {
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .breadcrumb-home-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-sep {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .widget-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+            height: 100%;
+            color: var(--text-main);
+        }
+
+        .widget-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent-purple);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-120%);
+                width: 260px !important;
+                padding-right: 16px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-navbar-standalone {
+                justify-content: flex-end;
+                padding-left: 70px;
+                margin-bottom: 20px;
+                gap: 10px;
+            }
+
+            .search-standalone-box {
+                width: auto;
+                flex-grow: 1;
+                max-width: 100%;
+            }
+
+            .search-standalone-input {
+                padding-left: 40px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .search-standalone-icon {
+                left: 14px;
+            }
+
+            .notification-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* ======================================================================
+           2. KHUSUS: COMING SOON & ROADMAP STYLES (NEW)
+           ====================================================================== */
+
+        /* Layout Hero */
+        .coming-soon-hero {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .coming-soon-img {
+            max-width: 300px;
+            margin-bottom: 2rem;
+            animation: floatAnim 6s ease-in-out infinite;
+        }
+
+        @keyframes floatAnim {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* Countdown Timer Boxes */
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 16px;
+            min-width: 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .countdown-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ec4899, #8b5cf6);
+        }
+
+        .countdown-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: block;
+            line-height: 1.1;
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Timeline / Roadmap Styling */
+        .timeline-wrapper {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline-wrapper::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 10px;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-mode .timeline-wrapper::before {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+            padding-left: 25px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -26px;
+            /* Adjust based on wrapper padding */
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid var(--bg-card);
+            z-index: 2;
+        }
+
+        .timeline-dot.done {
+            background: var(--accent-green);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+        }
+
+        .timeline-dot.active {
+            background: var(--accent-purple);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            animation: pulseDot 2s infinite;
+        }
+
+        .timeline-dot.future {
+            background: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        @keyframes pulseDot {
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(99, 102, 241, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .timeline-item:hover .timeline-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-purple);
+            transform: translateX(5px);
+        }
+
+        body.light-mode .timeline-content {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        body.light-mode .timeline-item:hover .timeline-content {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .timeline-date {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .timeline-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        /* Subscribe Input */
+        .sub-input-group {
+            position: relative;
+        }
+
+        .sub-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            padding: 14px 20px;
+            border-radius: 50px;
+            color: var(--text-main);
+            padding-right: 120px;
+        }
+
+        .sub-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        .sub-btn {
+            position: absolute;
+            right: 6px;
+            top: 6px;
+            bottom: 6px;
+            border-radius: 40px;
+            padding: 0 24px;
+            background: var(--accent-purple);
+            border: none;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .sub-btn:hover {
+            background: #4f46e5;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR (TIDAK DIUBAH) -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <div class="sidebar-divider"></div>
+
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link"><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link"><i class="bi bi-graph-up-arrow"></i> <span>Analytics</span></a>
+
+                <div class="nav-category">APLIKASI</div>
+                <a href="email.html" class="nav-link"><i class="bi bi-envelope"></i> <span>Email</span></a>
+                <a href="chat.html" class="nav-link"><i class="bi bi-chat-dots"></i> <span>Chat</span></a>
+                <a href="calendar.html" class="nav-link"><i class="bi bi-calendar3"></i> <span>Calendar</span></a>
+
+                <div class="nav-category">ANTARMUKA</div>
+                <a class="nav-link collapsed" data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers-fill"></i>
+                    <span>Komponen UI</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link">Alerts</a>
+                        <a href="buttons.html" class="nav-link">Buttons</a>
+                        <a href="cards.html" class="nav-link">Cards & Widgets</a>
+                        <a href="modals.html" class="nav-link">Modals</a>
+                        <a href="wizard.html" class="nav-link">Wizard</a>
+                        <a href="toast-notify.html" class="nav-link">Toast & Notify</a>
+                    </div>
+                </div>
+
+                <a class="nav-link collapsed" data-bs-toggle="collapse" href="#menuForms"><i
+                        class="bi bi-file-text"></i> <span>Forms & Tables</span> <i
+                        class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link">Form Elements</a>
+                        <a href="table.html" class="nav-link">Data Tables</a>
+                    </div>
+                </div>
+
+                <div class="nav-category">HALAMAN</div>
+                <a class="nav-link collapsed" data-bs-toggle="collapse" href="#menuPages" aria-expanded="true"><i
+                        class="bi bi-file-lock"></i> <span>Otentikasi</span> <i
+                        class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link">Profile</a>
+                        <a href="login.html" class="nav-link">Login</a>
+                        <a href="register.html" class="nav-link">Register</a>
+                        <a href="reset-password.html" class="nav-link">Reset Password</a>
+                        <a href="lock-screen.html" class="nav-link">Lock Screen</a>
+                        <!-- Active State for Coming Soon -->
+                        <a href="coming-soon.html" class="nav-link active">Coming Soon</a>
+                        <a href="maintenance.html" class="nav-link">Maintenance</a>
+                        <a href="403.html" class="nav-link">Error 403</a>
+                        <a href="404.html" class="nav-link">Error 404</a>
+                        <a href="500.html" class="nav-link">Error 500</a>
+                        <a href="503.html" class="nav-link">Error 503</a>
+                        <a href="504.html" class="nav-link">Error 504</a>
+                        <a href="505.html" class="nav-link">Error 505</a>
+                        <a href="506.html" class="nav-link">Error 506</a>
+                        <a href="507.html" class="nav-link">Error 507</a>
+                    </div>
+                </div>
+                <a href="setting.html" class="nav-link"><i class="bi bi-gear"></i> <span>Pengaturan</span></a>
+            </div>
+
+            <!-- MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div>
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT (DIUBAH SESUAI PERMINTAAN) -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari sesuatu...">
+                </div>
+
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p>
+                                    <span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Page Header Section Title -->
+            <div class="active-page-header text-center text-md-start d-md-flex align-items-end justify-content-between">
+                <div>
+                    <div class="header-badge mb-2"><i class="bi bi-rocket-takeoff-fill"></i> FUTURE UPDATES</div>
+                    <h1 class="page-title-large d-block">Coming Soon</h1>
+                    <p class="text-muted mb-0" style="max-width: 500px;">
+                        Kami sedang mempersiapkan modul baru yang luar biasa. Pantau terus roadmap pengembangan kami di
+                        bawah ini.
+                    </p>
+                </div>
+                <div class="d-none d-md-block">
+                    <div class="breadcrumb-modern">
+                        <a href="#" class="breadcrumb-home-icon"><i class="bi bi-house-door-fill"></i></a>
+                        <span class="breadcrumb-sep"><i class="bi bi-chevron-right"></i></span>
+                        <a href="#" class="breadcrumb-item-custom">Halaman</a>
+                        <span class="breadcrumb-sep"><i class="bi bi-chevron-right"></i></span>
+                        <span class="breadcrumb-item-custom active">Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: COUNTDOWN & INTRO -->
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8 text-center">
+                    <div class="coming-soon-hero">
+                        <!-- Placeholder Image (Rocket/Illustration) -->
+                        <i class="bi bi-code-square text-primary"
+                            style="font-size: 5rem; opacity: 0.8; display: inline-block; margin-bottom: 20px;"></i>
+
+                        <h2 class="fw-bold mb-3">Modul Akuntansi & Laporan Canggih</h2>
+                        <p class="text-muted mb-4 fs-5">Sistem keuangan terintegrasi dengan AI prediction akan segera
+                            hadir dalam dashboard Anda.</p>
+
+                        <!-- Countdown -->
+                        <div class="countdown-container" id="countdown">
+                            <div class="countdown-item">
+                                <span class="countdown-number" id="days">00</span>
+                                <span class="countdown-label">Hari</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span class="countdown-number" id="hours">00</span>
+                                <span class="countdown-label">Jam</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span class="countdown-number" id="minutes">00</span>
+                                <span class="countdown-label">Menit</span>
+                            </div>
+                            <div class="countdown-item">
+                                <span class="countdown-number" id="seconds">00</span>
+                                <span class="countdown-label">Detik</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-lg"
+                            onclick="document.getElementById('notifySection').scrollIntoView({behavior: 'smooth'})">
+                            <i class="bi bi-bell-fill me-2"></i> Beritahu Saya Saat Rilis
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: ROADMAP (UPDATED SELANJUTNYA) & NOTIFY -->
+            <div class="row g-4">
+                <!-- Timeline Roadmap -->
+                <div class="col-lg-7">
+                    <div class="widget-card h-100">
+                        <div class="card-header-custom ps-0 pt-0 bg-transparent border-0 mb-3">
+                            <h5 class="fw-bold mb-0"><i class="bi bi-map me-2 text-primary"></i> Roadmap Pengembangan
+                            </h5>
+                        </div>
+
+                        <div class="timeline-wrapper">
+                            <!-- Item 1: Done -->
+                            <div class="timeline-item">
+                                <div class="timeline-dot done"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-date">Q4 2024 - Selesai</div>
+                                    <h6 class="timeline-title">Pembaruan Sistem Keamanan</h6>
+                                    <p class="text-muted small mb-0">Implementasi 2FA, enkripsi data end-to-end, dan
+                                        pembaruan firewall server untuk keamanan maksimal.</p>
+                                </div>
+                            </div>
+
+                            <!-- Item 2: Active (Current Focus) -->
+                            <div class="timeline-item">
+                                <div class="timeline-dot active"></div>
+                                <div class="timeline-content" style="border-left: 3px solid var(--accent-purple);">
+                                    <div class="timeline-date">Q1 2025 - Sedang Dikerjakan</div>
+                                    <h6 class="timeline-title">Modul Akuntansi & Laporan AI</h6>
+                                    <p class="text-muted small mb-0">Fitur yang sedang Anda tunggu. Pencatatan otomatis
+                                        arus kas, neraca laba rugi, dan prediksi keuangan berbasis AI.</p>
+                                    <div class="mt-2">
+                                        <span class="badge bg-soft-info text-info me-1">Accounting</span>
+                                        <span class="badge bg-soft-info text-info">AI Analysis</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Item 3: Future -->
+                            <div class="timeline-item">
+                                <div class="timeline-dot future"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-date">Q2 2025 - Mendatang</div>
+                                    <h6 class="timeline-title">Integrasi Mobile App (iOS & Android)</h6>
+                                    <p class="text-muted small mb-0">Akses dashboard Nexus Admin langsung dari genggaman
+                                        Anda dengan aplikasi native yang responsif.</p>
+                                </div>
+                            </div>
+
+                            <!-- Item 4: Future -->
+                            <div class="timeline-item">
+                                <div class="timeline-dot future"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-date">Q3 2025 - Konsep</div>
+                                    <h6 class="timeline-title">Marketplace Integrations</h6>
+                                    <p class="text-muted small mb-0">Sinkronisasi stok dan pesanan otomatis dari
+                                        Tokopedia, Shopee, dan TikTok Shop.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notify Form & Contact -->
+                <div class="col-lg-5">
+                    <div class="widget-card h-100 d-flex flex-column justify-content-center text-center"
+                        id="notifySection">
+                        <div class="mb-4">
+                            <div class="icon-square bg-soft-info text-info mx-auto mb-3"
+                                style="width: 70px; height: 70px; font-size: 1.8rem; background: rgba(59,130,246,0.1);">
+                                <i class="bi bi-envelope-paper-heart"></i>
+                            </div>
+                            <h4 class="fw-bold">Jangan Sampai Terlewat!</h4>
+                            <p class="text-muted">Jadilah yang pertama mencoba fitur baru kami. Dapatkan akses beta
+                                tester eksklusif.</p>
+                        </div>
+
+                        <form class="sub-input-group mb-4"
+                            onsubmit="event.preventDefault(); alert('Terima kasih! Email Anda telah terdaftar.');">
+                            <input type="email" class="sub-input" placeholder="Masukkan alamat email..." required>
+                            <button type="submit" class="sub-btn">Gabung</button>
+                        </form>
+
+                        <div class="p-3 rounded-3"
+                            style="background: rgba(255,255,255,0.03); border: 1px dashed var(--border-color);">
+                            <p class="small text-muted mb-2 fw-bold text-uppercase ls-1">Atau hubungi tim support</p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="#" class="btn btn-outline-secondary btn-sm rounded-pill"><i
+                                        class="bi bi-whatsapp"></i> WhatsApp</a>
+                                <a href="#" class="btn btn-outline-secondary btn-sm rounded-pill"><i
+                                        class="bi bi-telegram"></i> Telegram</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            /* ======================================================================
+               GLOBAL JS (SIDEBAR, THEME, MOBILE MENU) - TETAP PERTAHANKAN
+               ====================================================================== */
+            const body = document.body;
+            const sidebar = document.getElementById("sidebar");
+            const collapseBtn = document.getElementById("collapseBtn");
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+            const menuThemeSwitch = document.getElementById("menuThemeSwitch");
+            const mobileBtn = document.getElementById("mobileMenuBtn");
+            const overlay = document.getElementById("sidebarOverlay");
+
+            // Function to handle Theme Change
+            function toggleTheme() {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+                if (menuThemeSwitch) menuThemeSwitch.checked = !isLight;
+            }
+
+            // Initial Theme Load
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+                if (menuThemeSwitch) menuThemeSwitch.checked = false;
+            } else {
+                if (menuThemeSwitch) menuThemeSwitch.checked = true;
+            }
+
+            themeToggle?.addEventListener("click", toggleTheme);
+            menuThemeSwitch?.addEventListener("change", () => {
+                if (menuThemeSwitch.checked) { if (body.classList.contains("light-mode")) toggleTheme(); }
+                else { if (!body.classList.contains("light-mode")) toggleTheme(); }
+            });
+
+            function closeMobileMenu() {
+                sidebar.classList.remove("active");
+                if (overlay) overlay.classList.remove("show");
+            }
+            function toggleMobileMenu() {
+                sidebar.classList.toggle("active");
+                if (overlay) overlay.classList.toggle("show");
+            }
+
+            if (collapseBtn) {
+                collapseBtn.addEventListener("click", () => {
+                    if (window.innerWidth <= 768) closeMobileMenu();
+                    else {
+                        sidebar.classList.toggle("collapsed");
+                        body.classList.toggle("sidebar-collapsed");
+                    }
+                });
+            }
+            if (mobileBtn) mobileBtn.addEventListener("click", toggleMobileMenu);
+            if (overlay) overlay.addEventListener("click", closeMobileMenu);
+
+            /* ======================================================================
+               KHUSUS: LOGIKA COMING SOON & COUNTDOWN
+               ====================================================================== */
+
+            // Set tanggal peluncuran (Misal: 14 hari dari sekarang)
+            const launchDate = new Date();
+            launchDate.setDate(launchDate.getDate() + 14);
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = launchDate - now;
+
+                if (distance < 0) {
+                    document.getElementById("countdown").innerHTML = "<h3 class='text-primary fw-bold'>KAMI SUDAH LIVE!</h3>";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Helper agar selalu 2 digit (01, 05, dll)
+                const fmt = (n) => n < 10 ? `0${n}` : n;
+
+                document.getElementById("days").innerText = fmt(days);
+                document.getElementById("hours").innerText = fmt(hours);
+                document.getElementById("minutes").innerText = fmt(minutes);
+                document.getElementById("seconds").innerText = fmt(seconds);
+            }
+
+            setInterval(updateCountdown, 1000);
+            updateCountdown(); // Run immediately
+        });
+    </script>
+</body>
+
+</html>

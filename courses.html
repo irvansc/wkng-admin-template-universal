@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - invoices</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+   <style>
+    /* ======================================================================
+           2. GLOBAL CUSTOM STYLE FOR COURSE MODULE
+           (Styles khusus untuk halaman Kursus/Kelas - Interaktif & Modern)
+           ====================================================================== */
+
+        /* A. Filter & Toolbar Section */
+        .course-toolbar {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* [MODIFIED] Fixed Dark Mode Issue for Select */
+        .custom-select-modern {
+            background-color: var(--bg-card); /* Changed from input-bg to ensure visibility */
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 16px;
+            border-radius: 12px;
+            outline: none;
+            cursor: pointer;
+            min-width: 150px;
+            transition: border-color 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236366f1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            padding-right: 40px;
+        }
+
+        .custom-select-modern:focus {
+            border-color: var(--accent-purple);
+        }
+
+        /* [MODIFIED] Ensure options are readable in Dark Mode */
+        .custom-select-modern option {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            padding: 10px;
+        }
+
+        .view-toggle-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .view-toggle-btn.active, .view-toggle-btn:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        /* B. Shared Course Card Base */
+        .course-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        
+        body.light-mode .course-card:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .course-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 160px;
+            overflow: hidden;
+        }
+
+        .course-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .course-card:hover .course-img {
+            transform: scale(1.05);
+        }
+
+        .course-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            z-index: 2;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .badge-premium { background: linear-gradient(135deg, #f59e0b, #d97706); border: none; }
+        .badge-free { background: linear-gradient(135deg, #10b981, #059669); border: none; }
+        .badge-popular { background: linear-gradient(135deg, #ec4899, #db2777); border: none; }
+
+        .course-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .course-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .course-instructor {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .instructor-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .instructor-name {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .course-footer {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        body.light-mode .course-footer {
+             border-top-color: rgba(0,0,0,0.05);
+        }
+
+        .course-price {
+            font-weight: 700;
+            color: var(--accent-purple);
+            font-size: 1.1rem;
+        }
+
+        .course-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--accent-orange);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* --- STYLE VARIATION 1: PROGRESS FOCUSED (Enrolled) --- */
+        .progress-slim {
+            height: 6px;
+            background-color: var(--input-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-bar-custom {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+        }
+
+        /* --- STYLE VARIATION 2: HORIZONTAL LIST --- */
+        .course-card.horizontal-mode {
+            flex-direction: row;
+            height: auto;
+            align-items: stretch;
+        }
+        .horizontal-mode .course-img-wrapper {
+            width: 280px;
+            height: auto;
+            min-height: 180px;
+        }
+        .horizontal-mode .course-body {
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .course-card.horizontal-mode { flex-direction: column; }
+            .horizontal-mode .course-img-wrapper { width: 100%; height: 180px; }
+        }
+
+        /* --- STYLE VARIATION 3: HERO / FEATURED --- */
+        .course-hero-card {
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+        }
+        .course-hero-card:hover { transform: scale(1.01); }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.2));
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative; z-index: 2; color: white;
+        }
+        .play-btn-overlay {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.5rem; border: 1px solid rgba(255,255,255,0.3);
+            margin-bottom: 20px; transition: all 0.3s;
+        }
+        .course-hero-card:hover .play-btn-overlay {
+            background: var(--accent-purple); border-color: var(--accent-purple); transform: scale(1.1);
+        }
+
+        /* --- STYLE VARIATION 4: MINIMALIST OUTLINE --- */
+        .course-minimal {
+            background: transparent;
+            border: 1px dashed var(--border-color);
+        }
+        .course-minimal:hover {
+            border-style: solid;
+            border-color: var(--accent-purple);
+            background: var(--bg-card);
+        }
+
+        /* --- STYLE VARIATION 5: GLASSMORPHISM --- */
+        .course-glass {
+            position: relative;
+            background: url('https://placehold.co/600x400/222/555') center/cover;
+        }
+        .glass-body {
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: absolute;
+            bottom: 12px; left: 12px; right: 12px;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        body.light-mode .glass-body {
+            background: rgba(255, 255, 255, 0.7);
+            border-color: rgba(0,0,0,0.1);
+        }
+
+        /* --- STYLE VARIATION 6: NEON GLOW (Dark Mode Only) --- */
+        .course-neon {
+            border: 1px solid var(--accent-purple);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+        }
+        .course-neon:hover {
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+        }
+        
+        /* --- STYLE VARIATION 7: INSTRUCTOR FOCUSED --- */
+        .instructor-img-large {
+            width: 80px; height: 80px; border-radius: 50%;
+            border: 4px solid var(--bg-card);
+            margin-top: -40px; margin-left: 20px;
+            position: relative; z-index: 2;
+        }
+        .instructor-card-top { height: 100px; background: linear-gradient(135deg, #3b82f6, #0ea5e9); }
+
+        /* --- STATISTIC HEADER --- */
+        .course-stat-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex; align-items: center; gap: 16px;
+        }
+        .stat-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; flex-shrink: 0;
+        }
+   </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse" id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="/products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link "><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link "><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link "><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link "><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link "><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu" aria-expanded="true"><i
+                        class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link active"><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT -->
+       <!-- MAIN CONTENT -->
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        
+       <!-- Navbar -->
+       <div class="top-navbar-standalone">
+        <div class="search-standalone-box">
+            <i class="bi bi-search search-standalone-icon"></i>
+            <input type="text" class="search-standalone-input" placeholder="Cari sesuatu...">
+        </div>
+
+        <!-- [NEW] Notification Bell with Red Dot -->
+        <div class="notification-wrapper dropdown">
+            <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                data-bs-display="static">
+                <i class="bi bi-bell"></i>
+                <div class="notification-dot-red"></div>
+            </div>
+            <ul class="dropdown-menu notification-dropdown-menu">
+                <div
+                    class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                    <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                    <span class="badge bg-danger rounded-pill">3 Baru</span>
+                </div>
+
+                <li><a class="notification-item" href="#">
+                        <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                        </div>
+                        <div class="notif-content">
+                            <h6>System Alert</h6>
+                            <p>CPU Usage above 90% detected.</p>
+                            <span class="notif-time">2 mins ago</span>
+                        </div>
+                    </a></li>
+
+                <li><a class="notification-item" href="#">
+                        <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                        <div class="notif-content">
+                            <h6>New Order</h6>
+                            <p>Received order #ORD-248 from Budi.</p>
+                            <span class="notif-time">15 mins ago</span>
+                        </div>
+                    </a></li>
+
+                <li><a class="notification-item" href="#">
+                        <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                        <div class="notif-content">
+                            <h6>Server Update</h6>
+                            <p>Server scheduled for maintenance.</p>
+                            <span class="notif-time">1 hour ago</span>
+                        </div>
+                    </a></li>
+
+                <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                        style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+            </ul>
+        </div>
+    </div>
+
+        <!-- PAGE HEADER -->
+        <div class="active-page-header">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-lg-7 mb-3 mb-lg-0">
+                    <h1 class="page-title-large">E-Learning Courses</h1>
+                    <p class="text-muted mb-0" style="font-size: 1.05rem;">
+                        Kelola kurikulum, pantau progress siswa, dan buat materi pembelajaran interaktif.
+                    </p>
+                </div>
+                <div class="col-lg-5 text-lg-end">
+                    <div class="header-badge mb-2"><i class="bi bi-mortarboard-fill"></i> Academic Module</div><br>
+                    <nav class="breadcrumb-modern">
+                        <span class="breadcrumb-item-custom">Akademik</span>
+                        <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                        <span class="breadcrumb-item-custom active">Courses</span>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATISTIC ROW -->
+        <div class="course-stat-row">
+            <div class="stat-box">
+                <div class="stat-icon" style="background: rgba(99,102,241,0.1); color: var(--accent-purple);">
+                    <i class="bi bi-collection-play-fill"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">124</h3>
+                    <small class="text-muted">Total Kursus</small>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon" style="background: rgba(16,185,129,0.1); color: var(--accent-green);">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">8.2k</h3>
+                    <small class="text-muted">Siswa Aktif</small>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon" style="background: rgba(245,158,11,0.1); color: var(--accent-orange);">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">4.8</h3>
+                    <small class="text-muted">Avg Rating</small>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon" style="background: rgba(239,68,68,0.1); color: var(--accent-red);">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0 fw-bold">320</h3>
+                    <small class="text-muted">Jam Materi</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- COURSE TOOLBAR (FILTER & ACTIONS) -->
+        <div class="course-toolbar">
+            <div class="filter-group">
+                <select class="custom-select-modern" id="categoryFilter">
+                    <option value="all">Semua Kategori</option>
+                    <option value="development">Development</option>
+                    <option value="design">Design</option>
+                    <option value="business">Business</option>
+                    <option value="marketing">Marketing</option>
+                </select>
+                <!-- [MODIFIED] Added ID for Sorting & Proper Options -->
+                <select class="custom-select-modern" id="sortFilter">
+                    <option value="default">Urutkan: Default</option>
+                    <option value="rating">Rating Tertinggi</option>
+                    <option value="populer">Terpopuler (Siswa)</option>
+                    <option value="az">Judul (A-Z)</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <div class="btn-group">
+                    <button class="view-toggle-btn active" id="btnGridView" onclick="setCourseView('grid')"><i class="bi bi-grid-fill"></i></button>
+                    <button class="view-toggle-btn" id="btnListView" onclick="setCourseView('list')"><i class="bi bi-list-ul"></i></button>
+                </div>
+                <button class="btn btn-primary d-flex align-items-center gap-2" style="background: var(--accent-purple); border: none; padding: 10px 20px; border-radius: 12px;">
+                    <i class="bi bi-plus-lg"></i> Buat Kursus
+                </button>
+            </div>
+        </div>
+
+        <!-- ======================================================================
+             COURSE LIST CONTENT (GRID SYSTEM)
+             [MODIFIED] Added DATA Attributes for Sorting Logic (Rating, Popularity, Title)
+             ====================================================================== -->
+        
+        <div class="row g-4 mb-5" id="courseContainer">
+
+            <!-- Item 1: Hero -->
+            <div class="col-12 course-item" data-category="design" data-rating="4.9" data-popularity="1204" data-title="Masterclass UI/UX Design Modern 2025">
+                <div class="course-hero-card" style="background-image: url('https://placehold.co/1200x600/1e1e2e/6366f1?text=Masterclass+UI+Design');">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <div class="play-btn-overlay"><i class="bi bi-play-fill"></i></div>
+                        <span class="badge bg-danger mb-2">FEATURED</span>
+                        <h2 class="fw-bold display-6">Masterclass UI/UX Design Modern 2025</h2>
+                        <p class="mb-3 text-white-50" style="max-width: 600px;">Pelajari cara membuat desain antarmuka yang memukau dengan Figma dan prinsip UX terbaru.</p>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="https://placehold.co/40x40/png" class="rounded-circle" width="30">
+                                <span class="small fw-bold">Sarah Jenkins</span>
+                            </div>
+                            <span class="text-white-50">|</span>
+                            <span class="small"><i class="bi bi-people"></i> 1,204 Siswa</span>
+                            <span class="text-white-50">|</span>
+                            <span class="small text-warning"><i class="bi bi-star-fill"></i> 4.9</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2: React JS -->
+            <div class="col-xl-3 col-lg-4 col-md-6 course-item" data-category="development" data-rating="4.8" data-popularity="210" data-title="React JS: Dari Dasar Hingga Mahir">
+                <div class="course-card">
+                    <div class="course-img-wrapper">
+                        <span class="course-badge badge-premium">Premium</span>
+                        <img src="https://placehold.co/600x400/222/6366f1?text=React+JS" class="course-img" alt="React">
+                    </div>
+                    <div class="course-body">
+                        <div class="course-meta">
+                            <span><i class="bi bi-clock"></i> 12 Jam</span>
+                            <span><i class="bi bi-bar-chart"></i> Beginner</span>
+                        </div>
+                        <h3 class="course-title">React JS: Dari Dasar Hingga Mahir dengan Project</h3>
+                        <div class="course-instructor">
+                            <img src="https://placehold.co/50x50" class="instructor-avatar">
+                            <span class="instructor-name">Dimas Aryo</span>
+                        </div>
+                        <div class="course-footer">
+                            <div class="course-price">Rp 499.000</div>
+                            <div class="course-rating"><i class="bi bi-star-fill"></i> 4.8 (210)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3: Digital Marketing -->
+            <div class="col-xl-3 col-lg-4 col-md-6 course-item" data-category="marketing" data-rating="4.5" data-popularity="850" data-title="Digital Marketing 101">
+                <div class="course-card" style="border-color: var(--accent-green);">
+                    <div class="course-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge bg-soft-success text-success" style="background: rgba(16,185,129,0.1);">Sedang Dipelajari</span>
+                            <i class="bi bi-three-dots text-muted"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2 text-main">Digital Marketing 101</h4>
+                        <p class="text-muted small mb-3">Lanjutkan Bab 4: SEO Optimization</p>
+                        
+                        <div class="d-flex justify-content-between text-muted small mb-1">
+                            <span>Progress</span>
+                            <span>65%</span>
+                        </div>
+                        <div class="progress-slim">
+                            <div class="progress-bar-custom" style="width: 65%;"></div>
+                        </div>
+
+                        <button class="btn btn-sm btn-light w-100 mt-4 fw-bold text-primary" style="background: rgba(99,102,241,0.1); border:none;">Lanjutkan Belajar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4: Business -->
+            <div class="col-xl-3 col-lg-4 col-md-6 course-item" data-category="business" data-rating="4.7" data-popularity="50" data-title="Business Strategy">
+                <div class="course-card course-minimal">
+                    <div class="course-body d-flex flex-column justify-content-center text-center p-4">
+                        <div class="icon-square mx-auto mb-3" style="width: 60px; height: 60px; background: rgba(245,158,11,0.1); color: var(--accent-orange); border-radius: 50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                        <h5 class="fw-bold text-main">Business Strategy</h5>
+                        <p class="text-muted small">Fundamental bisnis untuk startup founder.</p>
+                        <hr style="border-color: var(--border-color); width: 100%;">
+                        <div class="d-flex justify-content-center gap-3 small text-muted">
+                            <span><i class="bi bi-people"></i> 50 Siswa</span>
+                            <span><i class="bi bi-file-text"></i> 12 Modul</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 5: Blender 3D -->
+            <div class="col-xl-3 col-lg-4 col-md-6 course-item" data-category="design" data-rating="5.0" data-popularity="300" data-title="3D Blender Course">
+                <div class="course-card course-glass h-100 border-0">
+                    <!-- Background set in CSS -->
+                    <div class="glass-body">
+                        <span class="badge bg-primary mb-2">DESIGN</span>
+                        <h5 class="fw-bold text-white mb-1">3D Blender Course</h5>
+                        <div class="d-flex align-items-center gap-2 small text-white-50">
+                            <i class="bi bi-star-fill text-warning"></i> 5.0
+                            <span>• By Rio Dewanto</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 6: Cyber Security -->
+            <div class="col-xl-3 col-lg-4 col-md-6 course-item" data-category="development" data-rating="4.6" data-popularity="150" data-title="Cyber Security Basic">
+                <div class="course-card course-neon">
+                    <div class="course-img-wrapper" style="height: 140px;">
+                        <img src="https://placehold.co/600x400/111/0ea5e9?text=Cyber+Security" class="course-img">
+                    </div>
+                    <div class="course-body">
+                        <h5 class="fw-bold text-main" style="text-shadow: 0 0 10px rgba(14,165,233,0.5);">Cyber Security Basic</h5>
+                        <p class="small text-muted mb-3">Ethical Hacking & Network Defense.</p>
+                        <div class="d-flex gap-2">
+                            <span class="badge border border-info text-info bg-transparent">Network</span>
+                            <span class="badge border border-info text-info bg-transparent">Security</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 7: Marketing Advanced -->
+            <div class="col-xl-3 col-lg-4 col-md-6 course-item" data-category="marketing" data-rating="4.8" data-popularity="900" data-title="Advance Social Media Ads Strategy">
+                <div class="course-card p-0">
+                    <div class="instructor-card-top"></div>
+                    <img src="https://placehold.co/100x100/ec4899/fff?text=AJ" class="instructor-img-large">
+                    <div class="p-3 pt-1">
+                        <h5 class="fw-bold mb-0">Angelina Jolie</h5>
+                        <small class="text-accent-pink fw-bold">Senior Marketing Lead</small>
+                        <div class="mt-3">
+                            <h6 class="text-muted small text-uppercase fw-bold">Course:</h6>
+                            <a href="#" class="text-main fw-bold text-decoration-none d-block">Advance Social Media Ads Strategy</a>
+                        </div>
+                        <div class="mt-3 d-flex justify-content-between align-items-center">
+                            <span class="small text-muted">24 Video</span>
+                            <button class="btn btn-sm btn-outline-light rounded-pill px-3">View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Item 8: JS ES6 -->
+             <div class="col-xl-3 col-lg-4 col-md-6 course-item" data-category="development" data-rating="4.4" data-popularity="500" data-title="JavaScript ES6+">
+                <div class="course-card p-3 d-flex align-items-center gap-3">
+                    <div class="rounded-3 overflow-hidden flex-shrink-0" style="width: 80px; height: 80px;">
+                        <img src="https://placehold.co/150x150/6366f1/fff?text=JS" class="w-100 h-100 object-fit-cover">
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold mb-1">JavaScript ES6+</h6>
+                        <div class="progress" style="height: 4px; background: var(--border-color);" role="progressbar">
+                            <div class="progress-bar bg-warning" style="width: 80%"></div>
+                        </div>
+                        <small class="text-muted d-block mt-1">80% Completed</small>
+                    </div>
+                    <button class="btn btn-icon btn-sm text-muted"><i class="bi bi-play-circle-fill fs-4"></i></button>
+                </div>
+            </div>
+
+        </div>
+        <!-- END OF GRID -->
+
+        <!-- PAGINATION (INTERACTIVE) -->
+        <!-- [MODIFIED] Added ID to facilitate JS Rendering -->
+        <nav aria-label="Page navigation" class="mt-auto d-flex justify-content-center">
+            <ul class="pagination" id="paginationContainer">
+                <!-- Javascript will populate this -->
+            </ul>
+        </nav>
+
+        <!-- START OF COPYRIGHT FOOTER SECTION -->
+        <footer class=" footer-dashboard">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                    <p class="mb-0 small text-muted">Copyright &copy; 2025
+                        <strong class="text-white">Nexus
+                            Admin</strong>. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                        <a href="#" class="footer-link">Kebijakan
+                            Privasi</a>
+                        <a href="#" class="footer-link">Syarat &
+                            Ketentuan</a>
+                        <a href="#" class="footer-link">Bantuan</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    </div>
+
+    <!-- Theme Toggle Floating (Maintained) -->
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+       // 2. COURSE MODULE LOGIC (NEW & COMPLETE)
+        
+        // --- State Management ---
+        const ITEMS_PER_PAGE = 4; // Change this to test pagination (e.g., 2 or 4)
+        let currentPage = 1;
+        let currentCategory = 'all';
+        let currentSearch = '';
+        
+        // View Switcher (Grid vs List)
+        function setCourseView(view) {
+            const container = document.getElementById('courseContainer');
+            const items = container.querySelectorAll('.course-item');
+            const btnGrid = document.getElementById('btnGridView');
+            const btnList = document.getElementById('btnListView');
+
+            if (view === 'list') {
+                items.forEach(item => {
+                    item.className = 'col-12 course-item'; 
+                    const card = item.querySelector('.course-card');
+                    if(card) card.classList.add('horizontal-mode');
+                });
+                btnList.classList.add('active');
+                btnGrid.classList.remove('active');
+            } else {
+                items.forEach(item => {
+                    item.className = 'col-xl-3 col-lg-4 col-md-6 course-item';
+                    const card = item.querySelector('.course-card');
+                    if(card) card.classList.remove('horizontal-mode');
+                });
+                btnGrid.classList.add('active');
+                btnList.classList.remove('active');
+            }
+        }
+
+        // --- FILTER & SEARCH LOGIC ---
+        function applyFilters() {
+            const items = Array.from(document.querySelectorAll('.course-item'));
+            let visibleCount = 0;
+            const filteredItems = [];
+
+            items.forEach(item => {
+                const category = item.getAttribute('data-category');
+                const title = item.getAttribute('data-title').toLowerCase();
+                const matchesCategory = (currentCategory === 'all' || category === currentCategory);
+                const matchesSearch = title.includes(currentSearch);
+
+                if (matchesCategory && matchesSearch) {
+                    item.style.display = 'block'; // Show temporarily for sorting
+                    filteredItems.push(item);
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Re-render pagination based on filtered items
+            renderPagination(filteredItems);
+        }
+
+        const categoryFilter = document.getElementById('categoryFilter');
+        categoryFilter.addEventListener('change', function() {
+            currentCategory = this.value;
+            currentPage = 1; // Reset to page 1
+            applyFilters();
+        });
+
+        const searchInput = document.getElementById('globalSearch');
+        searchInput.addEventListener('keyup', function() {
+            currentSearch = this.value.toLowerCase();
+            currentPage = 1;
+            applyFilters();
+        });
+
+        // --- SORTING LOGIC ---
+        const sortFilter = document.getElementById('sortFilter');
+        const courseContainer = document.getElementById('courseContainer');
+        
+        sortFilter.addEventListener('change', function() {
+            const criteria = this.value;
+            const items = Array.from(courseContainer.children);
+
+            items.sort((a, b) => {
+                if (criteria === 'rating') {
+                    return b.getAttribute('data-rating') - a.getAttribute('data-rating');
+                } else if (criteria === 'populer') {
+                    return b.getAttribute('data-popularity') - a.getAttribute('data-popularity');
+                } else if (criteria === 'az') {
+                    return a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'));
+                } else {
+                    return 0; // Default order
+                }
+            });
+
+            items.forEach(item => courseContainer.appendChild(item));
+            applyFilters(); // Re-apply pagination after sort
+        });
+
+
+        // --- PAGINATION LOGIC ---
+        function renderPagination(visibleItems) {
+            const paginationContainer = document.getElementById('paginationContainer');
+            paginationContainer.innerHTML = ''; // Clear old
+
+            const totalPages = Math.ceil(visibleItems.length / ITEMS_PER_PAGE);
+
+            if (totalPages <= 1) return; // Hide pagination if only 1 page
+
+            // Prev Button
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link bg-transparent border-secondary text-muted" href="#">Prev</a>`;
+            prevLi.onclick = (e) => { e.preventDefault(); if(currentPage > 1) changePage(currentPage - 1, visibleItems); };
+            paginationContainer.appendChild(prevLi);
+
+            // Numbered Buttons
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                // Styling active vs inactive
+                const activeStyle = "bg-primary border-primary text-white";
+                const inactiveStyle = "bg-transparent border-secondary text-muted";
+                li.innerHTML = `<a class="page-link ${i === currentPage ? activeStyle : inactiveStyle}" href="#">${i}</a>`;
+                
+                li.onclick = (e) => { 
+                    e.preventDefault(); 
+                    changePage(i, visibleItems); 
+                };
+                paginationContainer.appendChild(li);
+            }
+
+            // Next Button
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link bg-transparent border-secondary text-muted" href="#">Next</a>`;
+            nextLi.onclick = (e) => { e.preventDefault(); if(currentPage < totalPages) changePage(currentPage + 1, visibleItems); };
+            paginationContainer.appendChild(nextLi);
+
+            // Perform visual hiding/showing based on page
+            showPageItems(visibleItems);
+        }
+
+        function changePage(pageNum, items) {
+            currentPage = pageNum;
+            renderPagination(items);
+        }
+
+        function showPageItems(items) {
+            // First hide everything that matched filter
+            items.forEach(item => item.style.display = 'none');
+
+            // Calculate range
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            
+            // Show only items in range
+            const itemsToShow = items.slice(start, end);
+            itemsToShow.forEach(item => item.style.display = 'block');
+        }
+
+        // Initialize
+        applyFilters();
+
+    </script>
+</body>
+
+</html>

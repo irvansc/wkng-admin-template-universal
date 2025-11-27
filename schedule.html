@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Schedule</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+       
+        /* ======================================================================
+           /* COMPONENT ONLY */
+           /* SCHEDULE PAGE SPECIFIC STYLES & LAYOUTS
+           ====================================================================== */
+
+        /* 1. Control Bar Area */
+        .controls-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .day-filter-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .day-btn {
+            border: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .day-btn:hover, .day-btn.active {
+            background: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+        .search-filter-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: flex-end;
+        }
+        .input-group-custom {
+            display: flex;
+            align-items: center;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 4px 12px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .input-group-custom input {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            padding: 8px;
+            width: 100%;
+            outline: none;
+        }
+        .layout-toggle-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-dark);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .layout-toggle-btn.active {
+            background: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+
+        /* 2. Style Switcher */
+        .style-switcher-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .style-pill {
+            padding: 8px 16px;
+            border-radius: 50px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .style-pill:hover, .style-pill.active {
+            background: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+
+        /* ======================================================================
+           3. CORE CARD & LAYOUT LOGIC (VERTICAL VS HORIZONTAL)
+           ====================================================================== */
+        
+        /* Helpers */
+        .sch-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .sch-card:hover { border-color: var(--accent-purple); transform: translateY(-3px); }
+        .sch-time-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ------------------------------------------------------------------
+           STYLE 1: GRADIENT CARD (RE-DESIGNED FOR PRECISION)
+           ------------------------------------------------------------------ */
+        .style-1-card {
+            position: relative;
+            height: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Accent Line on Left */
+        .style-1-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 5px;
+            background: var(--item-hex);
+            z-index: 1;
+        }
+        
+        /* Layout Horizontal specific */
+        .layout-horizontal .style-1-card {
+            padding: 0;
+        }
+        .layout-horizontal .style-1-top {
+            padding: 24px 24px 16px 29px; /* Extra left pad for accent */
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+        }
+        .layout-horizontal .style-1-btm {
+            padding: 16px 24px 20px 29px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Layout Vertical specific */
+        .layout-vertical .style-1-card {
+            flex-direction: row;
+            align-items: center;
+        }
+        .layout-vertical .style-1-left {
+            padding: 20px 24px 20px 29px;
+            width: 35%;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+        .layout-vertical .style-1-right {
+            padding: 20px 24px;
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        @media(max-width: 768px) {
+            .layout-vertical .style-1-card { flex-direction: column; align-items: stretch; }
+            .layout-vertical .style-1-left { width: 100%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+            .layout-vertical .style-1-right { flex-direction: column; gap: 16px; align-items: flex-start; }
+        }
+
+        /* ------------------------------------------------------------------
+           STYLE 2: TABLE
+           ------------------------------------------------------------------ */
+        /* Horizontal (Standard Table) */
+        .layout-horizontal .table-responsive { display: block; }
+        .table-premium { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        .table-premium td { padding: 16px; background: var(--bg-card); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
+        .table-premium td:first-child { border-left: 1px solid var(--border-color); border-radius: 12px 0 0 12px; }
+        .table-premium td:last-child { border-right: 1px solid var(--border-color); border-radius: 0 12px 12px 0; }
+        
+        /* Vertical (Cards masquerading as Table Rows) */
+        .layout-vertical .table-as-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ------------------------------------------------------------------
+           STYLE 3: LIST
+           ------------------------------------------------------------------ */
+        /* Horizontal (Grid Boxes) */
+        .layout-horizontal .style-3-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 16px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Vertical (Standard List) */
+        .layout-vertical .style-3-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .layout-vertical .style-3-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: 0.2s;
+        }
+        .layout-vertical .style-3-item:hover { background: rgba(255,255,255,0.02); padding-left: 24px; }
+        .layout-vertical .style-3-item:last-child { border-bottom: none; }
+
+        /* ------------------------------------------------------------------
+           STYLE 4: CALENDAR GRID
+           ------------------------------------------------------------------ */
+        /* Horizontal (Grid) */
+        .layout-horizontal .style-4-card {
+            text-align: center; padding: 24px; 
+            border-top: 4px solid var(--item-hex);
+        }
+        /* Vertical (List with Side Icon) */
+        .layout-vertical .style-4-card {
+            display: flex; align-items: center; padding: 16px; gap: 20px;
+            border-left: 4px solid var(--item-hex);
+        }
+        .layout-vertical .style-4-icon { font-size: 2rem; color: var(--item-hex); }
+
+        /* ------------------------------------------------------------------
+           STYLE 5: KANBAN
+           ------------------------------------------------------------------ */
+        /* Horizontal (Scrolling Board) */
+        .layout-horizontal .kanban-container {
+            display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px;
+        }
+        .layout-horizontal .kanban-col {
+            min-width: 300px; background: rgba(0,0,0,0.2); border-radius: 16px; padding: 16px; border: 1px solid var(--border-color);
+        }
+        
+        /* Vertical (Stacked Groups) */
+        .layout-vertical .kanban-col {
+            margin-bottom: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        /* ------------------------------------------------------------------
+           STYLE 6: TIMELINE
+           ------------------------------------------------------------------ */
+        /* Horizontal (Horizontal Scroll Timeline) */
+        .layout-horizontal .timeline-container {
+            display: flex; gap: 40px; overflow-x: auto; padding: 20px 20px 40px; position: relative;
+        }
+        .layout-horizontal .timeline-container::before {
+            content: ''; position: absolute; top: 38px; left: 0; right: 0; height: 2px; background: var(--border-color); z-index: 0;
+        }
+        .layout-horizontal .timeline-item { min-width: 250px; position: relative; z-index: 1; padding-top: 40px; }
+        .layout-horizontal .timeline-dot {
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 20px; height: 20px; border-radius: 50%; background: var(--accent-purple); border: 4px solid var(--bg-card);
+        }
+
+        /* Vertical (Classic Timeline) */
+        .layout-vertical .timeline-container { position: relative; padding-left: 30px; }
+        .layout-vertical .timeline-container::before { content:''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--border-color); }
+        .layout-vertical .timeline-item { margin-bottom: 30px; position: relative; }
+        .layout-vertical .timeline-dot { position: absolute; left: -26px; top: 0; width: 20px; height: 20px; background: var(--accent-purple); border-radius: 50%; border: 4px solid var(--bg-card); }
+
+        /* ------------------------------------------------------------------
+           STYLE 7: COMPACT
+           ------------------------------------------------------------------ */
+        /* Horizontal (Cards Side by Side) */
+        .layout-horizontal .compact-card { padding: 16px; height: 100%; }
+        
+        /* Vertical (Full Width Bars) */
+        .layout-vertical .compact-row {
+            background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+        }
+
+        /* ------------------------------------------------------------------
+           STYLE 8: EXPANDED
+           ------------------------------------------------------------------ */
+        /* Horizontal (Grid Hover) */
+        .layout-horizontal .style-8-card {
+            height: 120px; overflow: hidden; transition: height 0.3s; padding: 20px;
+        }
+        .layout-horizontal .style-8-card:hover { height: 220px; z-index: 10; background: linear-gradient(135deg, var(--bg-card) 0%, rgba(99,102,241,0.1) 100%); }
+
+        /* Vertical (Accordion-like) */
+        .layout-vertical .style-8-card {
+            display: flex; flex-direction: column; padding: 20px; margin-bottom: 12px; transition: 0.3s;
+        }
+        .layout-vertical .style-8-card:hover { transform: scale(1.01); background: rgba(255,255,255,0.02); }
+
+        /* ------------------------------------------------------------------
+           STYLE 9: MINIMAL
+           ------------------------------------------------------------------ */
+        .style-minimal-card { background: transparent !important; border: 2px solid var(--border-color); box-shadow: none; border-radius: 0; transition: 0.2s; }
+        .style-minimal-card:hover { border-color: var(--text-main); }
+
+        /* ------------------------------------------------------------------
+           STYLE 10: NEON
+           ------------------------------------------------------------------ */
+        .style-neon-card {
+            background: #000; border: 1px solid var(--accent-purple); color: white;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.3), inset 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+        body.light-mode .style-neon-card { background: #fff; color: var(--accent-purple); box-shadow: 5px 5px 0 var(--accent-purple); border: 2px solid var(--accent-purple); }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+ /* Input & Select sesuai Theme "Nexus Admin" */
+ .form-control-nexus {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+.form-control-nexus:focus {
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    outline: none;
+}
+.form-control-nexus::placeholder { color: var(--text-muted); opacity: 0.7; }
+
+/* FIX SELECT DROPDOWN BACKGROUND & OPTIONS */
+.form-select.form-control-nexus {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+}
+/* Style untuk option dropdown agar tidak putih */
+.form-select.form-control-nexus option {
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    padding: 10px;
+}
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse" id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="/products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link "><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link "><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link "><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link "><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link "><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu" aria-expanded="true"><i
+                        class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link "><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link active"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Navbar -->
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari sesuatu...">
+                </div>
+
+                <!-- [NEW] Notification Bell with Red Dot -->
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p>
+                                    <span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p>
+                                    <span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p>
+                                    <span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER-->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Schedule</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">
+                            Kelola invoice, kontrol arus pembayaran, dan tingkatkan efisiensi keuangan
+
+                        </p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-box-seam"></i>Schedule</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><i
+                                        class="bi bi-house-door-fill"></i></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Akademik</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Schedule</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END OF PAGE HEADER -->
+
+
+            <!-- START OF CONTENT HERE -->
+
+  <!-- CONTROLS & FILTER SECTION -->
+  <div class="controls-wrapper">
+    <!-- Row 1: Day Filters -->
+  
+
+    <!-- Row 2: Search, Type Filter, Layout Toggle -->
+    <div class="control-row">
+        <div class="text-muted small d-none d-md-block"><i class="bi bi-sliders me-1"></i> Filter & Layout</div>
+        
+        <div class="search-filter-group">
+            <!-- Search Box -->
+            <div class="input-group-custom">
+                <i class="bi bi-search text-muted"></i>
+                <input type="text" id="searchInput" placeholder="Cari mapel atau guru..." onkeyup="handleSearch()">
+            </div>
+
+            <!-- Type Filter -->
+            <select class="form-select form-control-nexus" id="typeFilter" style="width: 150px; --bs-bg-opacity: .1;" onchange="handleTypeFilter()">
+                <option value="all">Semua Tipe</option>
+                <option value="math">Matematika</option>
+                <option value="science">Sains</option>
+                <option value="art">Seni</option>
+                <option value="lang">Bahasa</option>
+                <option value="tech">Teknologi</option>
+            </select>
+
+            <!-- Layout Toggle Switch -->
+            <div class="d-flex bg-dark border border-secondary rounded-3 p-1" style="--bs-bg-opacity: .1;">
+                <button class="layout-toggle-btn active" onclick="setLayout('horizontal', this)" title="Horizontal / Grid View">
+                    <i class="bi bi-grid"></i>
+                </button>
+                <button class="layout-toggle-btn" onclick="setLayout('vertical', this)" title="Vertical / List View">
+                    <i class="bi bi-list-ul"></i>
+                </button>
+            </div>
+            
+            <!-- ADD BUTTON MOVED HERE -->
+            <button class="btn btn-primary rounded-pill px-3" onclick="openAddModal()">
+                <i class="bi bi-plus-lg me-1"></i> Tambah
+            </button>
+        </div>
+    </div>
+</div>
+<div class="control-row mb-3">
+    <div class="day-filter-group" id="dayFilters">
+        <button class="day-btn active" onclick="setDayFilter('all', this)">Semua Hari</button>
+        <button class="day-btn" onclick="setDayFilter('Senin', this)">Senin</button>
+        <button class="day-btn" onclick="setDayFilter('Selasa', this)">Selasa</button>
+        <button class="day-btn" onclick="setDayFilter('Rabu', this)">Rabu</button>
+        <button class="day-btn" onclick="setDayFilter('Kamis', this)">Kamis</button>
+        <button class="day-btn" onclick="setDayFilter('Jumat', this)">Jumat</button>
+    </div>
+</div>
+<!-- STYLE SWITCHER -->
+<div class="style-switcher-pills">
+    <div class="style-pill active" onclick="setStyle('1', this)">1. Gradient Card</div>
+    <div class="style-pill" onclick="setStyle('2', this)">2. Premium Table</div>
+    <div class="style-pill" onclick="setStyle('3', this)">3. List Layout</div>
+    <div class="style-pill" onclick="setStyle('4', this)">4. Calendar Grid</div>
+    <div class="style-pill" onclick="setStyle('5', this)">5. Kanban Board</div>
+    <div class="style-pill" onclick="setStyle('6', this)">6. Timeline</div>
+    <div class="style-pill" onclick="setStyle('7', this)">7. Compact</div>
+    <div class="style-pill" onclick="setStyle('8', this)">8. Expanded</div>
+    <div class="style-pill" onclick="setStyle('9', this)">9. Minimalist</div>
+    <div class="style-pill" onclick="setStyle('10', this)">10. Neon Style</div>
+</div>
+
+<!-- DYNAMIC SCHEDULE CONTAINER -->
+<!-- Note: Data is now loaded FROM here, not inserted by JS initially -->
+<div id="scheduleContainer" class="row g-3 fade-in layout-horizontal">
+    
+    <!-- DATA ITEM 1 -->
+    <div class="col-md-6 col-lg-4 sch-item-root" 
+         data-id="1" data-day="Senin" data-time="07:30 - 09:00" data-subject="Matematika Lanjut" 
+         data-teacher="Dr. Budi Santoso" data-room="Lab A1" data-type="math" data-hex="#6366f1" data-bg="bg-purple-subtle">
+        <div class="sch-card style-1-card" style="--item-hex: #6366f1">
+            <div class="style-1-top" style="--item-hex: #6366f1">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge" style="background: #6366f120; color: #6366f1; border: 1px solid #6366f140">MATH</span>
+                    <i class="bi bi-three-dots text-muted"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-0 text-truncate" title="Matematika Lanjut" style="font-size: 1.1rem; letter-spacing: 0.3px;">Matematika Lanjut</h5>
+                <small class="text-muted" style="font-size: 0.85rem"><i class="bi bi-person me-1"></i>Dr. Budi Santoso</small>
+            </div>
+            <div class="style-1-btm">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-clock me-1"></i> 07:30 - 09:00</div>
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-geo-alt me-1"></i> Lab A1</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                    <small class="text-muted fw-bold"><i class="bi bi-calendar3 me-1"></i> Senin</small>
+                    <button class="btn btn-sm text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="background: #6366f1; width: 32px; height: 32px;"><i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA ITEM 2 -->
+    <div class="col-md-6 col-lg-4 sch-item-root"
+         data-id="2" data-day="Senin" data-time="09:15 - 10:45" data-subject="Fisika Kuantum" 
+         data-teacher="Siti Aminah, M.Sc" data-room="R. Teori 3" data-type="science" data-hex="#3b82f6" data-bg="bg-blue-subtle">
+        <div class="sch-card style-1-card" style="--item-hex: #3b82f6">
+             <!-- Static HTML content similar to above, allows viewing without JS initially -->
+            <div class="style-1-top" style="--item-hex: #3b82f6">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge" style="background: #3b82f620; color: #3b82f6; border: 1px solid #3b82f640">SCIENCE</span>
+                    <i class="bi bi-three-dots text-muted"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-0 text-truncate">Fisika Kuantum</h5>
+                <small class="text-muted" style="font-size: 0.85rem"><i class="bi bi-person me-1"></i>Siti Aminah, M.Sc</small>
+            </div>
+            <div class="style-1-btm">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-clock me-1"></i> 09:15 - 10:45</div>
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-geo-alt me-1"></i> R. Teori 3</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                    <small class="text-muted fw-bold"><i class="bi bi-calendar3 me-1"></i> Senin</small>
+                    <button class="btn btn-sm text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="background: #3b82f6; width: 32px; height: 32px;"><i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA ITEM 3 -->
+    <div class="col-md-6 col-lg-4 sch-item-root"
+         data-id="3" data-day="Selasa" data-time="08:00 - 09:30" data-subject="Bahasa Inggris" 
+         data-teacher="John Doe, B.Ed" data-room="Lab Bahasa" data-type="lang" data-hex="#f59e0b" data-bg="bg-orange-subtle">
+         <div class="sch-card style-1-card" style="--item-hex: #f59e0b">
+            <div class="style-1-top" style="--item-hex: #f59e0b">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge" style="background: #f59e0b20; color: #f59e0b; border: 1px solid #f59e0b40">LANG</span>
+                    <i class="bi bi-three-dots text-muted"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-0 text-truncate">Bahasa Inggris</h5>
+                <small class="text-muted" style="font-size: 0.85rem"><i class="bi bi-person me-1"></i>John Doe, B.Ed</small>
+            </div>
+            <div class="style-1-btm">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-clock me-1"></i> 08:00 - 09:30</div>
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-geo-alt me-1"></i> Lab Bahasa</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                    <small class="text-muted fw-bold"><i class="bi bi-calendar3 me-1"></i> Selasa</small>
+                    <button class="btn btn-sm text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="background: #f59e0b; width: 32px; height: 32px;"><i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA ITEM 4 -->
+    <div class="col-md-6 col-lg-4 sch-item-root"
+         data-id="4" data-day="Selasa" data-time="10:00 - 11:30" data-subject="Seni Rupa" 
+         data-teacher="Rina S.Sn" data-room="Studio 1" data-type="art" data-hex="#8b5cf6" data-bg="bg-purple-subtle">
+         <div class="sch-card style-1-card" style="--item-hex: #8b5cf6">
+            <div class="style-1-top" style="--item-hex: #8b5cf6">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge" style="background: #8b5cf620; color: #8b5cf6; border: 1px solid #8b5cf640">ART</span>
+                    <i class="bi bi-three-dots text-muted"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-0 text-truncate">Seni Rupa</h5>
+                <small class="text-muted" style="font-size: 0.85rem"><i class="bi bi-person me-1"></i>Rina S.Sn</small>
+            </div>
+            <div class="style-1-btm">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-clock me-1"></i> 10:00 - 11:30</div>
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-geo-alt me-1"></i> Studio 1</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                    <small class="text-muted fw-bold"><i class="bi bi-calendar3 me-1"></i> Selasa</small>
+                    <button class="btn btn-sm text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="background: #8b5cf6; width: 32px; height: 32px;"><i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA ITEM 5 -->
+    <div class="col-md-6 col-lg-4 sch-item-root"
+         data-id="5" data-day="Rabu" data-time="07:30 - 09:00" data-subject="Pemrograman Web" 
+         data-teacher="Eko Kurniawan" data-room="Lab Komputer 2" data-type="tech" data-hex="#10b981" data-bg="bg-green-subtle">
+         <div class="sch-card style-1-card" style="--item-hex: #10b981">
+            <div class="style-1-top" style="--item-hex: #10b981">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge" style="background: #10b98120; color: #10b981; border: 1px solid #10b98140">TECH</span>
+                    <i class="bi bi-three-dots text-muted"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-0 text-truncate">Pemrograman Web</h5>
+                <small class="text-muted" style="font-size: 0.85rem"><i class="bi bi-person me-1"></i>Eko Kurniawan</small>
+            </div>
+            <div class="style-1-btm">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-clock me-1"></i> 07:30 - 09:00</div>
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-geo-alt me-1"></i> Lab Komputer 2</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                    <small class="text-muted fw-bold"><i class="bi bi-calendar3 me-1"></i> Rabu</small>
+                    <button class="btn btn-sm text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="background: #10b981; width: 32px; height: 32px;"><i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DATA ITEM 6 -->
+    <div class="col-md-6 col-lg-4 sch-item-root"
+         data-id="6" data-day="Rabu" data-time="13:00 - 14:30" data-subject="Kimia Dasar" 
+         data-teacher="Prof. Haryono" data-room="Lab Kimia" data-type="science" data-hex="#ef4444" data-bg="bg-red-subtle">
+         <div class="sch-card style-1-card" style="--item-hex: #ef4444">
+            <div class="style-1-top" style="--item-hex: #ef4444">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge" style="background: #ef444420; color: #ef4444; border: 1px solid #ef444440">SCIENCE</span>
+                    <i class="bi bi-three-dots text-muted"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-0 text-truncate">Kimia Dasar</h5>
+                <small class="text-muted" style="font-size: 0.85rem"><i class="bi bi-person me-1"></i>Prof. Haryono</small>
+            </div>
+            <div class="style-1-btm">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-clock me-1"></i> 13:00 - 14:30</div>
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-geo-alt me-1"></i> Lab Kimia</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                    <small class="text-muted fw-bold"><i class="bi bi-calendar3 me-1"></i> Rabu</small>
+                    <button class="btn btn-sm text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="background: #ef4444; width: 32px; height: 32px;"><i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA ITEM 7 -->
+    <div class="col-md-6 col-lg-4 sch-item-root"
+         data-id="7" data-day="Kamis" data-time="09:00 - 10:30" data-subject="Algoritma" 
+         data-teacher="Deni Saputra" data-room="Lab Komputer 1" data-type="tech" data-hex="#0ea5e9" data-bg="bg-blue-subtle">
+         <div class="sch-card style-1-card" style="--item-hex: #0ea5e9">
+            <div class="style-1-top" style="--item-hex: #0ea5e9">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge" style="background: #0ea5e920; color: #0ea5e9; border: 1px solid #0ea5e940">TECH</span>
+                    <i class="bi bi-three-dots text-muted"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-0 text-truncate">Algoritma</h5>
+                <small class="text-muted" style="font-size: 0.85rem"><i class="bi bi-person me-1"></i>Deni Saputra</small>
+            </div>
+            <div class="style-1-btm">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-clock me-1"></i> 09:00 - 10:30</div>
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-geo-alt me-1"></i> Lab Komputer 1</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                    <small class="text-muted fw-bold"><i class="bi bi-calendar3 me-1"></i> Kamis</small>
+                    <button class="btn btn-sm text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="background: #0ea5e9; width: 32px; height: 32px;"><i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA ITEM 8 -->
+    <div class="col-md-6 col-lg-4 sch-item-root"
+         data-id="8" data-day="Jumat" data-time="08:00 - 10:00" data-subject="Sejarah" 
+         data-teacher="Bambang S.Pd" data-room="R. Teori 2" data-type="lang" data-hex="#14b8a6" data-bg="bg-teal-subtle">
+         <div class="sch-card style-1-card" style="--item-hex: #14b8a6">
+            <div class="style-1-top" style="--item-hex: #14b8a6">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge" style="background: #14b8a620; color: #14b8a6; border: 1px solid #14b8a640">LANG</span>
+                    <i class="bi bi-three-dots text-muted"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-0 text-truncate">Sejarah</h5>
+                <small class="text-muted" style="font-size: 0.85rem"><i class="bi bi-person me-1"></i>Bambang S.Pd</small>
+            </div>
+            <div class="style-1-btm">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-clock me-1"></i> 08:00 - 10:00</div>
+                    <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-geo-alt me-1"></i> R. Teori 2</div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                    <small class="text-muted fw-bold"><i class="bi bi-calendar3 me-1"></i> Jumat</small>
+                    <button class="btn btn-sm text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="background: #14b8a6; width: 32px; height: 32px;"><i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+            <!-- START OF COPYRIGHT FOOTER SECTION -->
+            <footer class=" footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025
+                            <strong class="text-white">Nexus
+                                Admin</strong>. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan
+                                Privasi</a>
+                            <a href="#" class="footer-link">Syarat &
+                                Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- END OF COPYRIGHT FOOTER -->
+        </main>
+
+            <!-- MODAL ADD/EDIT -->
+    
+    </div>
+    <div class="modal fade" id="scheduleModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main);">
+                <div class="modal-header border-bottom border-secondary border-opacity-25">
+                    <h5 class="modal-title">Tambah Jadwal</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3"><label class="form-label small text-muted">Mata Pelajaran</label><input type="text" class="form-control bg-dark text-light border-secondary"></div>
+                        <div class="row">
+                            <div class="col-6 mb-3"><label class="form-label small text-muted">Mulai</label><input type="time" class="form-control bg-dark text-light border-secondary"></div>
+                            <div class="col-6 mb-3"><label class="form-label small text-muted">Selesai</label><input type="time" class="form-control bg-dark text-light border-secondary"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary border-opacity-25">
+                    <button class="btn btn-link text-muted" data-bs-dismiss="modal">Batal</button>
+                    <button class="btn btn-primary rounded-pill">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Theme Toggle Floating (Maintained) -->
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/script.js"></script>
+   <script>
+   // GLOBAL VARIABLES
+   let activeStyle = '1';
+   let activeLayout = 'horizontal'; // 'horizontal' (grid) or 'vertical' (list)
+   let activeDay = 'all';
+   let activeType = 'all';
+   let searchQuery = '';
+
+   // DATA INITIALLY LOADED FROM HTML DOM (Not hardcoded in JS)
+   let scheduleData = [];
+
+   function initDataFromHTML() {
+       const items = document.querySelectorAll('.sch-item-root');
+       items.forEach(el => {
+           scheduleData.push({
+               id: el.getAttribute('data-id'),
+               day: el.getAttribute('data-day'),
+               time: el.getAttribute('data-time'),
+               subject: el.getAttribute('data-subject'),
+               teacher: el.getAttribute('data-teacher'),
+               room: el.getAttribute('data-room'),
+               type: el.getAttribute('data-type'),
+               hex: el.getAttribute('data-hex'),
+               bg: el.getAttribute('data-bg')
+           });
+       });
+   }
+
+   // --- FILTER & RENDER LOGIC ---
+
+   function getFilteredData() {
+       return scheduleData.filter(item => {
+           const matchDay = activeDay === 'all' || item.day === activeDay;
+           const matchType = activeType === 'all' || item.type === activeType;
+           const matchSearch = item.subject.toLowerCase().includes(searchQuery) || item.teacher.toLowerCase().includes(searchQuery);
+           return matchDay && matchType && matchSearch;
+       });
+   }
+
+   function renderSchedule() {
+       const data = getFilteredData();
+       const container = document.getElementById('scheduleContainer');
+       
+       // Set Container Class for CSS
+       container.className = `row g-3 fade-in layout-${activeLayout}`;
+       
+       let html = '';
+
+       if (data.length === 0) {
+           container.innerHTML = `<div class="col-12 text-center py-5 text-muted"><i class="bi bi-inbox fs-1 d-block mb-3"></i>Data tidak ditemukan.</div>`;
+           return;
+       }
+
+       // --- STYLE 1: GRADIENT CARD (REVAMPED) ---
+       if (activeStyle === '1') {
+           data.forEach(item => {
+               const colClass = activeLayout === 'horizontal' ? 'col-md-6 col-lg-4' : 'col-12';
+               
+               // Horizontal View Content
+               const horizontalContent = `
+                   <div class="style-1-top" style="--item-hex: ${item.hex}">
+                       <div class="d-flex justify-content-between align-items-start mb-2">
+                           <span class="badge" style="background: ${item.hex}20; color: ${item.hex}; border: 1px solid ${item.hex}40">${item.type.toUpperCase()}</span>
+                           <i class="bi bi-three-dots text-muted"></i>
+                       </div>
+                       <h5 class="fw-bold text-white mb-0 text-truncate" title="${item.subject}" style="font-size: 1.1rem; letter-spacing: 0.3px;">${item.subject}</h5>
+                       <small class="text-muted" style="font-size: 0.85rem"><i class="bi bi-person me-1"></i>${item.teacher}</small>
+                   </div>
+                   <div class="style-1-btm">
+                       <div class="d-flex align-items-center gap-2">
+                           <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-clock me-1"></i> ${item.time}</div>
+                           <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-geo-alt me-1"></i> ${item.room}</div>
+                       </div>
+                       <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-10">
+                           <small class="text-muted fw-bold"><i class="bi bi-calendar3 me-1"></i> ${item.day}</small>
+                           <button class="btn btn-sm text-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="background: ${item.hex}; width: 32px; height: 32px;"><i class="bi bi-arrow-right"></i></button>
+                       </div>
+                   </div>
+               `;
+
+               // Vertical View Content
+               const verticalContent = `
+                   <div class="style-1-left" style="--item-hex: ${item.hex}">
+                       <h5 class="fw-bold text-white mb-1" style="font-size: 1.15rem;">${item.subject}</h5>
+                       <div class="d-flex gap-2 align-items-center">
+                           <span class="badge" style="background: ${item.hex}20; color: ${item.hex}; border: 1px solid ${item.hex}40">${item.type}</span>
+                           <small class="text-muted"><i class="bi bi-person me-1"></i>${item.teacher}</small>
+                       </div>
+                   </div>
+                   <div class="style-1-right">
+                       <div class="d-flex gap-3 align-items-center flex-wrap">
+                           <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-calendar3 me-1"></i> ${item.day}</div>
+                           <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-clock me-1"></i> ${item.time}</div>
+                           <div class="badge bg-dark border border-secondary text-secondary rounded-pill px-3 py-2 fw-normal"><i class="bi bi-geo-alt me-1"></i> ${item.room}</div>
+                       </div>
+                       <button class="btn btn-sm text-white px-4 rounded-pill fw-bold shadow-sm" style="background: ${item.hex}; border: none;">Detail</button>
+                   </div>
+               `;
+
+               html += `
+               <div class="${colClass}">
+                   <div class="sch-card style-1-card" style="--item-hex: ${item.hex}">
+                       ${activeLayout === 'horizontal' ? horizontalContent : verticalContent}
+                   </div>
+               </div>`;
+           });
+       }
+       
+       // --- STYLE 2: TABLE (PREMIUM) ---
+       else if (activeStyle === '2') {
+           if (activeLayout === 'horizontal') {
+               // Standard Table View
+               html = `<div class="col-12"><div class="table-responsive"><table class="table-premium">
+                   <thead><tr><th>Hari</th><th>Waktu</th><th>Mata Pelajaran</th><th>Pengajar</th><th>Ruangan</th><th>Aksi</th></tr></thead><tbody>`;
+               data.forEach(item => {
+                   html += `<tr>
+                       <td><span class="badge bg-dark border border-secondary text-secondary">${item.day}</span></td>
+                       <td class="fw-bold text-white">${item.time}</td>
+                       <td>${item.subject}</td>
+                       <td>${item.teacher}</td>
+                       <td>${item.room}</td>
+                       <td><button class="btn btn-sm btn-icon-mini"><i class="bi bi-pencil"></i></button></td>
+                   </tr>`;
+               });
+               html += `</tbody></table></div></div>`;
+           } else {
+               // Vertical Table (Responsive Cards)
+               data.forEach(item => {
+                   html += `<div class="col-12">
+                       <div class="table-as-card">
+                           <div class="d-flex align-items-center gap-3">
+                               <div class="badge ${item.bg} p-2 rounded-3">${item.day.substring(0,3)}</div>
+                               <div>
+                                   <div class="fw-bold text-white">${item.subject}</div>
+                                   <div class="small text-muted">${item.time} &bull; ${item.teacher}</div>
+                               </div>
+                           </div>
+                           <div class="text-end">
+                               <div class="badge bg-dark border border-secondary">${item.room}</div>
+                           </div>
+                       </div>
+                   </div>`;
+               });
+           }
+       }
+
+       // --- STYLE 3: LIST LAYOUT ---
+       else if (activeStyle === '3') {
+           if (activeLayout === 'horizontal') {
+               // Grid Boxes
+               data.forEach(item => {
+                   html += `<div class="col-md-4"><div class="style-3-item">
+                       <div class="d-flex justify-content-between mb-3"><span class="badge ${item.bg}">${item.day}</span><i class="bi bi-three-dots text-muted"></i></div>
+                       <h5 class="text-white fw-bold">${item.subject}</h5>
+                       <p class="text-muted small">${item.teacher}</p>
+                       <div class="mt-auto pt-3 border-top border-secondary border-opacity-25 d-flex justify-content-between small text-muted"><span>${item.time}</span><span>${item.room}</span></div>
+                   </div></div>`;
+               });
+           } else {
+               // Standard List
+               html = `<div class="col-12"><div class="style-3-container">`;
+               data.forEach(item => {
+                   html += `<div class="style-3-item">
+                       <div class="d-flex align-items-center gap-3" style="width: 40%">
+                           <span class="badge ${item.bg}" style="width:60px">${item.time.split('-')[0]}</span>
+                           <span class="fw-bold text-white">${item.subject}</span>
+                       </div>
+                       <div class="text-muted small" style="width: 30%">${item.teacher}</div>
+                       <div class="text-end small text-muted" style="width: 30%"><i class="bi bi-geo-alt me-1"></i>${item.room} (${item.day})</div>
+                   </div>`;
+               });
+               html += `</div></div>`;
+           }
+       }
+
+       // --- STYLE 4: CALENDAR GRID ---
+       else if (activeStyle === '4') {
+           data.forEach(item => {
+               const colClass = activeLayout === 'horizontal' ? 'col-md-3 col-6' : 'col-12';
+               if (activeLayout === 'horizontal') {
+                    html += `<div class="${colClass}">
+                       <div class="sch-card style-4-card" style="--item-hex: ${item.hex}">
+                           <div class="text-center mb-2"><i class="bi bi-calendar-event fs-2" style="color:${item.hex}"></i></div>
+                           <div class="fw-bold text-white">${item.subject}</div>
+                           <div class="small text-muted mb-2">${item.day}, ${item.time}</div>
+                           <div class="badge bg-dark border border-secondary">${item.room}</div>
+                       </div>
+                    </div>`;
+               } else {
+                   html += `<div class="col-12">
+                       <div class="sch-card style-4-card" style="--item-hex: ${item.hex}">
+                           <div class="style-4-icon"><i class="bi bi-calendar-event"></i></div>
+                           <div class="flex-grow-1">
+                               <div class="d-flex justify-content-between">
+                                   <h5 class="mb-0 text-white fw-bold">${item.subject}</h5>
+                                   <span class="badge ${item.bg}">${item.day}</span>
+                               </div>
+                               <div class="text-muted small">${item.time} &bull; ${item.teacher}</div>
+                           </div>
+                       </div>
+                   </div>`;
+               }
+           });
+       }
+
+       // --- STYLE 5: KANBAN ---
+       else if (activeStyle === '5') {
+           // Group data by day for Kanban
+           const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+           const grouped = {};
+           days.forEach(d => grouped[d] = data.filter(i => i.day === d));
+
+           if (activeLayout === 'horizontal') {
+               html = `<div class="col-12"><div class="kanban-container">`;
+               days.forEach(day => {
+                   if (activeDay !== 'all' && activeDay !== day) return;
+                   html += `<div class="kanban-col">
+                       <div class="d-flex justify-content-between mb-3 text-white fw-bold"><span>${day}</span><span class="badge bg-secondary rounded-circle">${grouped[day].length}</span></div>
+                       ${grouped[day].map(i => `
+                           <div class="sch-card p-3 mb-2 border-0 shadow-sm">
+                               <div class="badge ${i.bg} mb-2">${i.time}</div>
+                               <div class="fw-bold text-white small">${i.subject}</div>
+                               <div class="text-muted small">${i.teacher}</div>
+                           </div>
+                       `).join('')}
+                   </div>`;
+               });
+               html += `</div></div>`;
+           } else {
+               // Vertical Stacked Groups
+               days.forEach(day => {
+                   if (grouped[day].length === 0) return;
+                   if (activeDay !== 'all' && activeDay !== day) return;
+                   html += `<div class="col-12"><div class="kanban-col">
+                       <h5 class="mb-3 text-white border-bottom border-secondary border-opacity-25 pb-2">${day}</h5>
+                       <div class="row g-2">
+                           ${grouped[day].map(i => `
+                               <div class="col-md-4">
+                                   <div class="sch-card p-3 h-100">
+                                       <div class="fw-bold text-white">${i.subject}</div>
+                                       <div class="small text-muted">${i.time} &bull; ${i.room}</div>
+                                   </div>
+                               </div>
+                           `).join('')}
+                       </div>
+                   </div></div>`;
+               });
+           }
+       }
+
+       // --- STYLE 6: TIMELINE ---
+       else if (activeStyle === '6') {
+            if (activeLayout === 'horizontal') {
+               html = `<div class="col-12"><div class="timeline-container">`;
+               data.forEach(item => {
+                   html += `<div class="timeline-item">
+                       <div class="timeline-dot"></div>
+                       <div class="sch-card p-3">
+                           <div class="badge ${item.bg} mb-2">${item.day}</div>
+                           <div class="fw-bold text-white">${item.subject}</div>
+                           <div class="small text-muted">${item.time}</div>
+                       </div>
+                   </div>`;
+               });
+               html += `</div></div>`;
+            } else {
+               html = `<div class="col-12"><div class="timeline-container">`;
+               data.forEach(item => {
+                   html += `<div class="timeline-item ps-4">
+                       <div class="timeline-dot"></div>
+                       <div class="sch-card p-3 d-flex justify-content-between align-items-center">
+                           <div>
+                               <div class="fw-bold text-white">${item.subject}</div>
+                               <div class="small text-muted">${item.day}, ${item.time}</div>
+                           </div>
+                           <div class="badge bg-dark border border-secondary">${item.room}</div>
+                       </div>
+                   </div>`;
+               });
+               html += `</div></div>`;
+            }
+       }
+
+       // --- STYLE 7: COMPACT ---
+       else if (activeStyle === '7') {
+            data.forEach(item => {
+               if (activeLayout === 'horizontal') {
+                   html += `<div class="col-6 col-md-3">
+                       <div class="sch-card compact-card text-center" style="border-top: 3px solid ${item.hex}">
+                           <div class="fw-bold text-white small">${item.subject}</div>
+                           <div class="text-muted" style="font-size: 0.7rem">${item.day}</div>
+                           <div class="text-white mt-1 bg-dark rounded px-1" style="font-size: 0.7rem">${item.time}</div>
+                       </div>
+                   </div>`;
+               } else {
+                   html += `<div class="col-12">
+                       <div class="compact-row">
+                           <div class="d-flex align-items-center gap-3">
+                               <div class="badge bg-dark text-white" style="width:80px">${item.time.split(' - ')[0]}</div>
+                               <div class="fw-bold text-white">${item.subject} <span class="text-muted fw-normal small">(${item.teacher})</span></div>
+                           </div>
+                           <div class="small text-muted">${item.day}</div>
+                       </div>
+                   </div>`;
+               }
+            });
+       }
+
+       // --- STYLE 8: EXPANDED ---
+       else if (activeStyle === '8') {
+            data.forEach(item => {
+               const colClass = activeLayout === 'horizontal' ? 'col-md-4' : 'col-12';
+               html += `<div class="${colClass}">
+                   <div class="sch-card style-8-card">
+                       <div class="d-flex justify-content-between align-items-start">
+                           <span class="badge ${item.bg}">${item.time}</span>
+                           <i class="bi bi-three-dots text-muted"></i>
+                       </div>
+                       <div class="mt-2">
+                           <h5 class="fw-bold text-white mb-0">${item.subject}</h5>
+                           <p class="text-muted small mb-0">${item.room}</p>
+                       </div>
+                       <div class="mt-3 pt-3 border-top border-secondary border-opacity-25">
+                           <div class="d-flex align-items-center gap-2">
+                               <div class="avatar-modern" style="width:28px;height:28px;font-size:0.8rem;">${item.teacher.charAt(0)}</div>
+                               <span class="small text-light">${item.teacher}</span>
+                           </div>
+                       </div>
+                   </div>
+               </div>`;
+            });
+       }
+
+       // --- STYLE 9: MINIMALIST ---
+       else if (activeStyle === '9') {
+            data.forEach(item => {
+               const colClass = activeLayout === 'horizontal' ? 'col-md-4' : 'col-12';
+               html += `<div class="${colClass}">
+                   <div class="sch-card style-minimal-card p-3">
+                       <div class="text-muted small text-uppercase tracking-wide mb-2">${item.day} // ${item.time}</div>
+                       <h4 class="fw-light text-white mb-1">${item.subject}</h4>
+                       <div class="small text-muted">${item.teacher} @ ${item.room}</div>
+                   </div>
+               </div>`;
+            });
+       }
+
+       // --- STYLE 10: NEON ---
+       else if (activeStyle === '10') {
+            data.forEach(item => {
+               const colClass = activeLayout === 'horizontal' ? 'col-md-4' : 'col-12';
+               const flexClass = activeLayout === 'vertical' ? 'd-flex justify-content-between align-items-center' : 'text-center';
+               
+               html += `<div class="${colClass}">
+                   <div class="sch-card style-neon-card p-4 ${flexClass}">
+                       <div>
+                           <h4 class="fw-bold mb-1" style="text-shadow: 0 0 10px ${item.hex}; color: white;">${item.subject}</h4>
+                           <div class="small opacity-75">${item.teacher}</div>
+                       </div>
+                       <div class="${activeLayout === 'horizontal' ? 'mt-3' : ''}">
+                           <span class="badge border border-light rounded-pill">${item.day} ${item.time}</span>
+                       </div>
+                   </div>
+               </div>`;
+            });
+       }
+
+       container.innerHTML = html;
+   }
+
+   // --- CONTROL HANDLERS ---
+   
+   function setStyle(styleId, btn) {
+       activeStyle = styleId;
+       document.querySelectorAll('.style-pill').forEach(el => el.classList.remove('active'));
+       btn.classList.add('active');
+       renderSchedule();
+   }
+
+   function setLayout(layout, btn) {
+       activeLayout = layout;
+       document.querySelectorAll('.layout-toggle-btn').forEach(el => el.classList.remove('active'));
+       btn.classList.add('active');
+       renderSchedule();
+   }
+
+   function setDayFilter(day, btn) {
+       activeDay = day;
+       document.querySelectorAll('.day-btn').forEach(el => el.classList.remove('active'));
+       btn.classList.add('active');
+       renderSchedule();
+   }
+
+   function handleSearch() {
+       searchQuery = document.getElementById('searchInput').value.toLowerCase();
+       renderSchedule();
+   }
+
+   function handleTypeFilter() {
+       activeType = document.getElementById('typeFilter').value;
+       renderSchedule();
+   }
+
+   function openAddModal() {
+       var myModal = new bootstrap.Modal(document.getElementById('scheduleModal'));
+       myModal.show();
+   }
+   initDataFromHTML();
+
+   </script>
+</body>
+
+</html>

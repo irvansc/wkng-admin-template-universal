@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>505 HTTP Version Not Supported - Nexus Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. CORE STYLES (KONSISTEN)
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-pink: #d946ef;
+            --accent-indigo: #4f46e5;
+            --border-color: #374151;
+            --gradient-primary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+
+            /* Text Gradients */
+            --text-gradient-dark: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            --text-gradient-light: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+
+            /* Version Gradient (Retro Purple/Pink for 505) */
+            --gradient-version: linear-gradient(135deg, #d946ef 0%, #6366f1 100%);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        /* ======================================================================
+           2. BACKGROUND SHAPES
+           ====================================================================== */
+        .shape {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            animation: floatShape 10s infinite ease-in-out;
+            opacity: 0.5;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: #6366f1;
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+        }
+
+        /* Indigo */
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: #d946ef;
+            border-radius: 50%;
+            bottom: -50px;
+            right: -50px;
+            animation-delay: 2s;
+        }
+
+        /* Pink */
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            top: 40%;
+            left: 40%;
+            animation-delay: 4s;
+            opacity: 0.3;
+        }
+
+        @keyframes floatShape {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(20px, -20px);
+            }
+        }
+
+        /* ======================================================================
+           3. CONTENT CONTAINER & RESPONSIVE
+           ====================================================================== */
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 60px 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+
+        body.light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 576px) {
+            .glass-card {
+                padding: 40px 20px;
+            }
+
+            .error-code {
+                font-size: 3.5rem !important;
+                /* Smaller text on mobile */
+            }
+
+            .error-title {
+                font-size: 1.25rem;
+            }
+
+            .tv-container {
+                transform: scale(0.8);
+                /* Scale down animation on mobile */
+                margin-bottom: 10px;
+            }
+        }
+
+        /* ======================================================================
+           4. RETRO TV ANIMATION (PURE CSS)
+           ====================================================================== */
+        .tv-container {
+            width: 160px;
+            height: 140px;
+            position: relative;
+            margin: 0 auto 30px;
+            animation: floatTV 4s ease-in-out infinite;
+        }
+
+        /* TV Body */
+        .tv-body {
+            width: 140px;
+            height: 100px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border-radius: 20px;
+            position: absolute;
+            bottom: 20px;
+            left: 10px;
+            z-index: 2;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Screen */
+        .tv-screen {
+            width: 100px;
+            height: 70px;
+            background: #111827;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Static Noise Effect (Glitch) */
+        .tv-static {
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.1) 2px,
+                    rgba(255, 255, 255, 0.1) 4px);
+            background-size: 100% 100%;
+            animation: staticNoise 0.5s infinite steps(4);
+            z-index: 1;
+        }
+
+        /* Face */
+        .tv-face {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tv-eyes {
+            display: flex;
+            gap: 20px;
+        }
+
+        .pixel-eye {
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            box-shadow: 0 0 5px #fff;
+            animation: blinkPixel 3s infinite steps(1);
+            /* Pixel blink */
+        }
+
+        .tv-mouth {
+            width: 20px;
+            height: 4px;
+            background: #fff;
+            box-shadow: 0 0 5px #fff;
+        }
+
+        /* Antenna */
+        .tv-antenna {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 40px;
+            z-index: 1;
+        }
+
+        .antenna-stick {
+            width: 4px;
+            height: 40px;
+            background: #cbd5e1;
+            position: absolute;
+            bottom: 0;
+            border-radius: 4px;
+            transform-origin: bottom center;
+        }
+
+        .stick-left {
+            left: 30px;
+            transform: rotate(-30deg);
+            animation: antennaWiggleL 3s infinite ease-in-out;
+        }
+
+        .stick-right {
+            right: 30px;
+            transform: rotate(30deg);
+            animation: antennaWiggleR 3s infinite ease-in-out;
+        }
+
+        .antenna-ball {
+            width: 8px;
+            height: 8px;
+            background: #d946ef;
+            border-radius: 50%;
+            position: absolute;
+            top: -4px;
+            left: -2px;
+            box-shadow: 0 0 10px #d946ef;
+        }
+
+        /* Feet */
+        .tv-leg {
+            width: 8px;
+            height: 25px;
+            background: #4b5563;
+            position: absolute;
+            bottom: -5px;
+            border-radius: 4px;
+            z-index: 1;
+        }
+
+        .leg-left {
+            left: 30px;
+            transform: rotate(-15deg);
+        }
+
+        .leg-right {
+            right: 30px;
+            transform: rotate(15deg);
+        }
+
+        /* Animations */
+        @keyframes floatTV {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        @keyframes staticNoise {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0.8;
+            }
+
+            25% {
+                transform: translate(-2px, 2px);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: translate(2px, -2px);
+                opacity: 0.8;
+            }
+
+            75% {
+                transform: translate(-2px, -2px);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translate(0, 0);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes blinkPixel {
+
+            0%,
+            90% {
+                opacity: 1;
+            }
+
+            95% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes antennaWiggleL {
+
+            0%,
+            100% {
+                transform: rotate(-30deg);
+            }
+
+            50% {
+                transform: rotate(-40deg);
+            }
+        }
+
+        @keyframes antennaWiggleR {
+
+            0%,
+            100% {
+                transform: rotate(30deg);
+            }
+
+            50% {
+                transform: rotate(40deg);
+            }
+        }
+
+        /* ======================================================================
+           5. TYPOGRAPHY & BUTTONS
+           ====================================================================== */
+        .error-code {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            background: var(--gradient-version);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .error-desc {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-home {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+            color: white;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-fixed {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle-fixed:hover {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            transform: rotate(15deg);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle-fixed" id="themeToggle" title="Ganti Tema">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="error-container">
+        <div class="glass-card">
+
+            <!-- Retro TV Animation -->
+            <div class="tv-container">
+                <!-- Antenna -->
+                <div class="tv-antenna">
+                    <div class="antenna-stick stick-left">
+                        <div class="antenna-ball"></div>
+                    </div>
+                    <div class="antenna-stick stick-right">
+                        <div class="antenna-ball"></div>
+                    </div>
+                </div>
+
+                <!-- Feet -->
+                <div class="tv-leg leg-left"></div>
+                <div class="tv-leg leg-right"></div>
+
+                <!-- Main Body -->
+                <div class="tv-body">
+                    <div class="tv-screen">
+                        <div class="tv-static"></div>
+                        <div class="tv-face">
+                            <div class="tv-eyes">
+                                <div class="pixel-eye"></div>
+                                <div class="pixel-eye"></div>
+                            </div>
+                            <div class="tv-mouth"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Content -->
+            <h1 class="error-code">505</h1>
+            <h2 class="error-title">Versi HTTP Tidak Didukung</h2>
+            <p class="error-desc">
+                Server kami menolak mendukung versi protokol HTTP yang digunakan dalam permintaan ini. Mungkin browser
+                Anda terlalu canggih (atau terlalu jadul) untuk TV Retro kami.
+            </p>
+
+            <!-- Action Button -->
+            <a href="home.html" class="btn-home">
+                <i class="bi bi-arrow-left"></i> Kembali ke Masa Kini
+            </a>
+
+        </div>
+
+        <div class="mt-4 text-muted small opacity-50">
+            Error Code: 505_HTTP_VERSION_NOT_SUPPORTED | Nexus System
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const body = document.body;
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            // Initial Theme Load
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            }
+
+            // Theme Toggle Logic
+            themeToggle?.addEventListener("click", () => {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lock Screen - Nexus Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. CORE STYLES (KONSISTEN)
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-sidebar: #1f2937;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-blue: #3b82f6;
+            --border-color: #374151;
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --gradient-primary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            /* Text Gradients */
+            --text-gradient-dark: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            --text-gradient-light: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-bg: #f9fafb;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        /* ======================================================================
+           2. SPLIT LAYOUT STYLES
+           ====================================================================== */
+        .login-wrapper {
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* --- LEFT SIDE (BRANDING & CLOCK) --- */
+        .brand-section {
+            background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            overflow: hidden;
+            color: white;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            filter: blur(50px);
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
+            opacity: 0.6;
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: #ec4899;
+            border-radius: 50%;
+            top: -50px;
+            left: -50px;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: #6366f1;
+            border-radius: 50%;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 2s;
+        }
+
+        .shape-3 {
+            width: 150px;
+            height: 150px;
+            background: #3b82f6;
+            border-radius: 50%;
+            top: 40%;
+            right: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px) scale(1);
+            }
+
+            50% {
+                transform: translateY(-20px) scale(1.05);
+            }
+
+            100% {
+                transform: translateY(0px) scale(1);
+            }
+        }
+
+        /* Digital Clock Container */
+        .clock-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 40px 60px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .clock-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .clock-time {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 10px;
+            font-variant-numeric: tabular-nums;
+            /* Agar lebar angka tetap saat detik berubah */
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .clock-date {
+            font-size: 1.2rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #fbbf24;
+            /* Warning/Locked Color */
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fbbf24;
+            animation: pulseStatus 2s infinite;
+        }
+
+        @keyframes pulseStatus {
+            0% {
+                opacity: 0.5;
+                box-shadow: 0 0 0 #fbbf24;
+            }
+
+            50% {
+                opacity: 1;
+                box-shadow: 0 0 10px #fbbf24;
+            }
+
+            100% {
+                opacity: 0.5;
+                box-shadow: 0 0 0 #fbbf24;
+            }
+        }
+
+        /* --- RIGHT SIDE (FORM) --- */
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-dark);
+            position: relative;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            z-index: 2;
+            text-align: center;
+        }
+
+        /* User Avatar */
+        .avatar-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--bg-card);
+            box-shadow: 0 0 0 2px var(--accent-purple), 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 2px;
+            background: var(--bg-card);
+        }
+
+        .avatar-lock-icon {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 32px;
+            height: 32px;
+            background: var(--accent-purple);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--bg-card);
+            font-size: 0.9rem;
+        }
+
+        /* Header */
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .user-role {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        /* Input Styles */
+        .input-group-custom {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            /* Rounded for lock screen style */
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .input-group-custom:focus-within {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+
+        .form-control-custom {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            padding: 14px 20px;
+            font-size: 0.95rem;
+            width: 100%;
+            outline: none;
+            text-align: center;
+            /* Center input for lock screen */
+        }
+
+        .form-control-custom:focus {
+            background: transparent;
+            box-shadow: none;
+            color: var(--text-main);
+        }
+
+        .form-control-custom::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* Button */
+        .btn-unlock {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: -50px;
+            /* Overlap input */
+            z-index: 2;
+            position: relative;
+        }
+
+        .btn-unlock:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+        }
+
+        /* Switch Account */
+        .switch-account {
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+
+        .switch-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 2px;
+        }
+
+        .switch-link:hover {
+            color: var(--accent-purple);
+            border-bottom-color: var(--accent-purple);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-fixed {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle-fixed:hover {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            transform: rotate(15deg);
+        }
+
+        /* Mobile Logo */
+        .mobile-logo-container {
+            margin-bottom: 20px;
+        }
+
+        .mobile-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+        }
+
+        /* Mobile Lock Status Styling */
+        .mobile-lock-status {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .status-badge-mobile {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            /* Amber-400 */
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            margin-bottom: 8px;
+        }
+
+        .mobile-clock {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .mobile-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* --- RESPONSIVE FIX (MOBILE CENTERING) --- */
+        @media (max-width: 991px) {
+            .brand-section {
+                display: none;
+            }
+
+            .form-section {
+                /* Menggunakan Flexbox agar konten benar-benar di tengah dan rapi */
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                /* Pastikan minimal setinggi layar */
+                height: auto;
+                padding: 40px 20px;
+            }
+
+            /* Hapus hack pseudo-element yang menyebabkan ruang kosong */
+            .form-section::before {
+                display: none;
+            }
+
+            .login-card {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            body {
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid p-0 login-wrapper">
+        <div class="row g-0 h-100">
+
+            <!-- LEFT SIDE: CLOCK & INFO -->
+            <div class="col-lg-6 brand-section">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+
+                <!-- Digital Clock Widget -->
+                <div class="clock-container">
+                    <div class="clock-time" id="clockTime">00:00:00</div>
+                    <div class="clock-date" id="clockDate">Senin, 1 Januari 2025</div>
+                    <div class="status-badge">
+                        <div class="status-indicator"></div>
+                        Sesi Terkunci
+                    </div>
+                </div>
+
+                <div class="mt-5 text-white opacity-50 small">
+                    Nexus Security System v2.0
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE: LOCK FORM -->
+            <div class="col-lg-6 form-section">
+
+                <button class="theme-toggle-fixed" id="themeToggle" title="Ganti Tema">
+                    <i class="bi bi-moon-fill" id="themeIcon"></i>
+                </button>
+
+                <div class="login-card">
+                    <!-- Mobile Logo & Lock Status (Visible only on Mobile) -->
+                    <div class="d-lg-none">
+                        <div class="mobile-logo-container">
+                            <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo"
+                                class="mobile-logo">
+                        </div>
+
+                        <!-- NEW: Mobile Lock Indicator -->
+                        <div class="mobile-lock-status">
+                            <div class="status-badge-mobile">
+                                <div class="status-indicator"></div>
+                                Sesi Terkunci
+                            </div>
+                            <div class="mobile-clock" id="mobileClockTime">00:00</div>
+                            <div class="mobile-date" id="mobileClockDate">Senin, 1 Jan</div>
+                        </div>
+                    </div>
+
+                    <!-- User Avatar -->
+                    <div class="avatar-wrapper">
+                        <!-- Placeholder User Image -->
+                        <img src="https://placehold.co/200x200/374151/FFFFFF?text=A" alt="Admin Avatar"
+                            class="avatar-img">
+                        <div class="avatar-lock-icon">
+                            <i class="bi bi-lock-fill"></i>
+                        </div>
+                    </div>
+
+                    <h2 class="user-name">Admin Pusat</h2>
+                    <p class="user-role">Super Administrator</p>
+
+                    <form action="home.html">
+                        <!-- Password Input with Unlock Button inline -->
+                        <div class="d-flex align-items-center justify-content-center mb-4 position-relative"
+                            style="max-width: 300px; margin: 0 auto;">
+                            <div class="input-group-custom w-100 pe-5">
+                                <input type="password" class="form-control-custom" id="password"
+                                    placeholder="Masukkan Password" required>
+                            </div>
+                            <button type="submit" class="btn-unlock" title="Buka Kunci">
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="switch-account">
+                            Bukan Anda? <a href="login.html" class="switch-link">Ganti Akun</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            /* ======================================================================
+               THEME LOGIC
+               ====================================================================== */
+            const body = document.body;
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            }
+
+            themeToggle?.addEventListener("click", () => {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+            });
+
+            /* ======================================================================
+               REAL-TIME CLOCK LOGIC
+               ====================================================================== */
+            function updateClock() {
+                const now = new Date();
+
+                // Format Waktu (HH:MM:SS)
+                const timeString = now.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                }).replace(/\./g, ':');
+
+                // Format Tanggal (Hari, Tanggal Bulan Tahun)
+                const dateString = now.toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                // Desktop Clock
+                const clockTime = document.getElementById('clockTime');
+                const clockDate = document.getElementById('clockDate');
+
+                // Mobile Clock
+                const mobileTime = document.getElementById('mobileClockTime');
+                const mobileDate = document.getElementById('mobileClockDate');
+
+                if (clockTime) clockTime.textContent = timeString;
+                if (clockDate) clockDate.textContent = dateString;
+
+                // Update Mobile Elements
+                if (mobileTime) mobileTime.textContent = timeString.slice(0, 5); // Ambil HH:MM saja agar ringkas
+                if (mobileDate) mobileDate.textContent = dateString;
+            }
+
+            // Update immediately then every second
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+    </script>
+</body>
+
+</html>

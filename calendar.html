@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Calendar</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* ======================================================================
+           2. SPECIFIC: CALENDAR PAGE STYLES
+           (Styling khusus untuk halaman Kalender)
+           ====================================================================== */
+
+        /* --- UNIVERSAL PAGE HEADER STYLE --- */
+        .active-page-header {
+            padding: 30px;
+            border-radius: 24px;
+            background-color: var(--bg-card);
+            position: relative;
+            margin-bottom: 3.5rem;
+            border: 2px solid transparent;
+            /* Gradient Background Pattern */
+            background-image: linear-gradient(var(--bg-card), var(--bg-card)), linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15);
+        }
+
+        .page-title-large {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--text-main) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        body.light-mode .page-title-large {
+            background: none;
+            -webkit-text-fill-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            white-space: nowrap;
+        }
+
+        .breadcrumb-modern {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        body.light-mode .breadcrumb-modern {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-color: var(--border-color);
+        }
+
+        .breadcrumb-item-custom {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item-custom:hover {
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-item-custom.active {
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .breadcrumb-home-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-sep {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* --- CALENDAR SPECIFIC STYLES --- */
+        /* [MODIFIED] Increased margin-top to fix spacing issue */
+        .section-title-modern {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 60px 0 20px;
+            /* Increased from 40px to 60px */
+            padding-left: 12px;
+            border-left: 4px solid var(--accent-purple);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* 1. Full Calendar Container */
+        .calendar-wrapper {
+            background: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            padding: 24px;
+        }
+
+        .calendar-header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .calendar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .btn-nav-cal {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+
+        .btn-nav-cal:hover {
+            background: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+
+        /* 2. Grid System */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: var(--border-color);
+            /* Border color between cells */
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .calendar-day-header {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        body.light-mode .calendar-day-header {
+            background: #f8fafc;
+        }
+
+        .calendar-day-cell {
+            background: var(--bg-card);
+            min-height: 120px;
+            padding: 8px;
+            position: relative;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .calendar-day-cell:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        body.light-mode .calendar-day-cell:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .day-number {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            display: block;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            line-height: 24px;
+            border-radius: 50%;
+        }
+
+        .day-today .day-number {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+        .day-other-month {
+            opacity: 0.3;
+        }
+
+        /* Events Pills */
+        .event-pill {
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            color: white;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .event-pill:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+
+        .event-purple {
+            background: var(--accent-purple);
+        }
+
+        .event-green {
+            background: var(--accent-green);
+        }
+
+        .event-orange {
+            background: var(--accent-orange);
+        }
+
+        .event-red {
+            background: var(--accent-red);
+        }
+
+        /* 3. Timeline View Styles */
+        .timeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .timeline-list::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            background: var(--bg-card);
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-left: 16px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -25px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--accent-purple);
+            z-index: 2;
+        }
+
+        .timeline-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        /* 4. Mini Calendar */
+        .mini-cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .mini-day {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .mini-day:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+        }
+
+        .mini-day.active {
+            background: var(--accent-purple);
+            color: white;
+            font-weight: bold;
+        }
+
+        /* --- NEW: FULLCALENDAR WEEK VIEW STYLE (VISUAL MOCKUP) --- */
+        .fc-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            /* [MODIFIED] Added explicit margin top to ensure separation */
+            margin-top: 20px;
+        }
+
+        .fc-header {
+            display: grid;
+            grid-template-columns: 60px repeat(7, 1fr);
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* [MODIFIED] Updated text colors for readability */
+        .fc-time-col {
+            border-right: 1px solid var(--border-color);
+            padding: 10px;
+        }
+
+        .fc-day-col {
+            text-align: center;
+            padding: 10px;
+            border-right: 1px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-main);
+            opacity: 0.9;
+        }
+
+        .fc-day-col:last-child {
+            border-right: none;
+        }
+
+        .fc-body {
+            display: grid;
+            grid-template-columns: 60px repeat(7, 1fr);
+            /* Height based on hours, e.g., 9am-5pm */
+            min-height: 500px;
+        }
+
+        /* Time slots column */
+        .fc-time-slots {
+            border-right: 1px solid var(--border-color);
+            display: grid;
+            grid-template-rows: repeat(9, 60px);
+            /* 9 hours */
+        }
+
+        .fc-time-label {
+            font-size: 0.75rem;
+            color: var(--text-main);
+            opacity: 0.7;
+            text-align: right;
+            padding-right: 8px;
+            transform: translateY(-50%);
+        }
+
+        /* Day columns container */
+        .fc-day-columns {
+            display: contents;
+            /* Use parent grid */
+        }
+
+        .fc-day-track {
+            border-right: 1px solid var(--border-color);
+            position: relative;
+            /* Grid lines for hours */
+            background-image: linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
+            background-size: 100% 60px;
+            /* Matches row height */
+        }
+
+        .fc-day-track:last-child {
+            border-right: none;
+        }
+
+        /* Event Blocks */
+        .fc-event-block {
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            border-radius: 6px;
+            padding: 6px;
+            font-size: 0.75rem;
+            color: white;
+            border-left: 3px solid rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .fc-event-title {
+            font-weight: 700;
+            display: block;
+        }
+
+        .fc-event-time {
+            font-size: 0.7rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-120%);
+                width: 260px !important;
+                padding-right: 16px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-navbar-standalone {
+                justify-content: flex-end;
+                padding-left: 70px;
+                margin-bottom: 20px;
+                gap: 10px;
+            }
+
+            .search-standalone-box {
+                width: auto;
+                flex-grow: 1;
+                max-width: 100%;
+            }
+
+            .search-standalone-input {
+                padding-left: 40px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .search-standalone-icon {
+                left: 14px;
+            }
+
+            .notification-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+
+            /* Responsive Calendar */
+            .calendar-day-header {
+                font-size: 0.7rem;
+                padding: 8px 2px;
+            }
+
+            .calendar-day-cell {
+                min-height: 60px;
+                padding: 4px;
+            }
+
+            .event-pill {
+                font-size: 0.6rem;
+                padding: 2px 4px;
+            }
+
+            .calendar-title {
+                font-size: 1.2rem;
+            }
+
+            /* FC Responsive - Simplified for mobile */
+            .fc-header,
+            .fc-body {
+                grid-template-columns: 50px repeat(7, 150px);
+                /* Horizontal scroll */
+                overflow-x: auto;
+            }
+
+            .fc-wrapper {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link"><i class="bi bi-graph-up-arrow"></i> <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse " id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="orders.html" class="nav-link"><span>Pesanan</span></a>
+                        <a href="customers.html" class="nav-link"><span>Pelanggan (CRM)</span></a>
+                        <a href="pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link"><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link"><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link"><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link"><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps" aria-expanded="true"><i
+                        class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link "><span>Email</span></a>
+                        <a href="chat.html" class="nav-link "><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link active"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT (CALENDAR PAGE) -->
+        <main class="main-content">
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari jadwal...">
+                </div>
+
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p><span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER -->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Calendar</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">Kelola jadwal tim,
+                            rapat, dan acara penting.</p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-calendar-event"></i> SCHEDULE</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><span class="breadcrumb-home-icon"><i
+                                            class="bi bi-house-door-fill"></i></span></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Aplikasi</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Calendar</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. STYLE 1: FULL INTERACTIVE CALENDAR -->
+            <div class="section-title-modern">Full Month View</div>
+            <div class="calendar-wrapper mb-5">
+                <div class="calendar-header-controls">
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="alert('Previous Month')"><i
+                                class="bi bi-chevron-left"></i></button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="alert('Next Month')"><i
+                                class="bi bi-chevron-right"></i></button>
+                        <h2 class="calendar-title mb-0 ms-3">November 2025</h2>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-secondary">Day</button>
+                        <button class="btn btn-sm btn-secondary">Week</button>
+                        <button class="btn btn-sm btn-primary active">Month</button>
+                        <button class="btn btn-sm btn-success ms-3" onclick="alert('Add Event Modal')"><i
+                                class="bi bi-plus-lg me-1"></i> Add Event</button>
+                    </div>
+                </div>
+
+                <!-- Calendar Grid -->
+                <div class="calendar-grid">
+                    <!-- Header Row -->
+                    <div class="calendar-day-header">Minggu</div>
+                    <div class="calendar-day-header">Senin</div>
+                    <div class="calendar-day-header">Selasa</div>
+                    <div class="calendar-day-header">Rabu</div>
+                    <div class="calendar-day-header">Kamis</div>
+                    <div class="calendar-day-header">Jumat</div>
+                    <div class="calendar-day-header">Sabtu</div>
+
+                    <!-- Week 1 -->
+                    <div class="calendar-day-cell day-other-month"><span class="day-number">26</span></div>
+                    <div class="calendar-day-cell day-other-month"><span class="day-number">27</span></div>
+                    <div class="calendar-day-cell day-other-month"><span class="day-number">28</span></div>
+                    <div class="calendar-day-cell day-other-month"><span class="day-number">29</span></div>
+                    <div class="calendar-day-cell day-other-month"><span class="day-number">30</span></div>
+                    <div class="calendar-day-cell day-other-month"><span class="day-number">31</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">1</span></div>
+
+                    <!-- Week 2 -->
+                    <div class="calendar-day-cell"><span class="day-number">2</span></div>
+                    <div class="calendar-day-cell">
+                        <span class="day-number">3</span>
+                        <div class="event-pill event-purple">Daily Standup</div>
+                    </div>
+                    <div class="calendar-day-cell"><span class="day-number">4</span></div>
+                    <div class="calendar-day-cell">
+                        <span class="day-number">5</span>
+                        <div class="event-pill event-green">Project Launch 🚀</div>
+                    </div>
+                    <div class="calendar-day-cell"><span class="day-number">6</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">7</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">8</span></div>
+
+                    <!-- Week 3 -->
+                    <div class="calendar-day-cell"><span class="day-number">9</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">10</span>
+                        <div class="event-pill event-purple">Daily Standup</div>
+                    </div>
+                    <div class="calendar-day-cell"><span class="day-number">11</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">12</span>
+                        <div class="event-pill event-orange">Client Meeting</div>
+                    </div>
+                    <div class="calendar-day-cell"><span class="day-number">13</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">14</span>
+                        <div class="event-pill event-red">Holiday (Off)</div>
+                    </div>
+                    <div class="calendar-day-cell"><span class="day-number">15</span></div>
+
+                    <!-- Week 4 -->
+                    <div class="calendar-day-cell"><span class="day-number">16</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">17</span>
+                        <div class="event-pill event-purple">Daily Standup</div>
+                    </div>
+                    <div class="calendar-day-cell"><span class="day-number">18</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">19</span></div>
+                    <div class="calendar-day-cell day-today">
+                        <span class="day-number">20</span>
+                        <div class="event-pill event-info">Board Meeting</div>
+                    </div>
+                    <div class="calendar-day-cell"><span class="day-number">21</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">22</span></div>
+
+                    <!-- Week 5 -->
+                    <div class="calendar-day-cell"><span class="day-number">23</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">24</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">25</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">26</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">27</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">28</span></div>
+                    <div class="calendar-day-cell"><span class="day-number">29</span></div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- 2. STYLE 2: SCHEDULE TIMELINE -->
+                <div class="col-lg-8">
+                    <div class="section-title-modern mt-0">Style 2: Daily Schedule</div>
+                    <div class="widget-card h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Agenda Hari Ini (20 Nov)</h5>
+                            <button class="btn btn-sm btn-light text-primary">View All</button>
+                        </div>
+
+                        <div class="timeline-list">
+                            <!-- Item 1 -->
+                            <div class="timeline-item">
+                                <div class="timeline-dot border-primary"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="timeline-time text-primary">09:00 - 10:00 AM</div>
+                                        <h6 class="fw-bold mb-1">Sprint Planning</h6>
+                                        <p class="text-muted small mb-0">Diskusi backlog untuk minggu depan bersama tim
+                                            Dev.</p>
+                                    </div>
+                                    <div class="avatar-group d-flex">
+                                        <div class="avatar bg-secondary text-white"
+                                            style="width:32px; height:32px; font-size:0.7rem;">A</div>
+                                        <div class="avatar bg-info text-white ms-n2"
+                                            style="width:32px; height:32px; font-size:0.7rem; border:2px solid var(--bg-card);">
+                                            B</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Item 2 -->
+                            <div class="timeline-item">
+                                <div class="timeline-dot border-success"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="timeline-time text-success">11:30 - 12:30 PM</div>
+                                        <h6 class="fw-bold mb-1">Client Call: PT. Maju Jaya</h6>
+                                        <p class="text-muted small mb-0">Presentasi progress Q4 dan revisi desain.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Item 3 -->
+                            <div class="timeline-item">
+                                <div class="timeline-dot border-warning"></div>
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="timeline-time text-warning">03:00 PM</div>
+                                        <h6 class="fw-bold mb-1">Review Server Logs</h6>
+                                        <p class="text-muted small mb-0">Cek anomali traffic pada jam sibuk.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. STYLE 3: MINI CALENDAR -->
+                <div class="col-lg-4">
+                    <div class="section-title-modern mt-0">Style 3: Mini Widget</div>
+                    <div class="widget-card h-100 text-center">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button class="btn btn-icon btn-sm"><i class="bi bi-chevron-left"></i></button>
+                            <h6 class="fw-bold mb-0">November 2025</h6>
+                            <button class="btn btn-icon btn-sm"><i class="bi bi-chevron-right"></i></button>
+                        </div>
+
+                        <div class="mini-cal-grid">
+                            <span class="text-muted small fw-bold">M</span>
+                            <span class="text-muted small fw-bold">S</span>
+                            <span class="text-muted small fw-bold">S</span>
+                            <span class="text-muted small fw-bold">R</span>
+                            <span class="text-muted small fw-bold">K</span>
+                            <span class="text-muted small fw-bold">J</span>
+                            <span class="text-muted small fw-bold">S</span>
+
+                            <!-- Dates -->
+                            <div class="mini-day text-muted">26</div>
+                            <div class="mini-day text-muted">27</div>
+                            <div class="mini-day text-muted">28</div>
+                            <div class="mini-day text-muted">29</div>
+                            <div class="mini-day text-muted">30</div>
+                            <div class="mini-day text-muted">31</div>
+                            <div class="mini-day">1</div>
+
+                            <div class="mini-day">2</div>
+                            <div class="mini-day">3</div>
+                            <div class="mini-day">4</div>
+                            <div class="mini-day">5</div>
+                            <div class="mini-day">6</div>
+                            <div class="mini-day">7</div>
+                            <div class="mini-day">8</div>
+
+                            <div class="mini-day">9</div>
+                            <div class="mini-day">10</div>
+                            <div class="mini-day">11</div>
+                            <div class="mini-day">12</div>
+                            <div class="mini-day">13</div>
+                            <div class="mini-day">14</div>
+                            <div class="mini-day">15</div>
+
+                            <div class="mini-day">16</div>
+                            <div class="mini-day">17</div>
+                            <div class="mini-day">18</div>
+                            <div class="mini-day">19</div>
+                            <div class="mini-day active">20</div>
+                            <div class="mini-day">21</div>
+                            <div class="mini-day">22</div>
+                        </div>
+
+                        <div class="mt-4 text-start">
+                            <h6 class="small fw-bold text-muted mb-3">UPCOMING</h6>
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="text-center" style="min-width: 40px;">
+                                    <div class="fw-bold text-primary">22</div>
+                                    <div class="small text-muted" style="font-size: 0.65rem;">NOV</div>
+                                </div>
+                                <div>
+                                    <div class="small fw-bold">Team Building</div>
+                                    <div class="small text-muted">10:00 AM • Central Park</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-center" style="min-width: 40px;">
+                                    <div class="fw-bold text-danger">24</div>
+                                    <div class="small text-muted" style="font-size: 0.65rem;">NOV</div>
+                                </div>
+                                <div>
+                                    <div class="small fw-bold">Deadline Report</div>
+                                    <div class="small text-muted">05:00 PM • Office</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. STYLE 4: FULLCALENDAR WEEK VIEW -->
+            <div class="section-title-modern">Style 4: FullCalendar-like Week View</div>
+            <div class="fc-wrapper">
+                <div class="fc-header">
+                    <div class="fc-time-col"></div> <!-- Empty corner -->
+                    <div class="fc-day-col">Mon 17</div>
+                    <div class="fc-day-col">Tue 18</div>
+                    <div class="fc-day-col">Wed 19</div>
+                    <div class="fc-day-col">Thu 20</div>
+                    <div class="fc-day-col">Fri 21</div>
+                    <div class="fc-day-col">Sat 22</div>
+                    <div class="fc-day-col">Sun 23</div>
+                </div>
+                <div class="fc-body">
+                    <div class="fc-time-slots">
+                        <div class="fc-time-label">9am</div>
+                        <div class="fc-time-label">10am</div>
+                        <div class="fc-time-label">11am</div>
+                        <div class="fc-time-label">12pm</div>
+                        <div class="fc-time-label">1pm</div>
+                        <div class="fc-time-label">2pm</div>
+                        <div class="fc-time-label">3pm</div>
+                        <div class="fc-time-label">4pm</div>
+                        <div class="fc-time-label">5pm</div>
+                    </div>
+                    <div class="fc-day-columns">
+                        <!-- Monday -->
+                        <div class="fc-day-track">
+                            <div class="fc-event-block bg-primary" style="top: 60px; height: 60px;">
+                                <span class="fc-event-title">Team Sync</span>
+                                <span class="fc-event-time">10:00 - 11:00</span>
+                            </div>
+                        </div>
+                        <!-- Tuesday -->
+                        <div class="fc-day-track"></div>
+                        <!-- Wednesday -->
+                        <div class="fc-day-track">
+                            <div class="fc-event-block bg-success" style="top: 180px; height: 90px;">
+                                <span class="fc-event-title">Client Lunch</span>
+                                <span class="fc-event-time">12:00 - 13:30</span>
+                            </div>
+                        </div>
+                        <!-- Thursday -->
+                        <div class="fc-day-track">
+                            <div class="fc-event-block bg-warning text-dark" style="top: 300px; height: 60px;">
+                                <span class="fc-event-title">Code Review</span>
+                                <span class="fc-event-time">14:00 - 15:00</span>
+                            </div>
+                        </div>
+                        <!-- Friday -->
+                        <div class="fc-day-track">
+                            <div class="fc-event-block bg-danger" style="top: 0px; height: 120px;">
+                                <span class="fc-event-title">Hackathon</span>
+                                <span class="fc-event-time">09:00 - 11:00</span>
+                            </div>
+                        </div>
+                        <!-- Sat -->
+                        <div class="fc-day-track"></div>
+                        <!-- Sun -->
+                        <div class="fc-day-track"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- START OF COPYRIGHT FOOTER SECTION -->
+            <footer class=" footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025
+                            <strong class="text-white">Nexus
+                                Admin</strong>. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan
+                                Privasi</a>
+                            <a href="#" class="footer-link">Syarat &
+                                Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- END OF COPYRIGHT FOOTER -->
+        </main>
+    </div>
+
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/script.js"></script>
+
+</body>
+
+</html>

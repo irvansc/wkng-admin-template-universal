@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Page Not Found - Nexus Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. CORE STYLES (KONSISTEN)
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-blue: #3b82f6;
+            --border-color: #374151;
+            --gradient-primary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            /* Text Gradients */
+            --text-gradient-dark: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            --text-gradient-light: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        /* ======================================================================
+           2. BACKGROUND SHAPES (SAMA DENGAN LOGIN)
+           ====================================================================== */
+        .shape {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            animation: floatShape 10s infinite ease-in-out;
+            opacity: 0.5;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: #6366f1;
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+        }
+
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: #ec4899;
+            border-radius: 50%;
+            bottom: -50px;
+            right: -50px;
+            animation-delay: 2s;
+        }
+
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: #3b82f6;
+            border-radius: 50%;
+            top: 40%;
+            left: 40%;
+            animation-delay: 4s;
+            opacity: 0.3;
+        }
+
+        @keyframes floatShape {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(20px, -20px);
+            }
+        }
+
+        /* ======================================================================
+           3. 404 CONTENT CONTAINER
+           ====================================================================== */
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 60px 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+
+        body.light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ======================================================================
+           4. GHOST ANIMATION (PURE CSS)
+           ====================================================================== */
+        .ghost-container {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin: 0 auto 30px;
+            animation: floatGhost 3s ease-in-out infinite;
+        }
+
+        .ghost-body {
+            width: 100px;
+            height: 110px;
+            background: #fff;
+            border-radius: 50px 50px 0 0;
+            position: absolute;
+            left: 10px;
+            top: 0;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        body.light-mode .ghost-body {
+            background: var(--bg-dark);
+            /* Ghost jadi gelap di light mode biar kontras, atau tetap putih dengan border */
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Wavy bottom of ghost */
+        .ghost-wave {
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background-size: 20px 20px;
+            background-image: radial-gradient(circle at 10px 10px, transparent 10px, #fff 10px);
+            /* inverse circle */
+        }
+
+        /* Mata */
+        .ghost-eyes {
+            display: flex;
+            justify-content: space-between;
+            width: 50px;
+            position: absolute;
+            top: 40px;
+            left: 25px;
+            z-index: 3;
+        }
+
+        .eye {
+            width: 12px;
+            height: 12px;
+            background: #111827;
+            border-radius: 50%;
+            animation: blink 4s infinite;
+        }
+
+        /* Mulut */
+        .ghost-mouth {
+            width: 16px;
+            height: 20px;
+            background: #111827;
+            border-radius: 50%;
+            position: absolute;
+            top: 65px;
+            left: 42px;
+            z-index: 3;
+        }
+
+        /* Pipi Merona */
+        .ghost-blush {
+            position: absolute;
+            width: 12px;
+            height: 6px;
+            background: #f472b6;
+            border-radius: 50%;
+            top: 55px;
+            opacity: 0.6;
+        }
+
+        .blush-left {
+            left: 15px;
+        }
+
+        .blush-right {
+            right: 15px;
+        }
+
+        /* Bayangan di bawah */
+        .ghost-shadow {
+            width: 80px;
+            height: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            position: absolute;
+            bottom: -30px;
+            left: 20px;
+            animation: shadowScale 3s ease-in-out infinite;
+            filter: blur(5px);
+        }
+
+        @keyframes floatGhost {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes shadowScale {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+
+            50% {
+                transform: scale(0.8);
+                opacity: 0.1;
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            96%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            98% {
+                transform: scaleY(0.1);
+            }
+        }
+
+        /* ======================================================================
+           5. TYPOGRAPHY & BUTTONS
+           ====================================================================== */
+        .error-code {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            background: var(--text-gradient-dark);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        body.light-mode .error-code {
+            background: var(--text-gradient-light);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .error-desc {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-home {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+            color: white;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-fixed {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle-fixed:hover {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            transform: rotate(15deg);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle-fixed" id="themeToggle" title="Ganti Tema">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="error-container">
+        <div class="glass-card">
+
+            <!-- Ghost Animation -->
+            <div class="ghost-container">
+                <div class="ghost-body">
+                    <div class="ghost-eyes">
+                        <div class="eye"></div>
+                        <div class="eye"></div>
+                    </div>
+                    <div class="ghost-blush blush-left"></div>
+                    <div class="ghost-blush blush-right"></div>
+                    <div class="ghost-mouth"></div>
+                </div>
+                <div class="ghost-shadow"></div>
+            </div>
+
+            <!-- Text Content -->
+            <h1 class="error-code">404</h1>
+            <h2 class="error-title">Oops! Halaman Hilang</h2>
+            <p class="error-desc">
+                Sepertinya halaman yang Anda cari telah diculik oleh alien atau tersesat di dimensi lain.
+            </p>
+
+            <!-- Action Button -->
+            <a href="home.html" class="btn-home">
+                <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
+            </a>
+
+        </div>
+
+        <div class="mt-4 text-muted small opacity-50">
+            Error Code: 404_NOT_FOUND | Nexus System
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const body = document.body;
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            // Initial Theme Load
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            }
+
+            // Theme Toggle Logic
+            themeToggle?.addEventListener("click", () => {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+            });
+        });
+    </script>
+</body>
+
+</html>

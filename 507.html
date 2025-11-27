@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>507 Insufficient Storage - Nexus Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. CORE STYLES (KONSISTEN)
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-crimson: #e11d48;
+            --accent-rose: #be123c;
+            --border-color: #374151;
+            --gradient-primary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+
+            /* Text Gradients */
+            --text-gradient-dark: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            --text-gradient-light: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+
+            /* Storage Gradient (Crimson/Rose for 507 - Critical Full) */
+            --gradient-storage: linear-gradient(135deg, #e11d48 0%, #db2777 100%);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        /* ======================================================================
+           2. BACKGROUND SHAPES
+           ====================================================================== */
+        .shape {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            animation: floatShape 10s infinite ease-in-out;
+            opacity: 0.5;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: #e11d48;
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+        }
+
+        /* Crimson */
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: #db2777;
+            border-radius: 50%;
+            bottom: -50px;
+            right: -50px;
+            animation-delay: 2s;
+        }
+
+        /* Pink */
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: #fb7185;
+            border-radius: 50%;
+            top: 40%;
+            left: 40%;
+            animation-delay: 4s;
+            opacity: 0.3;
+        }
+
+        @keyframes floatShape {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(20px, -20px);
+            }
+        }
+
+        /* ======================================================================
+           3. CONTENT CONTAINER & RESPONSIVE
+           ====================================================================== */
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 60px 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+
+        body.light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 576px) {
+            .glass-card {
+                padding: 40px 20px;
+            }
+
+            .error-code {
+                font-size: 3.5rem !important;
+            }
+
+            .error-title {
+                font-size: 1.25rem;
+            }
+
+            .box-container {
+                transform: scale(0.8);
+                margin-bottom: 10px;
+            }
+        }
+
+        /* ======================================================================
+           4. BLOATED SERVER BOX ANIMATION (PURE CSS)
+           ====================================================================== */
+        .box-container {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            margin: 0 auto 30px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        /* The Box Body */
+        .server-box {
+            width: 120px;
+            height: 100px;
+            background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%);
+            border-radius: 15px;
+            position: relative;
+            z-index: 2;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 10px 25px rgba(225, 29, 72, 0.4);
+            animation: strain 3s ease-in-out infinite;
+            /* Bernapas berat */
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        /* Interactive: Panik saat di-hover */
+        .server-box:hover {
+            animation: shakePanic 0.3s infinite;
+            background: linear-gradient(135deg, #be123c 0%, #881337 100%);
+        }
+
+        /* The Lid (Penutup Atas) */
+        .server-lid {
+            width: 126px;
+            height: 20px;
+            background: #881337;
+            position: absolute;
+            top: -10px;
+            left: -3px;
+            border-radius: 10px;
+            z-index: 1;
+            animation: popLid 3s ease-in-out infinite;
+            /* Tutupnya membal */
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .server-box:hover .server-lid {
+            animation: popLidPanic 0.3s infinite;
+        }
+
+        /* Data Stuffing (Isi yang meluap) */
+        .data-stuffing {
+            position: absolute;
+            width: 100px;
+            height: 30px;
+            background: #fb7185;
+            top: -15px;
+            left: 10px;
+            border-radius: 10px 10px 0 0;
+            z-index: 0;
+            opacity: 0.8;
+            animation: stuffingShow 3s ease-in-out infinite;
+        }
+
+        /* Face (Muka Kesakitan/Penuh) */
+        .box-face {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .box-eye {
+            width: 12px;
+            height: 4px;
+            /* Mata menyipit */
+            background: #fff;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .box-eye::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -2px;
+            width: 16px;
+            height: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            transform: rotate(15deg);
+            /* Alis menderita */
+        }
+
+        .box-eye:last-child::before {
+            transform: rotate(-15deg);
+        }
+
+        .box-mouth {
+            width: 10px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 30px;
+        }
+
+        /* Sweat Drops (Keringat) */
+        .sweat {
+            position: absolute;
+            width: 6px;
+            height: 10px;
+            background: #38bdf8;
+            /* Biru air */
+            border-radius: 50%;
+            opacity: 0;
+            z-index: 3;
+        }
+
+        .s1 {
+            top: 10px;
+            left: -5px;
+            animation: dropSweat 2s infinite 1s;
+        }
+
+        .s2 {
+            top: 20px;
+            right: -5px;
+            animation: dropSweat 2.5s infinite 0.5s;
+        }
+
+        /* Gauge/Meter Penuh */
+        .capacity-meter {
+            width: 80px;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .capacity-fill {
+            width: 100%;
+            height: 100%;
+            background: #fbbf24;
+            animation: warningFlash 1s infinite;
+        }
+
+        /* Animations */
+        @keyframes strain {
+
+            0%,
+            100% {
+                transform: scale(1);
+                border-radius: 15px;
+            }
+
+            50% {
+                transform: scale(1.05, 0.95);
+                border-radius: 25px 25px 15px 15px;
+            }
+
+            /* Menggembung */
+        }
+
+        @keyframes popLid {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(-2deg);
+            }
+
+            /* Terangkat karena penuh */
+        }
+
+        @keyframes stuffingShow {
+
+            0%,
+            100% {
+                transform: scaleY(0);
+            }
+
+            50% {
+                transform: scaleY(1);
+            }
+        }
+
+        @keyframes dropSweat {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes warningFlash {
+
+            0%,
+            100% {
+                background: #fbbf24;
+            }
+
+            50% {
+                background: #fff;
+            }
+        }
+
+        @keyframes shakePanic {
+            0% {
+                transform: translate(1px, 1px) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(-1px, -2px) rotate(-1deg);
+            }
+
+            50% {
+                transform: translate(-3px, 0px) rotate(1deg);
+            }
+
+            75% {
+                transform: translate(3px, 2px) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(1px, -1px) rotate(-1deg);
+            }
+        }
+
+        @keyframes popLidPanic {
+
+            0%,
+            100% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(-5deg);
+            }
+        }
+
+        /* ======================================================================
+           5. TYPOGRAPHY & BUTTONS
+           ====================================================================== */
+        .error-code {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            background: var(--gradient-storage);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .error-desc {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-home {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+            color: white;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-fixed {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle-fixed:hover {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            transform: rotate(15deg);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle-fixed" id="themeToggle" title="Ganti Tema">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="error-container">
+        <div class="glass-card">
+
+            <!-- Bloated Server Animation -->
+            <div class="box-container">
+                <div class="server-lid"></div>
+                <div class="data-stuffing"></div>
+                <div class="server-box" title="Aku sudah penuh! (Hover me)">
+
+                    <!-- Face -->
+                    <div class="box-face">
+                        <div class="box-eye"></div>
+                        <div class="box-eye"></div>
+                    </div>
+                    <div class="box-mouth"></div>
+
+                    <!-- Capacity Warning -->
+                    <div class="capacity-meter">
+                        <div class="capacity-fill"></div>
+                    </div>
+
+                    <!-- Sweat -->
+                    <div class="sweat s1"></div>
+                    <div class="sweat s2"></div>
+                </div>
+            </div>
+
+            <!-- Text Content -->
+            <h1 class="error-code">507</h1>
+            <h2 class="error-title">Penyimpanan Penuh</h2>
+            <p class="error-desc">
+                Server kami terlalu kenyang! Kapasitas penyimpanan tidak cukup untuk memproses permintaan Anda. Kami
+                sedang melakukan diet data (pembersihan) sekarang.
+            </p>
+
+            <!-- Action Button -->
+            <a href="home.html" class="btn-home">
+                <i class="bi bi-trash"></i> Coba Bersihkan Cache
+            </a>
+
+        </div>
+
+        <div class="mt-4 text-muted small opacity-50">
+            Error Code: 507_INSUFFICIENT_STORAGE | Nexus System
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const body = document.body;
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            // Initial Theme Load
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            }
+
+            // Theme Toggle Logic
+            themeToggle?.addEventListener("click", () => {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+            });
+        });
+    </script>
+</body>
+
+</html>

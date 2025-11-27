@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - invoices</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <style>
+        /* 1. CONTROLS BAR & INPUTS (FIXED COLORS) */
+        .st-controls-bar {
+            display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;
+            align-items: center; justify-content: space-between;
+            padding-bottom: 20px; border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Input & Select sesuai Theme "Nexus Admin" */
+        .form-control-nexus {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .form-control-nexus:focus {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+            outline: none;
+        }
+        .form-control-nexus::placeholder { color: var(--text-muted); opacity: 0.7; }
+
+        /* FIX SELECT DROPDOWN BACKGROUND & OPTIONS */
+        .form-select.form-control-nexus {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-position: right 1rem center;
+            background-size: 16px 12px;
+        }
+        /* Style untuk option dropdown agar tidak putih */
+        .form-select.form-control-nexus option {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            padding: 10px;
+        }
+
+        .st-search-box { position: relative; width: 300px; max-width: 100%; }
+        .st-search-input { padding-left: 42px; }
+        .st-search-icon { 
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%); 
+            color: var(--text-muted); font-size: 1rem; pointer-events: none;
+        }
+
+        .view-switcher-label {
+            font-size: 0.75rem; font-weight: 700; 
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        /* --- GLOBAL AVATAR & BADGES --- */
+        .st-avatar-group { display: flex; align-items: center; }
+        .st-avatar {
+            width: 40px; height: 40px; border-radius: 10px; object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+        .st-avatar-lg { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; }
+        .st-avatar-xl { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; border: 4px solid var(--bg-card); }
+        
+        .st-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; display: inline-block; }
+        .st-badge-success { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .st-badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--accent-orange); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .st-badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .st-badge-purple { background: rgba(99, 102, 241, 0.15); color: var(--accent-purple); border: 1px solid rgba(99, 102, 241, 0.2); }
+
+        /* --- STYLE 1: ADVANCED CARD GRID (PRO PROFILE) --- */
+        .st-card-advanced {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 20px; padding: 0; text-align: center;
+            position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden; height: 100%; display: flex; flex-direction: column;
+        }
+        .st-card-advanced:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-purple);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .st-card-header-gradient {
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+            position: relative;
+        }
+        .st-card-header-gradient::before {
+            content: ''; position: absolute; inset: 0; background: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.1;
+        }
+        .st-avatar-floating {
+            margin-top: -40px; margin-bottom: 12px; position: relative; z-index: 2;
+            padding: 4px; background: var(--bg-card); border-radius: 50%; display: inline-block;
+        }
+        .st-avatar-floating img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
+        .st-card-body { padding: 0 24px 24px; flex: 1; display: flex; flex-direction: column; }
+        
+        .st-stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+            background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px; margin: 16px 0;
+            border: 1px solid var(--border-color);
+        }
+        body.light-mode .st-stats-grid { background: rgba(0,0,0,0.03); }
+        
+        .st-stat-item h6 { font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-main); }
+        .st-stat-item span { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+
+        /* --- STYLE 2: ADVANCED TABLE (DETAILED) --- */
+        .st-table-wrapper {
+            background: var(--bg-card); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .st-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .st-table th {
+            text-align: left; padding: 18px 24px; color: var(--text-muted); font-size: 0.75rem; 
+            text-transform: uppercase; font-weight: 700; letter-spacing: 0.8px;
+            border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.02);
+        }
+        .st-table td {
+            padding: 18px 24px; vertical-align: middle; border-bottom: 1px solid var(--border-color);
+            color: var(--text-main); font-size: 0.9rem; transition: background 0.2s;
+        }
+        .st-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .st-user-detail { display: flex; flex-direction: column; }
+        .st-user-detail .name { font-weight: 600; font-size: 0.95rem; color: var(--text-main); }
+        .st-user-detail .email { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* --- STYLE 3: COMPACT LIST (DENSE & ACTIONABLE) --- */
+        .st-compact-item {
+            display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border-color);
+            background: var(--bg-card); transition: all 0.2s; cursor: pointer; position: relative;
+            margin-bottom: -1px; /* Overlap borders */
+        }
+        .st-compact-item:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
+        .st-compact-item:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; border-bottom: none; }
+        .st-compact-item:hover { background: rgba(99, 102, 241, 0.05); z-index: 1; border-color: transparent; }
+        .st-compact-item::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+            background: var(--accent-purple); opacity: 0; transition: 0.2s;
+        }
+        .st-compact-item:hover::before { opacity: 1; }
+        .st-compact-actions { opacity: 0; transition: 0.2s; display: flex; gap: 8px; margin-left: auto; }
+        .st-compact-item:hover .st-compact-actions { opacity: 1; }
+
+        /* --- STYLE 5: METRO UI (TILES WITH BACKGROUND ICONS) --- */
+        .st-metro-tile {
+            position: relative; overflow: hidden; border-radius: 16px;
+            padding: 24px; height: 180px; display: flex; flex-direction: column; justify-content: space-between;
+            transition: 0.3s; cursor: pointer; border: 1px solid transparent;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .st-metro-tile:hover { transform: translateY(-5px) scale(1.02); z-index: 2; box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+        .st-metro-bg-icon {
+            position: absolute; right: -20px; bottom: -20px; font-size: 8rem; opacity: 0.1;
+            transform: rotate(-15deg); transition: 0.3s;
+        }
+        .st-metro-tile:hover .st-metro-bg-icon { transform: rotate(0deg) scale(1.1); opacity: 0.15; }
+        
+        .bg-metro-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+        .bg-metro-green { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .bg-metro-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; }
+        .bg-metro-orange { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .bg-metro-dark { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); }
+        
+        /* --- STYLE 6: ADVANCED TRACKING --- */
+        .st-track-card {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;
+            padding: 24px; display: flex; gap: 20px; align-items: center; height: 100%; transition: 0.3s;
+        }
+        .st-track-card:hover { border-color: var(--accent-purple); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .progress-label { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 6px; color: var(--text-muted); }
+        .progress-slim { height: 8px; background: rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+        .progress-bar-striped { background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent); background-size: 1rem 1rem; }
+
+        /* Helpers */
+        .text-xs { font-size: 0.75rem; }
+        .hide-section { display: none !important; }
+        .animate-in { animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* SEARCH HIGHLIGHT HELPER */
+        .highlight-text { background-color: rgba(255, 255, 0, 0.3); color: white; border-radius: 2px; }
+        </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse" id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="/products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link "><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link "><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link "><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link "><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link "><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu" aria-expanded="true"><i
+                        class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link "><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link active"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Navbar -->
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari sesuatu...">
+                </div>
+
+                <!-- [NEW] Notification Bell with Red Dot -->
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p>
+                                    <span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p>
+                                    <span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p>
+                                    <span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER-->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">students</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">
+                            Kelola invoice, kontrol arus pembayaran, dan tingkatkan efisiensi keuangan
+
+                        </p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-box-seam"></i>students</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><i
+                                        class="bi bi-house-door-fill"></i></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Akademik</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">students</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END OF PAGE HEADER -->
+
+
+            <!-- START OF CONTENT HERE -->
+ <!-- CONTROL BAR (FIXED STYLING & FUNCTIONAL IDs) -->
+ <div class="st-controls-bar">
+    <!-- Filter & Search Group -->
+    <div class="d-flex flex-wrap gap-3 align-items-center flex-grow-1">
+        <div class="st-search-box">
+            <i class="bi bi-search st-search-icon"></i>
+            <input type="text" id="globalSearchInput" class="form-control form-control-nexus st-search-input" placeholder="Cari nama, ID, atau kelas...">
+        </div>
+        
+        <div class="d-flex gap-2">
+            <select id="roleFilter" class="form-select form-control-nexus" style="width: auto;">
+                <option value="all">Semua Role</option>
+                <option value="Siswa">Siswa</option>
+                <option value="Pengajar">Pengajar</option>
+            </select>
+            <select id="statusFilter" class="form-select form-control-nexus" style="width: auto;">
+                <option value="all">Status: Semua</option>
+                <option value="Active">Aktif</option>
+                <option value="Non-Aktif">Non-Aktif</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- STYLE SWITCHER -->
+    <div class="d-flex align-items-center gap-2 bg-dark bg-opacity-10 p-1 rounded-3 border border-secondary border-opacity-25">
+        <span class="view-switcher-label ms-2 me-1 d-none d-md-block">Tampilan:</span>
+        <select class="form-select form-control-nexus border-0 bg-transparent py-1 ps-2 pe-4 fw-bold text-primary" id="styleSwitcher" style="width: auto; box-shadow: none;">
+            <option value="style-card-advanced">✨ Pro Cards</option>
+            <option value="style-table">📋 Power Table</option>
+            <option value="style-compact">📧 Compact List</option>
+            <option value="style-tracking">📊 Adv Tracking</option>
+            <option value="style-metro">🪟 Metro UI</option>
+        </select>
+    </div>
+</div>
+
+<!-- ===================================================================
+     CONTENT AREA - SEARCHABLE ITEMS
+     Note: Class "searchable-item" added for JS Logic
+     Data Attributes: data-role, data-status, data-name added
+==================================================================== -->
+<div id="contentArea">
+
+    <!-- 1. STYLE: ADVANCED CARD GRID -->
+    <div id="style-card-advanced" class="style-section animate-in">
+        <div class="row g-4">
+            <!-- ITEM 1 -->
+            <div class="col-md-6 col-lg-3 searchable-item" data-role="Siswa" data-status="Active" data-name="Sarah Amalia">
+                <div class="st-card-advanced">
+                    <div class="st-card-header-gradient">
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <button class="btn btn-sm btn-light bg-opacity-25 border-0 text-white rounded-circle"><i class="bi bi-three-dots-vertical"></i></button>
+                        </div>
+                    </div>
+                    <div class="st-avatar-floating">
+                        <img src="https://i.pravatar.cc/150?u=1" alt="Avatar">
+                    </div>
+                    
+                    <div class="st-card-body">
+                        <h5 class="fw-bold mb-1 text-main">Sarah Amalia</h5>
+                        <p class="text-muted mb-2 small">Siswa &bull; XII IPA 1</p>
+                        <div class="mb-2"><span class="st-badge st-badge-success">Active</span></div>
+                        
+                        <!-- STATS GRID -->
+                        <div class="st-stats-grid">
+                            <div class="st-stat-item">
+                                <h6>98%</h6>
+                                <span>Hadir</span>
+                            </div>
+                            <div class="st-stat-item" style="border-left:1px solid var(--border-color); border-right:1px solid var(--border-color)">
+                                <h6>85.5</h6>
+                                <span>Nilai</span>
+                            </div>
+                            <div class="st-stat-item">
+                                <h6>12</h6>
+                                <span>Poin</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto d-flex gap-2">
+                            <button class="btn btn-outline-secondary btn-sm flex-grow-1 rounded-pill"><i class="bi bi-chat-text me-1"></i> Chat</button>
+                            <button class="btn btn-primary btn-sm flex-grow-1 rounded-pill">Profile</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITEM 2 -->
+            <div class="col-md-6 col-lg-3 searchable-item" data-role="Pengajar" data-status="Active" data-name="Budi Santoso">
+                <div class="st-card-advanced">
+                    <div class="st-card-header-gradient" style="background: linear-gradient(135deg, #3b82f6, #0ea5e9);">
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <button class="btn btn-sm btn-light bg-opacity-25 border-0 text-white rounded-circle"><i class="bi bi-three-dots-vertical"></i></button>
+                        </div>
+                    </div>
+                    <div class="st-avatar-floating">
+                        <img src="https://i.pravatar.cc/150?u=2" alt="Avatar">
+                    </div>
+                    
+                    <div class="st-card-body">
+                        <h5 class="fw-bold mb-1 text-main">Budi Santoso</h5>
+                        <p class="text-muted mb-2 small">Pengajar &bull; Matematika</p>
+                        <div class="mb-2"><span class="st-badge st-badge-purple">Senior Guru</span></div>
+                        
+                        <!-- STATS GRID -->
+                        <div class="st-stats-grid">
+                            <div class="st-stat-item">
+                                <h6>4.9</h6>
+                                <span>Rating</span>
+                            </div>
+                            <div class="st-stat-item" style="border-left:1px solid var(--border-color); border-right:1px solid var(--border-color)">
+                                <h6>240</h6>
+                                <span>Siswa</span>
+                            </div>
+                            <div class="st-stat-item">
+                                <h6>24</h6>
+                                <span>Jam</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto d-flex gap-2">
+                            <button class="btn btn-outline-secondary btn-sm flex-grow-1 rounded-pill"><i class="bi bi-envelope me-1"></i> Email</button>
+                            <button class="btn btn-primary btn-sm flex-grow-1 rounded-pill">Jadwal</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITEM 3 -->
+            <div class="col-md-6 col-lg-3 searchable-item" data-role="Siswa" data-status="Non-Aktif" data-name="Kevin Sanjaya">
+                <div class="st-card-advanced">
+                    <div class="st-card-header-gradient" style="background: linear-gradient(135deg, #ef4444, #f87171);">
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <button class="btn btn-sm btn-light bg-opacity-25 border-0 text-white rounded-circle"><i class="bi bi-three-dots-vertical"></i></button>
+                        </div>
+                    </div>
+                    <div class="st-avatar-floating">
+                        <img src="https://i.pravatar.cc/150?u=3" alt="Avatar">
+                    </div>
+                    
+                    <div class="st-card-body">
+                        <h5 class="fw-bold mb-1 text-main">Kevin Sanjaya</h5>
+                        <p class="text-muted mb-2 small">Siswa &bull; XI IPS 2</p>
+                        <div class="mb-2"><span class="st-badge st-badge-danger">Warning</span></div>
+                        
+                        <!-- STATS GRID -->
+                        <div class="st-stats-grid">
+                            <div class="st-stat-item">
+                                <h6 class="text-danger">40%</h6>
+                                <span>Hadir</span>
+                            </div>
+                            <div class="st-stat-item" style="border-left:1px solid var(--border-color); border-right:1px solid var(--border-color)">
+                                <h6>60.0</h6>
+                                <span>Nilai</span>
+                            </div>
+                            <div class="st-stat-item">
+                                <h6>-5</h6>
+                                <span>Poin</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto d-flex gap-2">
+                            <button class="btn btn-outline-danger btn-sm flex-grow-1 rounded-pill"><i class="bi bi-exclamation-triangle me-1"></i> Alert</button>
+                            <button class="btn btn-outline-secondary btn-sm flex-grow-1 rounded-pill">Detail</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITEM 4 -->
+            <div class="col-md-6 col-lg-3 searchable-item" data-role="Pengajar" data-status="Active" data-name="Jessica Wong">
+                <div class="st-card-advanced">
+                    <div class="st-card-header-gradient" style="background: linear-gradient(135deg, #10b981, #34d399);">
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <button class="btn btn-sm btn-light bg-opacity-25 border-0 text-white rounded-circle"><i class="bi bi-three-dots-vertical"></i></button>
+                        </div>
+                    </div>
+                    <div class="st-avatar-floating">
+                        <img src="https://i.pravatar.cc/150?u=4" alt="Avatar">
+                    </div>
+                    
+                    <div class="st-card-body">
+                        <h5 class="fw-bold mb-1 text-main">Jessica Wong</h5>
+                        <p class="text-muted mb-2 small">Pengajar &bull; B. Inggris</p>
+                        <div class="mb-2"><span class="st-badge st-badge-success">Active</span></div>
+                        
+                        <!-- STATS GRID -->
+                        <div class="st-stats-grid">
+                            <div class="st-stat-item">
+                                <h6>5.0</h6>
+                                <span>Rating</span>
+                            </div>
+                            <div class="st-stat-item" style="border-left:1px solid var(--border-color); border-right:1px solid var(--border-color)">
+                                <h6>180</h6>
+                                <span>Siswa</span>
+                            </div>
+                            <div class="st-stat-item">
+                                <h6>18</h6>
+                                <span>Jam</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto d-flex gap-2">
+                            <button class="btn btn-outline-secondary btn-sm flex-grow-1 rounded-pill"><i class="bi bi-envelope me-1"></i> Email</button>
+                            <button class="btn btn-primary btn-sm flex-grow-1 rounded-pill">Jadwal</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. STYLE: POWER TABLE (DETAILED) -->
+    <div id="style-table" class="style-section hide-section animate-in">
+        <div class="st-table-wrapper">
+            <table class="st-table">
+                <thead>
+                    <tr>
+                        <th>User Info</th>
+                        <th>ID & Role</th>
+                        <th>Kelas / Mapel</th>
+                        <th>Status</th>
+                        <th>Performance</th>
+                        <th>Last Login</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ROW 1 -->
+                    <tr class="searchable-item" data-role="Siswa" data-status="Active" data-name="Sarah Amalia">
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="https://i.pravatar.cc/150?u=1" class="st-avatar" alt="">
+                                <div class="st-user-detail">
+                                    <span class="name">Sarah Amalia</span>
+                                    <span class="email">sarah@nexus.com</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-main fw-bold-500">Siswa</div>
+                            <div class="text-muted text-xs font-monospace">ST-001</div>
+                        </td>
+                        <td><span class="badge bg-secondary bg-opacity-10 text-secondary">XII IPA 1</span></td>
+                        <td><span class="st-badge st-badge-success">Active</span></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height: 6px; width:80px; background: rgba(255,255,255,0.1);">
+                                    <div class="progress-bar bg-primary" style="width: 85%;"></div>
+                                </div>
+                                <span class="fw-bold text-xs">85%</span>
+                            </div>
+                        </td>
+                        <td class="text-muted text-xs">2 mins ago</td>
+                        <td class="text-end">
+                            <button class="btn btn-icon btn-sm text-muted hover-text-primary"><i class="bi bi-pencil-square"></i></button>
+                        </td>
+                    </tr>
+                    <!-- ROW 2 -->
+                    <tr class="searchable-item" data-role="Pengajar" data-status="Active" data-name="Budi Santoso">
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="https://i.pravatar.cc/150?u=2" class="st-avatar" alt="">
+                                <div class="st-user-detail">
+                                    <span class="name">Budi Santoso</span>
+                                    <span class="email">budi@nexus.com</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-main fw-bold-500">Pengajar</div>
+                            <div class="text-muted text-xs font-monospace">TC-055</div>
+                        </td>
+                        <td><span class="badge bg-info bg-opacity-10 text-info">Matematika</span></td>
+                        <td><span class="st-badge st-badge-purple">Senior</span></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="text-warning"><i class="bi bi-star-fill"></i> 4.9</div>
+                            </div>
+                        </td>
+                        <td class="text-muted text-xs">1 hour ago</td>
+                        <td class="text-end">
+                            <button class="btn btn-icon btn-sm text-muted hover-text-primary"><i class="bi bi-pencil-square"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 3. STYLE: COMPACT LIST -->
+    <div id="style-compact" class="style-section hide-section animate-in">
+        <div class="bg-transparent">
+            <!-- Item 1 -->
+            <div class="st-compact-item searchable-item" data-role="Siswa" data-status="Active" data-name="Sarah Amalia">
+                <div class="form-check me-3">
+                    <input class="form-check-input bg-transparent border-secondary" type="checkbox">
+                </div>
+                <img src="https://i.pravatar.cc/150?u=1" class="st-avatar rounded-circle me-3" alt="">
+                <div class="flex-grow-1 d-flex align-items-center flex-wrap">
+                    <span class="text-main fw-bold me-2">Sarah Amalia</span>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary me-2" style="font-size:0.6rem">Siswa</span>
+                    <span class="text-muted small text-truncate d-none d-md-block" style="max-width: 300px;">Meminta izin cuti untuk keperluan lomba matematika nasional...</span>
+                </div>
+                <div class="st-compact-actions ms-auto">
+                    <button class="btn btn-sm btn-icon text-muted"><i class="bi bi-envelope"></i></button>
+                    <button class="btn btn-sm btn-icon text-muted"><i class="bi bi-trash"></i></button>
+                </div>
+                <div class="ms-3 text-end" style="min-width: 80px;">
+                    <span class="st-badge st-badge-success" style="padding: 2px 8px; font-size: 0.65rem;">Active</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. STYLE: ADVANCED TRACKING -->
+    <div id="style-tracking" class="style-section hide-section animate-in">
+        <div class="row g-3">
+            <!-- Tracking 1 -->
+            <div class="col-md-6 col-xl-4 searchable-item" data-role="Siswa" data-status="Active" data-name="Sarah Amalia">
+                <div class="st-track-card">
+                    <img src="https://i.pravatar.cc/150?u=1" class="st-avatar-lg" alt="">
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between mb-1">
+                            <h6 class="mb-0 fw-bold text-main">Sarah Amalia</h6>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill" style="font-size:0.6rem">Siswa</span>
+                        </div>
+                        <div class="text-xs text-muted mb-3">ID: ST-001 &bull; XII IPA 1</div>
+                        
+                        <div class="progress-label"><span>Tugas Harian</span> <span>80%</span></div>
+                        <div class="progress-slim"><div class="progress-bar progress-bar-striped bg-info" style="width: 80%"></div></div>
+                        
+                        <div class="progress-label"><span>Ujian Semester</span> <span>95%</span></div>
+                        <div class="progress-slim mb-0"><div class="progress-bar bg-purple" style="width: 95%; background-color: var(--accent-purple);"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. STYLE: METRO UI -->
+    <div id="style-metro" class="style-section hide-section animate-in">
+        <div class="row g-3">
+            <div class="col-6 col-md-4 col-lg-3 searchable-item" data-role="Siswa" data-status="Active" data-name="Sarah Amalia">
+                <div class="st-metro-tile bg-metro-blue">
+                    <i class="bi bi-mortarboard-fill st-metro-bg-icon"></i>
+                    <div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <img src="https://i.pravatar.cc/150?u=1" style="width:48px; height:48px; border-radius:50%; border:3px solid rgba(255,255,255,0.3);" alt="">
+                            <i class="bi bi-arrow-up-right-circle opacity-75 fs-4"></i>
+                        </div>
+                        <h5 class="fw-bold mt-3 mb-0 text-truncate">Sarah A.</h5>
+                        <small class="opacity-75">Siswa - XII IPA</small>
+                    </div>
+                    <div class="mt-2">
+                        <div class="d-flex justify-content-between small opacity-75 mb-1"><span>Academic</span><span>85%</span></div>
+                        <div class="progress" style="height:6px; background:rgba(255,255,255,0.2)"><div class="progress-bar bg-white" style="width:85%"></div></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-4 col-lg-3 searchable-item" data-role="Pengajar" data-status="Active" data-name="Budi Santoso">
+                <div class="st-metro-tile bg-metro-green">
+                    <i class="bi bi-briefcase-fill st-metro-bg-icon"></i>
+                    <div>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <img src="https://i.pravatar.cc/150?u=2" style="width:48px; height:48px; border-radius:50%; border:3px solid rgba(255,255,255,0.3);" alt="">
+                            <i class="bi bi-star-fill opacity-75 fs-4"></i>
+                        </div>
+                        <h5 class="fw-bold mt-3 mb-0 text-truncate">Budi S.</h5>
+                        <small class="opacity-75">Pengajar - Math</small>
+                    </div>
+                    <div class="mt-2">
+                        <div class="d-flex justify-content-between small opacity-75 mb-1"><span>Rating</span><span>4.9</span></div>
+                        <div class="progress" style="height:6px; background:rgba(255,255,255,0.2)"><div class="progress-bar bg-white" style="width:95%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div> <!-- End Content Area -->
+            <!-- END OF CONTENT HERE -->
+
+
+            <!-- START OF COPYRIGHT FOOTER SECTION -->
+            <footer class=" footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025
+                            <strong class="text-white">Nexus
+                                Admin</strong>. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan
+                                Privasi</a>
+                            <a href="#" class="footer-link">Syarat &
+                                Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- END OF COPYRIGHT FOOTER -->
+        </main>
+    </div>
+
+    <!-- Theme Toggle Floating (Maintained) -->
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        // 1. STYLE SWITCHER LOGIC
+        const styleSwitcher = document.getElementById('styleSwitcher');
+        const sections = document.querySelectorAll('.style-section');
+
+        styleSwitcher.addEventListener('change', (e) => {
+            const selectedStyle = e.target.value;
+            // Hide all
+            sections.forEach(section => {
+                section.classList.add('hide-section');
+                section.classList.remove('animate-in'); 
+            });
+            // Show selected
+            const activeSection = document.getElementById(selectedStyle);
+            if(activeSection) {
+                activeSection.classList.remove('hide-section');
+                void activeSection.offsetWidth; // Trigger reflow
+                activeSection.classList.add('animate-in');
+            }
+            // Re-apply current filter to the new view
+            applyFilters();
+        });
+
+        // 2. SEARCH & FILTER LOGIC (CLIENT SIDE)
+        const searchInput = document.getElementById('globalSearchInput');
+        const roleFilter = document.getElementById('roleFilter');
+        const statusFilter = document.getElementById('statusFilter');
+
+        function applyFilters() {
+            const searchValue = searchInput.value.toLowerCase();
+            const roleValue = roleFilter.value;
+            const statusValue = statusFilter.value;
+
+            // Select ALL searchable items across ALL views
+            const allItems = document.querySelectorAll('.searchable-item');
+
+            allItems.forEach(item => {
+                const name = item.getAttribute('data-name').toLowerCase();
+                const role = item.getAttribute('data-role');
+                const status = item.getAttribute('data-status');
+
+                // Logic Check
+                const matchesSearch = name.includes(searchValue);
+                const matchesRole = (roleValue === 'all') || (role === roleValue);
+                const matchesStatus = (statusValue === 'all') || (status === statusValue);
+
+                // Toggle Visibility
+                if (matchesSearch && matchesRole && matchesStatus) {
+                    item.classList.remove('d-none'); // Bootstrap class for display:none
+                    // Specific fix for table rows to preserve layout
+                    if(item.tagName === 'TR') item.style.display = ''; 
+                } else {
+                    item.classList.add('d-none');
+                }
+            });
+        }
+
+        // Event Listeners for Realtime Filtering
+        searchInput.addEventListener('keyup', applyFilters);
+        roleFilter.addEventListener('change', applyFilters);
+        statusFilter.addEventListener('change', applyFilters);
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 Internal Server Error - Nexus Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. CORE STYLES (KONSISTEN)
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-pink: #ec4899;
+            --accent-orange: #f97316;
+            --border-color: #374151;
+            --gradient-primary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+
+            /* Text Gradients */
+            --text-gradient-dark: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            --text-gradient-light: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+
+            /* Error Gradient (Orange/Pink for 500) */
+            --gradient-error: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        /* ======================================================================
+           2. BACKGROUND SHAPES
+           ====================================================================== */
+        .shape {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            animation: floatShape 10s infinite ease-in-out;
+            opacity: 0.5;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: #f97316;
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+        }
+
+        /* Orange */
+        .shape-2 {
+            width: 300px;
+            height: 300px;
+            background: #ec4899;
+            border-radius: 50%;
+            bottom: -50px;
+            right: -50px;
+            animation-delay: 2s;
+        }
+
+        /* Pink */
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: #6366f1;
+            border-radius: 50%;
+            top: 40%;
+            left: 40%;
+            animation-delay: 4s;
+            opacity: 0.3;
+        }
+
+        @keyframes floatShape {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(20px, -20px);
+            }
+        }
+
+        /* ======================================================================
+           3. CONTENT CONTAINER
+           ====================================================================== */
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 60px 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+
+        body.light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ======================================================================
+           4. DIZZY ROBOT ANIMATION (PURE CSS)
+           ====================================================================== */
+        .robot-container {
+            width: 140px;
+            height: 140px;
+            position: relative;
+            margin: 0 auto 20px;
+            animation: floatRobot 4s ease-in-out infinite;
+        }
+
+        /* Antenna */
+        .robot-antenna-stick {
+            width: 4px;
+            height: 25px;
+            background: #94a3b8;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        .robot-antenna-ball {
+            width: 12px;
+            height: 12px;
+            background: #f97316;
+            border-radius: 50%;
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.8);
+            animation: signalPulse 1s infinite alternate, antennaShake 0.2s infinite;
+        }
+
+        /* Head */
+        .robot-head {
+            width: 100px;
+            height: 90px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            border-radius: 24px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 2;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Screen/Face */
+        .robot-face {
+            width: 80px;
+            height: 50px;
+            background: #1e293b;
+            border-radius: 16px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Eyes */
+        .eye {
+            width: 18px;
+            height: 18px;
+            position: relative;
+        }
+
+        .eye::before,
+        .eye::after {
+            content: '';
+            position: absolute;
+            background: #ef4444;
+            border-radius: 2px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* X Eyes Styling */
+        .eye-x::before {
+            width: 100%;
+            height: 3px;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .eye-x::after {
+            width: 100%;
+            height: 3px;
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        /* Spinning Animation for Confusion */
+        .eye-left {
+            animation: spinEye 2s linear infinite;
+        }
+
+        .eye-right {
+            animation: spinEye 2s linear infinite reverse;
+        }
+
+        /* Mouth */
+        .robot-mouth {
+            position: absolute;
+            bottom: 8px;
+            width: 30px;
+            height: 4px;
+            background: #94a3b8;
+            border-radius: 2px;
+        }
+
+        /* Ears/Bolts */
+        .robot-ear {
+            width: 10px;
+            height: 20px;
+            background: #64748b;
+            position: absolute;
+            top: 55px;
+            z-index: 1;
+            border-radius: 4px;
+        }
+
+        .ear-left {
+            left: 12px;
+        }
+
+        .ear-right {
+            right: 12px;
+        }
+
+        /* Animations */
+        @keyframes floatRobot {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(2deg);
+            }
+        }
+
+        @keyframes spinEye {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes signalPulse {
+            0% {
+                box-shadow: 0 0 5px rgba(249, 115, 22, 0.5);
+                background: #f97316;
+            }
+
+            100% {
+                box-shadow: 0 0 20px rgba(249, 115, 22, 1);
+                background: #ffed4a;
+            }
+        }
+
+        @keyframes antennaShake {
+            0% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+
+            25% {
+                transform: translateX(-50%) rotate(-5deg);
+            }
+
+            75% {
+                transform: translateX(-50%) rotate(5deg);
+            }
+
+            100% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+        }
+
+        /* ======================================================================
+           5. TYPOGRAPHY & BUTTONS
+           ====================================================================== */
+        .error-code {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+            background: var(--gradient-error);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .error-desc {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-home {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+            color: white;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle-fixed {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle-fixed:hover {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            transform: rotate(15deg);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle-fixed" id="themeToggle" title="Ganti Tema">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="error-container">
+        <div class="glass-card">
+
+            <!-- Dizzy Robot Animation -->
+            <div class="robot-container">
+                <div class="robot-antenna-stick"></div>
+                <div class="robot-antenna-ball"></div>
+                <div class="robot-ear ear-left"></div>
+                <div class="robot-ear ear-right"></div>
+                <div class="robot-head">
+                    <div class="robot-face">
+                        <!-- X Eyes Spinning -->
+                        <div class="eye eye-x eye-left"></div>
+                        <div class="eye eye-x eye-right"></div>
+                        <div class="robot-mouth"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Content -->
+            <h1 class="error-code">500</h1>
+            <h2 class="error-title">Sistem Sedang Pusing</h2>
+            <p class="error-desc">
+                Server kami sedang mengalami masalah internal. Robot kami sedang berusaha memperbaikinya (setelah minum
+                kopi).
+            </p>
+
+            <!-- Action Button -->
+            <a href="home.html" class="btn-home">
+                <i class="bi bi-arrow-clockwise"></i> Coba Muat Ulang
+            </a>
+
+        </div>
+
+        <div class="mt-4 text-muted small opacity-50">
+            Error Code: 500_INTERNAL_SERVER_ERROR | Nexus System
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const body = document.body;
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            // Initial Theme Load
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            }
+
+            // Theme Toggle Logic
+            themeToggle?.addEventListener("click", () => {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+            });
+        });
+    </script>
+</body>
+
+</html>

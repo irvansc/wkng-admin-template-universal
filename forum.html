@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Forum</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- ApexCharts -->
+<link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        
+
+      /* ======================================================================
+         GLOBAL ADDITION - CSS (FORUM STYLE REFINEMENTS & WOW FACTOR)
+         ====================================================================== */
+      
+      /* 1. Enhanced Card Aesthetics */
+      .widget-card {
+          /* Deeper shadow and subtler border for premium feel */
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          /* Subtle gradient background for depth */
+          background: linear-gradient(145deg, var(--bg-card) 0%, rgba(31, 41, 55, 0.4) 100%);
+      }
+
+      body.light-mode .widget-card {
+           background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+           border-color: rgba(0,0,0,0.05);
+           box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      }
+
+      .widget-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          border-color: rgba(99, 102, 241, 0.3); /* Purple glow hint on hover */
+      }
+      
+      /* 2. Utility for Avatar Groups */
+      .avatar-group-stack {
+          display: flex;
+          align-items: center;
+          padding-left: 10px;
+      }
+      .avatar-group-stack img {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          border: 2px solid var(--bg-card);
+          margin-left: -12px;
+          object-fit: cover;
+          transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      .avatar-group-stack img:first-child {
+          margin-left: 0;
+      }
+      .avatar-group-stack img:hover {
+          transform: translateY(-4px) scale(1.1);
+          z-index: 10;
+          border-color: var(--accent-purple);
+      }
+      .avatar-more {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: var(--bg-sidebar);
+          color: var(--text-muted);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.75rem;
+          margin-left: -12px;
+          border: 2px solid var(--bg-card);
+          font-weight: 700;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          z-index: 1;
+      }
+
+      /* 3. Forum Badges - More "Pop" */
+      .badge-forum {
+          padding: 6px 14px;
+          border-radius: 50px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+          transition: all 0.2s;
+      }
+      .badge-forum:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+      .badge-forum-soft-purple { background: rgba(99, 102, 241, 0.1); color: var(--accent-purple); border: 1px solid rgba(99,102,241,0.2); }
+      .badge-forum-soft-green { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16,185,129,0.2); }
+      .badge-forum-soft-orange { background: rgba(245, 158, 11, 0.1); color: var(--accent-orange); border: 1px solid rgba(245,158,11,0.2); }
+      .badge-forum-soft-blue { background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border: 1px solid rgba(59,130,246,0.2); }
+
+      /* Style 1: Modern List Item Polish */
+      .forum-list-item {
+          border-radius: 16px;
+          background: rgba(255,255,255,0.01);
+          border: 1px solid transparent;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          margin-bottom: 8px; /* Spacing between items */
+      }
+      .forum-list-item:hover {
+          background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+          border-color: rgba(99, 102, 241, 0.2);
+          transform: translateX(4px); /* Subtle shift right */
+          box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      }
+      body.light-mode .forum-list-item:hover {
+          background: #f8fafc;
+          border-color: #e2e8f0;
+      }
+
+      /* Style 2: Card Grid Overlay Animation */
+      .forum-card-img-wrapper {
+          overflow: hidden;
+          border-radius: 12px;
+          position: relative;
+      }
+      .forum-card-img {
+          height: 160px; /* Taller for better visual */
+          width: 100%;
+          object-fit: cover;
+          border-radius: 12px;
+          margin-bottom: 16px;
+          mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+          -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+          transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .widget-card:hover .forum-card-img {
+          transform: scale(1.1);
+      }
+
+      /* Style 6: Chat / Message Polish */
+      .chat-container {
+          height: 450px;
+          overflow-y: auto;
+          padding-right: 12px;
+      }
+      .chat-container::-webkit-scrollbar { width: 4px; }
+      
+      .chat-msg {
+          display: flex;
+          gap: 14px;
+          margin-bottom: 24px;
+          align-items: flex-end; /* Align avatar to bottom */
+      }
+      .chat-msg.me {
+          flex-direction: row-reverse;
+      }
+      .chat-bubble {
+          max-width: 75%;
+          padding: 14px 20px;
+          border-radius: 20px 20px 20px 4px;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid var(--border-color);
+          color: var(--text-main);
+          font-size: 0.95rem;
+          line-height: 1.6;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+          position: relative;
+      }
+      .chat-msg.me .chat-bubble {
+          border-radius: 20px 20px 4px 20px;
+          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+          border: none;
+          color: white;
+          box-shadow: 0 8px 20px -5px rgba(99, 102, 241, 0.4);
+      }
+      .chat-time {
+          font-size: 0.65rem;
+          color: var(--text-muted);
+          margin-top: 6px;
+          font-weight: 600;
+          opacity: 0.7;
+      }
+
+      /* Style 7: Categories Glow Effect */
+      .category-icon-lg {
+          width: 70px;
+          height: 70px;
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2rem;
+          margin-bottom: 20px;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid var(--border-color);
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+          position: relative;
+          z-index: 1;
+      }
+      .widget-card:hover .category-icon-lg {
+          background: var(--accent-purple);
+          color: white;
+          transform: translateY(-10px) rotate(5deg) scale(1.1);
+          border-color: transparent;
+          box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.5);
+      }
+      /* Glow background for category card */
+      .category-card-wrap {
+          position: relative;
+          overflow: hidden;
+      }
+      .category-card-wrap::before {
+          content: '';
+          position: absolute;
+          top: 50%; left: 50%;
+          transform: translate(-50%, -50%);
+          width: 100px; height: 100px;
+          background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+          opacity: 0;
+          transition: opacity 0.4s;
+          pointer-events: none;
+      }
+      .category-card-wrap:hover::before {
+          opacity: 1;
+      }
+
+
+      /* Style 4: Q&A Voting */
+      .vote-box {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 2px;
+          margin-right: 20px;
+          min-width: 50px;
+          background: rgba(255,255,255,0.02);
+          padding: 10px;
+          border-radius: 12px;
+      }
+      .vote-btn {
+          background: none;
+          border: none;
+          color: var(--text-muted);
+          font-size: 1.4rem;
+          transition: all 0.2s;
+          cursor: pointer;
+          padding: 0;
+          height: 24px;
+          display: flex;
+          align-items: center;
+      }
+      .vote-btn:hover { color: var(--accent-purple); transform: scale(1.2); }
+      .vote-count { font-weight: 800; font-size: 1.2rem; color: var(--text-main); margin: 5px 0; }
+      
+      /* Style Separator */
+      .style-separator {
+          margin: 70px 0 30px;
+          padding-bottom: 15px;
+          border-bottom: 1px dashed var(--border-color);
+          color: var(--text-main);
+          font-weight: 800;
+          text-transform: uppercase;
+          font-size: 0.9rem;
+          letter-spacing: 2px;
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          opacity: 0.8;
+      }
+      .style-separator i { 
+          color: var(--accent-purple); 
+          font-size: 1.2rem;
+          filter: drop-shadow(0 0 8px rgba(99,102,241,0.5));
+      }
+
+      /* Glassmorphism Header */
+      .card-header-custom {
+          background: rgba(255, 255, 255, 0.01);
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      /* Table Enhancement */
+      .table-dashboard tbody tr {
+          transition: background 0.2s;
+      }
+      .table-dashboard tbody tr:hover td {
+          background-color: rgba(255, 255, 255, 0.02);
+          color: var(--text-main);
+      }
+      .table-dashboard td:first-child {
+          border-top-left-radius: 10px;
+          border-bottom-left-radius: 10px;
+      }
+      .table-dashboard td:last-child {
+          border-top-right-radius: 10px;
+          border-bottom-right-radius: 10px;
+      }
+
+      @media (max-width: 768px) {
+          .sidebar { transform: translateX(-120%); width: 260px !important; }
+          .sidebar.active { transform: translateX(0); }
+          .main-content { margin-left: 0; width: 100%; padding: 20px; }
+          .mobile-menu-btn { display: flex; }
+          .top-navbar-standalone { padding-left: 60px; }
+      }
+  </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <!-- [MODIFIED] Tombol Collapse -->
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <!-- [MODIFIED] Divider lebih tebal -->
+            <div class="sidebar-divider"></div>
+
+            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse" id="menuBusiness">
+                    <div class="nav-submenu">
+
+                        <a href="/products.html" class="nav-link "><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link "><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link "><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                <!-- SEKTOR FINANSIAL (CRYPTO & PERUSAHAAN) -->
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link "><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link "><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link "><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+
+                <!-- SEKTOR PENDIDIKAN -->
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu" ><i
+                        class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse " id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link "><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link "><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <!-- SEKTOR MASYARAKAT & UMUM -->
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial" aria-expanded="true"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link "><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link "><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link active"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <!-- TOOLS & SYSTEM (Generic) -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <!-- [MODIFIED] Menu Pengaturan (Tetap menggunakan struktur detail yang lama) -->
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [MODIFIED] MODERN PROFILE MENU -->
+            <div class="dropup profile-wrapper">
+                <!-- Trigger Button -->
+                <!-- [FIX] Added data-bs-display="static" to prevent popping behavior -->
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div> <!-- Online Indicator -->
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <!-- Modern Dropdown Content -->
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <!-- Functional Dark Mode Switch inside Menu -->
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Navbar -->
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <!-- [FIXED] ID ADDED HERE -->
+                    <input type="text" id="globalSearch" class="search-standalone-input" placeholder="Cari sesuatu...">
+                </div>
+
+                <!-- Notification Bell -->
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p>
+                                    <span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p>
+                                    <span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p>
+                                    <span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Page Header -->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Exams & Grading</h1>
+                        <p class="text-muted mb-0">Kelola jadwal ujian, input nilai, dan analisis performa siswa secara
+                            real-time.</p>
+                    </div>
+                    <div class="col-lg-5 text-lg-end">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <span class="badge bg-soft-purple text-uppercase fw-bold px-3 py-2 rounded-pill"><i
+                                    class="bi bi-calendar-check me-2"></i>Academic Year 2024/2025</span>
+                            <nav class="breadcrumb-modern">
+                                <a href="#" class="breadcrumb-item-custom"><i class="bi bi-house-door-fill"></i></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Akademik</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Exams</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- START OF CONTENT HERE -->
+ <!-- ======================================================================
+                 STYLE 1: FORUM THREAD LIST (CLASSIC - UPGRADED)
+                 ====================================================================== -->
+                 <div class="style-separator"><i class="bi bi-1-circle-fill"></i> Style 1: Modern List</div>
+            
+                 <div class="widget-card mb-4 p-0 overflow-hidden">
+                     <div class="card-header-custom p-4 d-flex justify-content-between align-items-center">
+                         <h5 class="mb-0 fw-bold">Diskusi Terbaru</h5>
+                         <div class="dropdown">
+                             <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown">Filter: Populer</button>
+                             <ul class="dropdown-menu"><li><a class="dropdown-item" href="#">Terbaru</a></li><li><a class="dropdown-item" href="#">Terlama</a></li></ul>
+                         </div>
+                     </div>
+                     <div class="p-3">
+                         <!-- Item 1 -->
+                         <div class="forum-list-item p-4 d-flex flex-column flex-md-row gap-4 align-items-md-center">
+                             <img src="https://placehold.co/60x60/6366f1/ffffff?text=JS" class="rounded-4 flex-shrink-0 shadow-sm" alt="Avatar">
+                             <div class="flex-grow-1">
+                                 <div class="mb-2 d-flex align-items-center gap-2">
+                                     <span class="badge-forum badge-forum-soft-purple">Development</span>
+                                     <span class="text-muted small fw-bold"><i class="bi bi-pin-angle-fill me-1 text-warning"></i>Pinned</span>
+                                 </div>
+                                 <h5 class="mb-1 fw-bold text-main"><a href="#" class="text-reset text-decoration-none">Best Practices ReactJS di Tahun 2025?</a></h5>
+                                 <p class="mb-0 small text-muted">Started by <span class="text-white fw-semibold">Rian Code</span> • 2 hours ago</p>
+                             </div>
+                             <div class="d-flex align-items-center gap-4 text-center mt-2 mt-md-0 border-start border-secondary border-opacity-10 ps-md-4">
+                                 <div><div class="h5 mb-0 fw-bold text-main">45</div><small class="text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;">Replies</small></div>
+                                 <div><div class="h5 mb-0 fw-bold text-main">1.2k</div><small class="text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;">Views</small></div>
+                                 <div class="avatar-group-stack">
+                                     <img src="https://placehold.co/30/333/fff?text=A">
+                                     <img src="https://placehold.co/30/444/fff?text=B">
+                                     <img src="https://placehold.co/30/555/fff?text=C">
+                                     <div class="avatar-more">+5</div>
+                                 </div>
+                             </div>
+                         </div>
+                         <!-- Item 2 -->
+                         <div class="forum-list-item p-4 d-flex flex-column flex-md-row gap-4 align-items-md-center">
+                             <img src="https://placehold.co/60x60/10b981/ffffff?text=UI" class="rounded-4 flex-shrink-0 shadow-sm" alt="Avatar">
+                             <div class="flex-grow-1">
+                                 <div class="mb-2 d-flex align-items-center gap-2">
+                                     <span class="badge-forum badge-forum-soft-green">Design</span>
+                                 </div>
+                                 <h5 class="mb-1 fw-bold text-main"><a href="#" class="text-reset text-decoration-none">Inspirasi UI Dashboard Dark Mode</a></h5>
+                                 <p class="mb-0 small text-muted">Started by <span class="text-white fw-semibold">Sarah Design</span> • 5 hours ago</p>
+                             </div>
+                             <div class="d-flex align-items-center gap-4 text-center mt-2 mt-md-0 border-start border-secondary border-opacity-10 ps-md-4">
+                                 <div><div class="h5 mb-0 fw-bold text-main">12</div><small class="text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;">Replies</small></div>
+                                 <div><div class="h5 mb-0 fw-bold text-main">340</div><small class="text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;">Views</small></div>
+                                 <div class="avatar-group-stack">
+                                     <img src="https://placehold.co/30/666/fff?text=D">
+                                     <img src="https://placehold.co/30/777/fff?text=E">
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+     
+                 <!-- ======================================================================
+                      STYLE 2: CARD GRID (SHOWCASE - UPGRADED)
+                      ====================================================================== -->
+                 <div class="style-separator"><i class="bi bi-2-circle-fill"></i> Style 2: Card Grid</div>
+     
+                 <div class="row g-4">
+                     <!-- Card 1 -->
+                     <div class="col-md-4">
+                         <div class="widget-card h-100 p-3">
+                             <div class="forum-card-img-wrapper">
+                                 <img src="https://placehold.co/600x300/1f2937/6366f1?text=Setup+Gaming" class="forum-card-img" alt="Topic">
+                                 <span class="position-absolute top-0 end-0 m-3 badge bg-black bg-opacity-50 backdrop-blur rounded-pill px-3 py-2">Hardware</span>
+                             </div>
+                             <h5 class="fw-bold mb-2">Showcase Setup Gaming Kalian!</h5>
+                             <p class="text-muted small mb-3">Ayo bagikan foto setup meja kerja atau gaming kalian di sini untuk inspirasi...</p>
+                             <div class="d-flex justify-content-between align-items-center border-top border-secondary border-opacity-10 pt-3 mt-auto">
+                                 <div class="d-flex align-items-center gap-2">
+                                     <img src="https://placehold.co/30/333/fff?text=U" class="rounded-circle" width="24">
+                                     <small class="text-muted fw-bold">User123</small>
+                                 </div>
+                                 <small class="text-main"><i class="bi bi-chat-fill me-1 text-primary"></i> 128</small>
+                             </div>
+                         </div>
+                     </div>
+                     <!-- Card 2 -->
+                     <div class="col-md-4">
+                         <div class="widget-card h-100 p-3 position-relative overflow-hidden">
+                             <div style="position: absolute; top:0; left:0; width:100%; height:4px; background: var(--accent-orange);"></div>
+                             <div class="d-flex justify-content-between mb-3 mt-2">
+                                 <span class="badge-forum badge-forum-soft-orange">Komunitas</span>
+                                 <small class="text-muted">1d ago</small>
+                             </div>
+                             <h5 class="fw-bold mb-2">Gathering Nasional 2025</h5>
+                             <p class="text-muted small mb-4">Rencana lokasi dan tanggal untuk acara gathering tahunan kita.</p>
+                             <div class="mt-auto">
+                                  <div class="d-flex justify-content-between align-items-center mb-1">
+                                     <small class="text-muted">Funding Goal</small>
+                                     <small class="text-warning fw-bold">75%</small>
+                                 </div>
+                                 <div class="progress rounded-pill" style="height: 8px; background: rgba(255,255,255,0.05);">
+                                     <div class="progress-bar bg-warning rounded-pill" style="width: 75%; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);"></div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                     <!-- Card 3 -->
+                     <div class="col-md-4">
+                         <div class="widget-card h-100 p-4 bg-grad-1 text-white border-0 d-flex flex-column justify-content-center text-center">
+                             <div class="mb-3 mx-auto p-3 rounded-circle bg-white bg-opacity-25 backdrop-blur" style="width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;">
+                                 <i class="bi bi-megaphone-fill fs-2 text-white"></i>
+                             </div>
+                             <h5 class="fw-bold mb-2">Update Server Maintenance</h5>
+                             <p class="opacity-75 small mb-4">Sistem akan offline sementara pada hari Minggu pukul 00:00 WIB.</p>
+                             <button class="btn btn-white text-primary rounded-pill fw-bold shadow-sm px-4">Read Announcement</button>
+                         </div>
+                     </div>
+                 </div>
+     
+                 <!-- ======================================================================
+                      STYLE 3: MINIMALIST TABLE (DATA DENSITY - UPGRADED)
+                      ====================================================================== -->
+                 <div class="style-separator"><i class="bi bi-3-circle-fill"></i> Style 3: Table View</div>
+     
+                 <div class="widget-card p-4 overflow-hidden">
+                     <div class="table-responsive">
+                         <table class="table-dashboard mb-0" style="border-collapse: separate; border-spacing: 0 10px;">
+                             <thead>
+                                 <tr class="text-uppercase small text-muted">
+                                     <th class="ps-3 border-0">Topic</th>
+                                     <th class="border-0">Category</th>
+                                     <th class="border-0">Users</th>
+                                     <th class="border-0">Stats</th>
+                                     <th class="text-end pe-3 border-0">Last Active</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <tr>
+                                     <td class="ps-3 border-bottom-0">
+                                         <div class="d-flex align-items-center gap-3">
+                                             <div class="rounded-circle bg-secondary bg-opacity-10 p-2 d-flex"><i class="bi bi-chat-square-text text-muted"></i></div>
+                                             <span class="fw-bold text-main">Cara optimasi database MySQL</span>
+                                         </div>
+                                     </td>
+                                     <td class="border-bottom-0"><span class="badge bg-dark border border-secondary text-muted rounded-pill px-3 py-2">Backend</span></td>
+                                     <td class="border-bottom-0">
+                                         <div class="avatar-group-stack">
+                                             <img src="https://placehold.co/24/111/fff?text=A"><img src="https://placehold.co/24/222/fff?text=B">
+                                         </div>
+                                     </td>
+                                     <td class="border-bottom-0"><span class="fw-bold text-main">12</span> <small class="text-muted">replies</small></td>
+                                     <td class="text-end pe-3 border-bottom-0 text-muted small fw-medium">5m ago</td>
+                                 </tr>
+                                 <tr>
+                                     <td class="ps-3 border-bottom-0">
+                                         <div class="d-flex align-items-center gap-3">
+                                             <div class="rounded-circle bg-danger bg-opacity-10 p-2 d-flex"><i class="bi bi-question-circle text-danger"></i></div>
+                                             <span class="fw-bold text-main">Error 500 saat deploy ke Vercel</span>
+                                         </div>
+                                     </td>
+                                     <td class="border-bottom-0"><span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2">Help</span></td>
+                                     <td class="border-bottom-0">
+                                         <div class="avatar-group-stack">
+                                             <img src="https://placehold.co/24/333/fff?text=C">
+                                         </div>
+                                     </td>
+                                     <td class="border-bottom-0"><span class="fw-bold text-main">2</span> <small class="text-muted">replies</small></td>
+                                     <td class="text-end pe-3 border-bottom-0 text-muted small fw-medium">1h ago</td>
+                                 </tr>
+                             </tbody>
+                         </table>
+                     </div>
+                 </div>
+     
+                 <!-- ======================================================================
+                      STYLE 4: Q&A / STACKOVERFLOW STYLE (UPGRADED)
+                      ====================================================================== -->
+                 <div class="style-separator"><i class="bi bi-4-circle-fill"></i> Style 4: Q&A (Solved/Unsolved)</div>
+     
+                 <div class="widget-card mb-3 p-4">
+                     <div class="d-flex align-items-start">
+                         <div class="vote-box text-center shadow-sm">
+                             <button class="vote-btn"><i class="bi bi-caret-up-fill"></i></button>
+                             <span class="vote-count text-success">42</span>
+                             <button class="vote-btn"><i class="bi bi-caret-down-fill"></i></button>
+                             <div class="mt-2 text-success" title="Solved"><i class="bi bi-check-circle-fill fs-5"></i></div>
+                         </div>
+                         <div class="flex-grow-1 ps-4">
+                             <h4 class="fw-bold mb-2 text-main">Bagaimana cara center div di tahun 2025?</h4>
+                             <p class="text-muted mb-3 line-clamp-2" style="font-size: 1rem;">Saya sudah mencoba menggunakan flexbox dan grid, tapi terkadang di mobile layoutnya pecah. Apakah ada method baru di CSS modern yang lebih reliable?</p>
+                             <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                 <div class="d-flex gap-2">
+                                     <span class="badge-forum badge-forum-soft-blue">CSS</span>
+                                     <span class="badge-forum badge-forum-soft-blue">Frontend</span>
+                                 </div>
+                                 <div class="d-flex align-items-center gap-2 bg-dark bg-opacity-50 px-3 py-2 rounded-pill border border-secondary border-opacity-25">
+                                     <img src="https://placehold.co/30/purple/fff?text=D" class="rounded-circle">
+                                     <div class="d-flex flex-column lh-1">
+                                         <span class="small fw-bold text-main">DevMaster</span>
+                                         <span style="font-size: 0.65rem;" class="text-muted">asked 2 days ago</span>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+     
+                 <!-- ======================================================================
+                      STYLE 5: DISCUSSION DETAIL (HERO HEADER - UPGRADED)
+                      ====================================================================== -->
+                 <div class="style-separator"><i class="bi bi-5-circle-fill"></i> Style 5: Thread Detail Hero</div>
+     
+                 <div class="widget-card p-0 overflow-hidden mb-4 shadow-lg border-0">
+                     <div class="p-5 bg-grad-2 text-white position-relative" style="overflow: hidden;">
+                         <!-- Abstract Shape -->
+                         <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.1); filter: blur(40px);"></div>
+                         
+                         <div class="position-absolute top-0 end-0 m-4 opacity-25 display-1"><i class="bi bi-quote"></i></div>
+                         <span class="badge bg-white text-primary fw-bold mb-3 px-3 py-2 rounded-pill shadow-sm">Tutorial</span>
+                         <h2 class="fw-bold mb-4 display-6">Panduan Lengkap Keamanan Jaringan</h2>
+                         <div class="d-flex align-items-center gap-3">
+                             <img src="https://placehold.co/48/fff/3b82f6?text=AD" class="rounded-circle border border-2 border-white shadow-sm">
+                             <div>
+                                 <div class="fw-bold fs-5">Admin Security</div>
+                                 <div class="small opacity-75">Posted on 12 Oct 2024</div>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="p-5">
+                         <p class="text-muted lead mb-4">
+                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                         </p>
+                         <div class="p-4 rounded-4 mt-3 mb-4 font-monospace text-warning bg-black border border-secondary border-opacity-25 shadow-inner">
+                             <div class="d-flex gap-2 mb-2 opacity-50"><div class="rounded-circle bg-danger" style="width:10px;height:10px"></div><div class="rounded-circle bg-warning" style="width:10px;height:10px"></div><div class="rounded-circle bg-success" style="width:10px;height:10px"></div></div>
+                             $ iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+                         </div>
+                         <p class="text-muted">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                         
+                         <div class="d-flex gap-3 mt-5 pt-4 border-top border-secondary border-opacity-10">
+                             <button class="btn btn-outline-secondary rounded-pill px-4 hover-scale"><i class="bi bi-heart me-2"></i> Like (24)</button>
+                             <button class="btn btn-outline-secondary rounded-pill px-4 hover-scale"><i class="bi bi-reply me-2"></i> Reply</button>
+                             <button class="btn btn-outline-secondary rounded-pill ms-auto px-4 hover-scale"><i class="bi bi-share me-2"></i> Share</button>
+                         </div>
+                     </div>
+                 </div>
+     
+                 <!-- ======================================================================
+                      STYLE 6: CHAT-LIKE DISCUSSION (UPGRADED)
+                      ====================================================================== -->
+                 <div class="style-separator"><i class="bi bi-6-circle-fill"></i> Style 6: Live Chat / Discussion</div>
+     
+                 <div class="widget-card p-0 overflow-hidden d-flex flex-column" style="height: 600px;">
+                     <div class="card-header-custom py-3 px-4 d-flex justify-content-between align-items-center">
+                         <div>
+                             <h6 class="mb-0 fw-bold"><i class="bi bi-hash text-muted me-2"></i>general-discussion</h6>
+                             <small class="text-muted">Topik bebas seputar teknologi</small>
+                         </div>
+                         <div class="d-flex align-items-center gap-2 bg-black bg-opacity-20 px-3 py-1 rounded-pill border border-white border-opacity-10">
+                             <span class="status-dot position-relative bg-success d-inline-block shadow-sm"></span>
+                             <small class="text-white fw-bold">12 Online</small>
+                         </div>
+                     </div>
+                     
+                     <div class="chat-container flex-grow-1 p-4 bg-dark bg-opacity-10">
+                         <!-- Message Other -->
+                         <div class="chat-msg">
+                             <img src="https://placehold.co/40/333/fff?text=B" class="rounded-circle shadow-sm" width="40" height="40">
+                             <div>
+                                 <div class="small text-muted mb-1 ms-2 fw-bold">Budi Santoso</div>
+                                 <div class="chat-bubble">Halo semuanya, ada yang tau kapan update v2.0 rilis?</div>
+                                 <div class="chat-time ms-2">10:30 AM</div>
+                             </div>
+                         </div>
+                         <!-- Message Me -->
+                         <div class="chat-msg me">
+                             <img src="https://placehold.co/40/6366f1/fff?text=Me" class="rounded-circle shadow-sm" width="40" height="40">
+                             <div>
+                                 <div class="chat-bubble">Kemungkinan minggu depan mas, tim dev sedang finalisasi bug fixing.</div>
+                                 <div class="chat-time text-end me-2">10:32 AM <i class="bi bi-check-all text-info"></i></div>
+                             </div>
+                         </div>
+                         <!-- Message Other -->
+                         <div class="chat-msg">
+                             <img src="https://placehold.co/40/333/fff?text=B" class="rounded-circle shadow-sm" width="40" height="40">
+                             <div>
+                                 <div class="small text-muted mb-1 ms-2 fw-bold">Budi Santoso</div>
+                                 <div class="chat-bubble">Wah mantap! Ga sabar nunggu fitur dark modenya. 👍</div>
+                             </div>
+                         </div>
+                     </div>
+     
+                     <div class="p-4 bg-card border-top border-secondary border-opacity-10">
+                         <div class="position-relative">
+                             <button class="btn btn-link text-muted position-absolute top-50 start-0 translate-middle-y ms-3 p-0"><i class="bi bi-emoji-smile fs-5"></i></button>
+                             <input type="text" class="form-control bg-dark border-secondary border-opacity-25 rounded-pill ps-5 py-3 text-white" placeholder="Ketik pesan..." style="padding-right: 60px;">
+                             <button class="btn btn-primary rounded-circle position-absolute top-50 end-0 translate-middle-y me-2 shadow-lg" style="width: 40px; height: 40px;"><i class="bi bi-send-fill"></i></button>
+                         </div>
+                     </div>
+                 </div>
+     
+                 <!-- ======================================================================
+                      STYLE 7: CATEGORIES EXPLORER (UPGRADED)
+                      ====================================================================== -->
+                 <div class="style-separator"><i class="bi bi-7-circle-fill"></i> Style 7: Category Grid</div>
+     
+                 <div class="row g-4">
+                     <div class="col-6 col-md-3">
+                         <div class="widget-card category-card-wrap text-center p-4 h-100 cursor-pointer">
+                             <div class="category-icon-lg mx-auto text-primary"><i class="bi bi-code-slash"></i></div>
+                             <h6 class="fw-bold mb-1">Programming</h6>
+                             <small class="text-muted fw-medium">1.2k Threads</small>
+                         </div>
+                     </div>
+                     <div class="col-6 col-md-3">
+                         <div class="widget-card category-card-wrap text-center p-4 h-100 cursor-pointer">
+                             <div class="category-icon-lg mx-auto text-success"><i class="bi bi-palette"></i></div>
+                             <h6 class="fw-bold mb-1">UI/UX Design</h6>
+                             <small class="text-muted fw-medium">850 Threads</small>
+                         </div>
+                     </div>
+                     <div class="col-6 col-md-3">
+                         <div class="widget-card category-card-wrap text-center p-4 h-100 cursor-pointer">
+                             <div class="category-icon-lg mx-auto text-warning"><i class="bi bi-currency-bitcoin"></i></div>
+                             <h6 class="fw-bold mb-1">Crypto & NFT</h6>
+                             <small class="text-muted fw-medium">3.4k Threads</small>
+                         </div>
+                     </div>
+                     <div class="col-6 col-md-3">
+                         <div class="widget-card category-card-wrap text-center p-4 h-100 cursor-pointer">
+                             <div class="category-icon-lg mx-auto text-danger"><i class="bi bi-controller"></i></div>
+                             <h6 class="fw-bold mb-1">Gaming</h6>
+                             <small class="text-muted fw-medium">5.1k Threads</small>
+                         </div>
+                     </div>
+                 </div>
+     
+                 <!-- ======================================================================
+                      STYLE 8: USER ACTIVITY / SIDEBAR WIDGET (UPGRADED)
+                      ====================================================================== -->
+                 <div class="style-separator"><i class="bi bi-8-circle-fill"></i> Style 8: Sidebar Tools (Logs & Top Users)</div>
+     
+                 <div class="row g-4">
+                     <div class="col-md-4">
+                         <div class="widget-card h-100">
+                             <h6 class="text-uppercase text-muted fw-bold small mb-4 ls-1 d-flex align-items-center gap-2"><i class="bi bi-clock-history"></i> Moderator Logs</h6>
+                             <div class="activity-feed ps-2">
+                                 <div class="activity-item pb-4 border-start border-secondary border-opacity-10 ps-4 position-relative">
+                                     <div class="activity-dot position-absolute top-0 start-0 translate-middle ms-0 bg-card border border-2 border-primary rounded-circle" style="width: 12px; height: 12px;"></div>
+                                     <p class="mb-1 small text-main"><strong>Admin</strong> menghapus thread spam.</p>
+                                     <span class="text-muted small fw-bold" style="font-size: 0.7rem;">10 mins ago</span>
+                                 </div>
+                                 <div class="activity-item pb-4 border-start border-secondary border-opacity-10 ps-4 position-relative">
+                                     <div class="activity-dot position-absolute top-0 start-0 translate-middle ms-0 bg-warning border border-2 border-warning rounded-circle shadow-sm" style="width: 12px; height: 12px;"></div>
+                                     <p class="mb-1 small text-main"><strong>System</strong> mendeteksi login baru.</p>
+                                     <span class="text-muted small fw-bold" style="font-size: 0.7rem;">1 hour ago</span>
+                                 </div>
+                                 <div class="activity-item ps-4 position-relative">
+                                     <div class="activity-dot position-absolute top-0 start-0 translate-middle ms-0 bg-success border border-2 border-success rounded-circle shadow-sm" style="width: 12px; height: 12px;"></div>
+                                     <p class="mb-1 small text-main"><strong>User123</strong> naik level ke 'Expert'.</p>
+                                     <span class="text-muted small fw-bold" style="font-size: 0.7rem;">3 hours ago</span>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                     
+                     <div class="col-md-4">
+                         <div class="widget-card h-100">
+                             <h6 class="text-uppercase text-muted fw-bold small mb-4 ls-1 d-flex align-items-center gap-2"><i class="bi bi-trophy"></i> Top Contributors</h6>
+                             <div class="d-flex align-items-center mb-4 p-3 rounded-3 bg-dark bg-opacity-20 border border-secondary border-opacity-10">
+                                 <div class="me-3 fw-black text-warning fs-4">#1</div>
+                                 <img src="https://placehold.co/48/6366f1/fff?text=A" class="rounded-circle me-3 border border-2 border-warning shadow-sm">
+                                 <div class="flex-grow-1">
+                                     <h6 class="mb-0 font-sm fw-bold text-main">Alex Code</h6>
+                                     <small class="text-warning fw-bold" style="font-size: 0.75rem;">1,240 Reputation</small>
+                                 </div>
+                                 <i class="bi bi-award-fill text-warning fs-4"></i>
+                             </div>
+                             <div class="d-flex align-items-center mb-3 px-2">
+                                 <div class="me-3 fw-bold text-muted w-20px text-center">2</div>
+                                 <img src="https://placehold.co/36/10b981/fff?text=S" class="rounded-circle me-3">
+                                 <div class="flex-grow-1">
+                                     <h6 class="mb-0 font-sm fw-bold text-main">Sarah Design</h6>
+                                     <small class="text-muted" style="font-size: 0.75rem;">980 Reputation</small>
+                                 </div>
+                             </div>
+                             <div class="d-flex align-items-center px-2">
+                                 <div class="me-3 fw-bold text-muted w-20px text-center">3</div>
+                                 <img src="https://placehold.co/36/ef4444/fff?text=J" class="rounded-circle me-3">
+                                 <div class="flex-grow-1">
+                                     <h6 class="mb-0 font-sm fw-bold text-main">John Doe</h6>
+                                     <small class="text-muted" style="font-size: 0.75rem;">850 Reputation</small>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+     
+                     <!-- ======================================================================
+                          STYLE 9: FORUM ANALYTICS WIDGET (UPGRADED)
+                          ====================================================================== -->
+                     <div class="col-md-4">
+                         <div class="widget-card h-100 position-relative overflow-hidden">
+                              <div style="position: absolute; bottom: -50px; right: -50px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%);"></div>
+                              
+                             <h6 class="text-uppercase text-muted fw-bold small mb-4 ls-1 d-flex align-items-center gap-2"><i class="bi bi-bar-chart"></i> Forum Stats</h6>
+                             <div class="row text-center mb-4">
+                                 <div class="col-6 border-end border-secondary border-opacity-10">
+                                     <h3 class="fw-black mb-0 text-white">12.5k</h3>
+                                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Posts</small>
+                                 </div>
+                                 <div class="col-6">
+                                     <h3 class="fw-black mb-0 text-white">4.2k</h3>
+                                     <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Members</small>
+                                 </div>
+                             </div>
+                             <div class="mb-4">
+                                 <div class="d-flex justify-content-between small mb-1">
+                                     <span class="fw-bold text-muted">Engagement Rate</span>
+                                     <span class="text-success fw-bold">85%</span>
+                                 </div>
+                                 <div class="progress rounded-pill" style="height: 8px; background: rgba(255,255,255,0.05); overflow: visible;">
+                                     <div class="progress-bar bg-success rounded-pill position-relative" style="width: 85%; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);">
+                                         <div style="position: absolute; right: 0; top: 50%; transform: translate(50%, -50%); width: 12px; height: 12px; background: #fff; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div>
+                                 <div class="d-flex justify-content-between small mb-1">
+                                     <span class="fw-bold text-muted">Server Load</span>
+                                     <span class="text-primary fw-bold">42%</span>
+                                 </div>
+                                 <div class="progress rounded-pill" style="height: 8px; background: rgba(255,255,255,0.05);">
+                                     <div class="progress-bar bg-primary rounded-pill" style="width: 42%"></div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+     
+                 <!-- ======================================================================
+                      STYLE 10: PINNED / ANNOUNCEMENT STYLE (UPGRADED)
+                      ====================================================================== -->
+                 <div class="style-separator"><i class="bi bi-10-circle-fill"></i> Style 10: Pinned Highlights</div>
+     
+                 <div class="widget-card p-0 mb-5 border-0 overflow-hidden shadow-lg position-relative">
+                     <div class="position-absolute top-0 start-0 w-100 h-100 bg-grad-1 opacity-10"></div>
+                     <div class="position-absolute start-0 top-0 bottom-0 bg-danger" style="width: 4px;"></div>
+                     
+                     <div class="p-4 p-lg-5 d-flex align-items-start gap-4 position-relative z-1">
+                         <div class="rounded-circle bg-danger text-white p-3 d-flex align-items-center justify-content-center shadow-lg hover-scale flex-shrink-0" style="width: 60px; height: 60px;">
+                             <i class="bi bi-pin-angle-fill fs-3"></i>
+                         </div>
+                         <div class="flex-grow-1">
+                             <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                                 <h4 class="fw-bold mb-0 text-white">Peraturan & Pedoman Komunitas 2025</h4>
+                                 <span class="badge bg-danger shadow-sm px-3 py-2">WAJIB BACA</span>
+                             </div>
+                             <p class="text-muted mb-4 lead" style="font-size: 1rem;">Harap membaca peraturan terbaru mengenai posting thread jual beli dan promosi terselubung. Pelanggaran akan dikenakan banned permanen.</p>
+                             <div class="d-flex gap-4 text-muted small fw-bold text-uppercase letter-spacing-1">
+                                 <span class="d-flex align-items-center"><i class="bi bi-person-circle me-2 fs-6"></i> Admin Team</span>
+                                 <span class="d-flex align-items-center"><i class="bi bi-calendar-event me-2 fs-6"></i> Updated Yesterday</span>
+                             </div>
+                         </div>
+                         <button class="btn btn-icon btn-outline-light rounded-circle ms-auto d-none d-lg-flex align-items-center justify-content-center" style="width: 40px; height: 40px;"><i class="bi bi-x-lg"></i></button>
+                     </div>
+                 </div>
+     
+            <!-- END OF CONTENT -->
+
+            <!-- START OF COPYRIGHT FOOTER SECTION -->
+            <footer class=" footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025
+                            <strong class="text-white">Nexus
+                                Admin</strong>. All rights reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan
+                                Privasi</a>
+                            <a href="#" class="footer-link">Syarat &
+                                Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- END OF COPYRIGHT FOOTER -->
+        </main>
+    </div>
+
+    <!-- Theme Toggle Floating (Maintained) -->
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+
+    /* ======================================================================
+              GLOBAL JS (SIDEBAR, THEME, MOBILE MENU)
+====================================================================== */
+const body = document.body;
+const sidebar = document.getElementById("sidebar");
+const collapseBtn = document.getElementById("collapseBtn");
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+const menuThemeSwitch = document.getElementById("menuThemeSwitch"); // New Switch in Dropdown
+const mobileBtn = document.getElementById("mobileMenuBtn"); // [FIX] Grab element
+const overlay = document.getElementById("sidebarOverlay"); // [FIX] Grab overlay
+
+// Function to handle Theme Change
+function toggleTheme() {
+    body.classList.toggle("light-mode");
+    const isLight = body.classList.contains("light-mode");
+
+    // Update Icons
+    if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+
+    // Update Local Storage
+    localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+
+    // Sync Checkbox state (if toggled via floating btn)
+    if (menuThemeSwitch) menuThemeSwitch.checked = !isLight; // Dark mode = checked
+
+    // Update Revenue Chart Color if exists (DASHBOARD ONLY)
+    if (window.revenueChartInstance) {
+        window.revenueChartInstance.options.scales.x.grid.color = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+        window.revenueChartInstance.options.scales.y.grid.color = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+        window.revenueChartInstance.update();
+    }
+}
+
+// Initial Theme Load
+if (localStorage.getItem("nexus_theme") === "light") {
+    body.classList.add("light-mode");
+    if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+    if (menuThemeSwitch) menuThemeSwitch.checked = false;
+} else {
+    if (menuThemeSwitch) menuThemeSwitch.checked = true; // Default Dark
+}
+
+// Event Listeners
+themeToggle?.addEventListener("click", toggleTheme);
+
+// Listener for the new switch inside profile menu
+menuThemeSwitch?.addEventListener("change", () => {
+    // If checked, we want DARK mode. If unchecked, LIGHT mode.
+    // Current logic: light-mode class means Light. No class means Dark.
+
+    if (menuThemeSwitch.checked) {
+        // User wants Dark
+        if (body.classList.contains("light-mode")) {
+            toggleTheme();
+        }
+    } else {
+        // User wants Light
+        if (!body.classList.contains("light-mode")) {
+            toggleTheme();
+        }
+    }
+});
+
+
+// [MODIFIED] Sidebar & Mobile Logic
+function closeMobileMenu() {
+    sidebar.classList.remove("active");
+    if (overlay) overlay.classList.remove("show");
+}
+
+function toggleMobileMenu() {
+    sidebar.classList.toggle("active");
+    if (overlay) overlay.classList.toggle("show");
+}
+
+// Collapse Button Logic (Modified for Mobile Close)
+if (collapseBtn) {
+    collapseBtn.addEventListener("click", () => {
+        // Jika layar kecil (mobile), tombol ini jadi tombol CLOSE
+        if (window.innerWidth <= 768) {
+            closeMobileMenu();
+        } else {
+            // Desktop: Collapse sidebar biasa
+            sidebar.classList.toggle("collapsed");
+            body.classList.toggle("sidebar-collapsed");
+        }
+    });
+}
+
+// Mobile Hamburger Button
+if (mobileBtn) {
+    mobileBtn.addEventListener("click", toggleMobileMenu);
+}
+
+// Overlay Click to Close
+if (overlay) {
+    overlay.addEventListener("click", closeMobileMenu);
+}
+  </script>
+       
+</body>
+
+</html>

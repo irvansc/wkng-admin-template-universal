@@ -1,0 +1,2652 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Admin - Produk & Stok</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- <link rel="stylesheet" href="assets/css/style.css"> (Inline styles used below) -->
+    <style>
+        :root {
+            --bg-dark: #111827;
+            --bg-sidebar: #1f2937;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-blue: #3b82f6;
+            --border-color: #374151;
+
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-info: #0ea5e9;
+
+            --sidebar-width: 260px;
+            --sidebar-width-collapsed: 90px;
+            --sidebar-left-pos: 16px;
+            --sidebar-padding-x: 16px;
+
+            --anim-speed: 0.3s;
+            --scrollbar-thumb: #4b5563;
+            --scrollbar-track: transparent;
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --icon-box-light: rgba(0, 0, 0, 0.03);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-bg: #ffffff;
+            --scrollbar-thumb: #cbd5e1;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-thumb);
+            border-radius: 10px;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* --- GLOBAL: SIDEBAR LAYOUT --- */
+        .mobile-menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+            transition: all 0.2s;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(2px);
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            height: calc(100vh - 32px);
+            position: fixed;
+            top: 16px;
+            left: var(--sidebar-left-pos);
+            padding: 24px 0 24px var(--sidebar-padding-x);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            overflow: visible;
+        }
+
+        .sidebar-header {
+            margin-bottom: 20px;
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            min-height: 40px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .brand-logo img {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .sidebar-divider {
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.15);
+            margin: 0 -16px 20px;
+            flex-shrink: 0;
+            border-radius: 2px;
+        }
+
+        .nav-scrollable {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            padding-right: 4px;
+            margin-bottom: 20px;
+        }
+
+        .nav-category {
+            font-size: 0.68rem;
+            padding: 0 16px;
+            margin: 28px 0 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            color: #64748b;
+            position: relative;
+        }
+
+        .nav-category::before {
+            content: "";
+            position: absolute;
+            left: 16px;
+            bottom: -5px;
+            width: 18px;
+            height: 2px;
+            background: #475569;
+            opacity: 0.4;
+            border-radius: 100px;
+        }
+
+        /* MENU ITEMS STYLING */
+        .nav-link {
+            color: var(--text-muted);
+            padding: 10px 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+            margin-right: 12px;
+            transition: all 0.2s;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-link i:not(.arrow-icon) {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .arrow-icon {
+            margin-left: auto;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .nav-link.active:not([data-bs-toggle="collapse"]),
+        .nav-link.active-btn:not([data-bs-toggle="collapse"]) {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(236, 72, 153, 0.4);
+            border-color: transparent;
+        }
+
+        .nav-link.active:not([data-bs-toggle="collapse"]) i:not(.arrow-icon),
+        .nav-link.active-btn:not([data-bs-toggle="collapse"]) i:not(.arrow-icon) {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .nav-link[data-bs-toggle="collapse"][aria-expanded="true"],
+        .nav-link[data-bs-toggle="collapse"].active {
+            background: transparent !important;
+            color: var(--text-main) !important;
+            box-shadow: none !important;
+        }
+
+        .nav-link[data-bs-toggle="collapse"][aria-expanded="true"] i:not(.arrow-icon),
+        .nav-link[data-bs-toggle="collapse"].active i:not(.arrow-icon) {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%) !important;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+        }
+
+        .nav-link[data-bs-toggle="collapse"][aria-expanded="true"] .arrow-icon {
+            transform: rotate(90deg);
+            color: var(--text-main) !important;
+        }
+
+        .nav-submenu {
+            padding-left: 0;
+            list-style: none;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+
+        .nav-submenu .nav-link {
+            padding-left: 50px;
+            height: 40px;
+            font-size: 0.85rem;
+            margin: 0;
+            margin-right: 12px;
+            background: transparent !important;
+            box-shadow: none !important;
+            color: var(--text-muted) !important;
+            transition: all 0.2s ease-in-out;
+            opacity: 0.7;
+        }
+
+        .collapse.show .nav-submenu .nav-link {
+            opacity: 1;
+        }
+
+        .nav-submenu .nav-link:hover {
+            color: var(--text-main) !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            padding-left: 53px;
+            opacity: 1;
+        }
+
+        .nav-submenu .nav-link.active {
+            background: rgba(255, 255, 255, 0.05) !important;
+            font-weight: 700;
+            opacity: 1;
+        }
+
+        .nav-submenu .nav-link.active span {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .nav-submenu-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            margin: 8px 12px 8px 50px;
+        }
+
+        body.light-mode .nav-submenu-divider {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-submenu-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin: 8px 0 4px 50px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+        }
+
+        /* --- GLOBAL: MODERN PROFILE MENU --- */
+        .profile-wrapper {
+            margin-top: auto;
+            width: 100%;
+            padding: 0 16px 16px 0px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .user-profile-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-profile-btn.dropdown-toggle::after {
+            display: none !important;
+        }
+
+        .user-profile-btn:hover,
+        .user-profile-btn[aria-expanded="true"] {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-profile-btn[aria-expanded="true"] .profile-chevron {
+            transform: rotate(180deg);
+            color: var(--text-main);
+        }
+
+        .avatar-container {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .avatar-modern {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            background-color: var(--accent-green);
+            border: 3px solid var(--bg-sidebar);
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .status-dot.pulse {
+            animation: statusPulse 2s infinite;
+        }
+
+        @keyframes statusPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .user-info-modern {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .user-name-modern {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role-modern {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-chevron {
+            color: var(--text-muted);
+            transition: transform 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .profile-dropdown-menu {
+            position: absolute;
+            bottom: 100% !important;
+            left: 0;
+            width: 100%;
+            margin-bottom: 12px !important;
+            padding: 8px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 -10px 40px -10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(31, 41, 55, 0.95);
+            animation: slideUpFade 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-origin: bottom center;
+            transform: none !important;
+        }
+
+        body.light-mode .profile-dropdown-menu {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .dropdown-header-modern {
+            padding: 12px 16px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 6px;
+        }
+
+        body.light-mode .dropdown-header-modern {
+            border-bottom-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .menu-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .menu-user-email {
+            font-size: 0.8rem;
+            color: var(--text-main);
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .profile-menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        body.light-mode .profile-menu-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-menu-item.danger-item:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .item-icon {
+            font-size: 1.1rem;
+        }
+
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-check-input.custom-switch {
+            width: 36px;
+            height: 20px;
+            cursor: pointer;
+            background-color: var(--border-color);
+            border-color: transparent;
+        }
+
+        .form-check-input.custom-switch:checked {
+            background-color: var(--accent-purple);
+            border-color: transparent;
+        }
+
+        /* --- GLOBAL: COLLAPSE BUTTON --- */
+        .sidebar-collapse-btn {
+            position: absolute;
+            top: 22px;
+            right: -15px;
+            width: 32px;
+            height: 32px;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-collapse-btn:hover {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            box-shadow: 2px 2px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* --- GLOBAL: SIDEBAR COLLAPSED STATE --- */
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+            padding: 24px 12px;
+        }
+
+        .sidebar.collapsed .brand-logo {
+            justify-content: center;
+            padding-left: 0;
+            width: 100%;
+        }
+
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .nav-category,
+        .sidebar.collapsed .arrow-icon,
+        .sidebar.collapsed .user-info,
+        .sidebar.collapsed .user-info-modern,
+        .sidebar.collapsed .profile-chevron {
+            display: none;
+        }
+
+        .sidebar.collapsed .collapse {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding-left: 0;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .nav-link,
+        .sidebar.collapsed .user-profile-btn {
+            justify-content: center;
+            padding: 8px;
+            margin-right: 0;
+        }
+
+        .sidebar.collapsed .sidebar-collapse-btn i {
+            transform: rotate(180deg);
+        }
+
+        /* --- GLOBAL: MAIN CONTENT WRAPPER --- */
+        .main-content {
+            margin-left: calc(var(--sidebar-left-pos) + var(--sidebar-width) + 24px);
+            width: calc(100% - (var(--sidebar-left-pos) + var(--sidebar-width) + 24px));
+            padding: 30px 30px 20px;
+            transition: all 0.3s ease;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.sidebar-collapsed .main-content {
+            margin-left: calc(var(--sidebar-left-pos) + var(--sidebar-width-collapsed) + 24px);
+            width: calc(100% - (var(--sidebar-left-pos) + var(--sidebar-width-collapsed) + 24px));
+        }
+
+        /* START OF GLOBAL: COPYRIGHT FOOTER */
+        .footer-dashboard {
+            padding-top: 2rem;
+            margin-bottom: 0.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-purple);
+        }
+
+        /* END OF GLOBAL: COPYRIGHT FOOTER */
+
+        /* --- GLOBAL: TOP NAVBAR & SEARCH & NOTIFICATIONS --- */
+        .top-navbar-standalone {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .search-standalone-box {
+            position: relative;
+            width: 300px;
+            transition: width 0.3s ease;
+        }
+
+        .search-standalone-input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px 20px 12px 48px;
+            color: var(--text-main);
+        }
+
+        .search-standalone-input:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .search-standalone-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-purple);
+        }
+
+        .notification-wrapper {
+            position: relative;
+        }
+
+        .notification-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .notification-btn:hover,
+        .notification-btn[aria-expanded="true"] {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            transform: translateY(-1px);
+        }
+
+        body.light-mode .notification-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-dot-red {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-red);
+            border-radius: 50%;
+            z-index: 2;
+            animation: notifPulse 1.5s infinite;
+        }
+
+        @keyframes notifPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        .notification-dropdown-menu {
+            position: absolute;
+            top: 100% !important;
+            right: 0 !important;
+            left: auto !important;
+            margin-top: 12px !important;
+            width: 320px;
+            padding: 8px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(31, 41, 55, 0.95);
+            animation: slideDownFade 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform: none !important;
+        }
+
+        body.light-mode .notification-dropdown-menu {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        @keyframes slideDownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .notification-item {
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: start;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: background 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .notification-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+        }
+
+        body.light-mode .notification-item:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .notif-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .bg-soft-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        .bg-soft-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .bg-soft-info {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .notif-content h6 {
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .notif-content p {
+            font-size: 0.75rem;
+            margin-bottom: 0;
+            opacity: 0.8;
+        }
+
+        .notif-time {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: #6366f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.5);
+            cursor: pointer;
+            z-index: 900;
+        }
+
+        .card-header-custom {
+            border-bottom: 1px solid var(--border-color);
+            margin: 0;
+            padding: 20px 24px;
+            background-color: rgba(0, 0, 0, 0.02);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .widget-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+            height: 100%;
+            color: var(--text-main);
+        }
+
+        .widget-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent-purple);
+        }
+
+        /* DASHBOARD STYLES */
+        .analytic-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            height: 100%;
+            transition: transform 0.2s;
+        }
+        
+        .analytic-box:hover {
+            border-color: var(--accent-purple);
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+            border-radius: 24px;
+            padding: 40px 30px;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dash-stat-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dash-icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .dash-trend-up {
+            color: var(--accent-green);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .dash-trend-down {
+            color: var(--accent-red);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .activity-feed {
+            position: relative;
+            padding-left: 20px;
+            border-left: 2px solid var(--border-color);
+        }
+
+        .activity-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .activity-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--accent-purple);
+            position: absolute;
+            left: -27px;
+            top: 5px;
+        }
+
+        .table-dashboard {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table-dashboard th {
+            padding: 15px;
+            text-align: left;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .table-dashboard td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        /* PAGE HEADER STYLES */
+        .active-page-header {
+            padding: 30px;
+            border-radius: 24px;
+            background-color: var(--bg-card);
+            position: relative;
+            margin-bottom: 3.5rem;
+            border: 2px solid transparent;
+            background-image: linear-gradient(var(--bg-card), var(--bg-card)),
+                linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.15);
+        }
+
+        .page-title-large {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg,
+                    var(--text-main) 0%,
+                    var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        body.light-mode .page-title-large {
+            background: none;
+            -webkit-text-fill-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-purple);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            white-space: nowrap;
+        }
+
+        .breadcrumb-modern {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        body.light-mode .breadcrumb-modern {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-color: var(--border-color);
+        }
+
+        .breadcrumb-item-custom {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item-custom:hover {
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-item-custom.active {
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .breadcrumb-home-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-purple);
+        }
+
+        .breadcrumb-sep {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-120%);
+                width: 260px !important;
+                padding-right: 16px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-navbar-standalone {
+                justify-content: flex-end;
+                padding-left: 70px;
+                margin-bottom: 20px;
+                gap: 10px;
+            }
+
+            .search-standalone-box {
+                width: auto;
+                flex-grow: 1;
+                max-width: 100%;
+            }
+
+            .search-standalone-input {
+                padding-left: 40px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .search-standalone-icon {
+                left: 14px;
+            }
+
+            .notification-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Section Titles */
+        .section-title-modern {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 40px 0 20px;
+            padding-left: 12px;
+            border-left: 4px solid var(--accent-purple);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding-bottom: 10px;
+        }
+
+        /* ======================================================================
+           PRODUCT & STOCK STYLES (EXISTING)
+           ====================================================================== */
+
+        /* Style 1: Gradient Card */
+        .prod-card-gradient {
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+        }
+
+        .prod-card-gradient::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .prod-card-gradient:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent-purple);
+        }
+
+        .prod-gradient-img-wrapper {
+            height: 180px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prod-gradient-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .prod-card-gradient:hover .prod-gradient-img-wrapper img {
+            transform: scale(1.1);
+        }
+
+        .prod-img-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to top, var(--bg-card) 10%, transparent);
+            z-index: 2;
+        }
+
+        .prod-badge-float {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 3;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .prod-content-gradient {
+            padding: 16px 20px 24px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .prod-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+            color: var(--text-main);
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .prod-cat {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .prod-price-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .prod-price {
+            font-size: 1.2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stock-indicator {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stock-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .btn-gradient-action {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-gradient-action:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+            color: white;
+        }
+
+        /* Style 2: Outline Card */
+        .prod-card-outline {
+            background: transparent;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prod-card-outline:hover {
+            border-color: var(--accent-purple);
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .outline-header {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .outline-img-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 4px;
+            flex-shrink: 0;
+        }
+
+        .outline-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .outline-info {
+            flex: 1;
+        }
+
+        /* [MODIFIED] GLOBAL: Updated SKU Style (Highligted) */
+        .outline-sku {
+            font-family: monospace;
+            font-size: 0.75rem;
+            /* Changed from muted/white to accent color for highlight */
+            color: var(--accent-purple);
+            background: rgba(99, 102, 241, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 4px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            font-weight: 600;
+        }
+
+        /* [MODIFIED] GLOBAL: Reduced Title Size */
+        .outline-info h6 {
+            font-size: 0.9rem !important; /* Force smaller size */
+            line-height: 1.3;
+        }
+
+        .outline-actions {
+            margin-top: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .btn-outline-custom {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            /* [MODIFIED] Centering content for Icon Only */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-outline-custom:hover {
+            border-color: var(--accent-purple);
+            color: var(--accent-purple);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        /* Style 3: Table Styles */
+        .table-responsive-custom {
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+
+        .table-modern {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table-modern thead th {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 16px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        body.light-mode .table-modern thead th {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .table-modern tbody td {
+            padding: 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        body.light-mode .table-modern tbody td {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-modern tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        body.light-mode .table-modern tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .product-mini-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .product-mini-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--bg-dark);
+        }
+
+        /* ======================================================================
+           [NEW] PENAMBAHAN STYLE 4 & 5 (Sesuai Permintaan)
+           ====================================================================== */
+
+        /* --- [NEW] Style 4: Glassmorphism Card (Floating Effect) --- */
+        .prod-card-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body.light-mode .prod-card-glass {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0,0,0,0.1);
+        }
+
+        .prod-card-glass:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-color: var(--accent-purple);
+        }
+
+        .glass-img-container {
+            width: 100%;
+            height: 160px;
+            border-radius: 18px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .glass-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .prod-card-glass:hover .glass-img-container img {
+            transform: scale(1.1);
+        }
+
+        .glass-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .glass-content {
+            padding: 0 8px 8px;
+        }
+
+        .glass-price-tag {
+            display: inline-block;
+            background: var(--accent-purple);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .glass-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s;
+        }
+
+        .prod-card-glass:hover .glass-actions {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .glass-btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .glass-btn-icon:hover {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+
+        /* --- [NEW] Style 5: Horizontal List Card (Detailed & Compact) --- */
+        .prod-card-horiz {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            display: flex;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            height: 140px;
+            margin-bottom: 16px; /* Space between cards in mobile view or wrapper */
+        }
+        
+        .prod-card-horiz:hover {
+            border-color: var(--accent-purple);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .horiz-img-box {
+            width: 140px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .horiz-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .horiz-content {
+            flex: 1;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .horiz-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .horiz-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: auto; /* Push footer down */
+        }
+        
+        .horiz-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .horiz-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        @media (max-width: 576px) {
+            .prod-card-horiz {
+                height: auto;
+                flex-direction: column;
+            }
+            .horiz-img-box {
+                width: 100%;
+                height: 160px;
+            }
+            .horiz-footer {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body id="body-container">
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="bi bi-list" style="font-size: 1.5rem;"></i></button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
+            </div>
+            <div class="sidebar-divider"></div>
+
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link "><i class="bi bi-graph-up-arrow"></i>
+                    <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness" aria-expanded="true">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span> <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse show" id="menuBusiness">
+                    <div class="nav-submenu">
+                        <a href="/products.html" class="nav-link active"><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link"><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link"><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+                
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuFinance"><i class="bi bi-wallet2"></i>
+                    <span>Keuangan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link"><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link"><span>Riwayat Transaksi</span></a>
+                        <a href="crypto-market.html" class="nav-link"><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+                <div class="nav-category">PENDIDIKAN</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuEdu"><i class="bi bi-mortarboard"></i>
+                    <span>Akademik</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuEdu">
+                    <div class="nav-submenu">
+                        <a href="courses.html" class="nav-link"><span>Kelas / Kursus</span></a>
+                        <a href="students.html" class="nav-link"><span>Siswa & Pengajar</span></a>
+                        <a href="schedule.html" class="nav-link"><span>Jadwal Pelajaran</span></a>
+                        <a href="exams.html" class="nav-link"><span>Ujian & Nilai</span></a>
+                    </div>
+                </div>
+
+                <div class="nav-category">SOSIAL & KOMUNITAS</div>
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSocial"><i class="bi bi-people"></i>
+                    <span>Komunitas</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSocial">
+                    <div class="nav-submenu">
+                        <a href="members.html" class="nav-link"><span>Data Anggota</span></a>
+                        <a href="events.html" class="nav-link"><span>Event & Kegiatan</span></a>
+                        <a href="donations.html" class="nav-link"><span>Donasi & Iuran</span></a>
+                        <a href="forum.html" class="nav-link"><span>Forum Diskusi</span></a>
+                    </div>
+                </div>
+
+                <div class="nav-category">SYSTEM TOOLS</div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuApps"><i class="bi bi-grid"></i>
+                    <span>Aplikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuApps">
+                    <div class="nav-submenu">
+                        <a href="email.html" class="nav-link"><span>Email</span></a>
+                        <a href="chat.html" class="nav-link"><span>Chat</span></a>
+                        <a href="calendar.html" class="nav-link"><span>Calendar</span></a>
+                        <a href="file-manager.html" class="nav-link"><span>File Manager</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuUI"><i class="bi bi-layers"></i>
+                    <span>UI Components</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuUI">
+                    <div class="nav-submenu">
+                        <a href="alerts.html" class="nav-link"><span>Alerts</span></a>
+                        <a href="buttons.html" class="nav-link"><span>Buttons</span></a>
+                        <a href="cards.html" class="nav-link"><span>Cards & Widgets</span></a>
+                        <a href="modals.html" class="nav-link"><span>Modals</span></a>
+                        <a href="wizard.html" class="nav-link"><span>Wizard</span></a>
+                        <a href="toast-notify.html" class="nav-link"><span>Toast & Notify</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuForms"><i class="bi bi-file-text"></i>
+                    <span>Forms & Tables</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuForms">
+                    <div class="nav-submenu">
+                        <a href="form.html" class="nav-link"><span>Form Elements</span></a>
+                        <a href="table.html" class="nav-link"><span>Data Tables</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuPages"><i class="bi bi-file-lock"></i>
+                    <span>Otentikasi</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuPages">
+                    <div class="nav-submenu">
+
+                        <a href="profile.html" class="nav-link" target="_blank"><span>Profile</span></a>
+                        <a href="login.html" class="nav-link" target="_blank"><span>Login</span></a>
+                        <a href="register.html" class="nav-link" target="_blank"><span>Register</span></a>
+                        <a href="reset-password.html" class="nav-link" target="_blank"><span>Reset Password</span></a>
+                        <a href="lock-screen.html" class="nav-link" target="_blank"><span>Lock Screen</span></a>
+                        <a href="coming-soon.html" class="nav-link" target="_blank"><span>Coming Soon</span></a>
+                        <a href="maintenance.html" class="nav-link" target="_blank"><span>Maintenance</span></a>
+                        <a href="403.html" class="nav-link" target="_blank"><span>Error 403</span></a>
+                        <a href="404.html" class="nav-link" target="_blank"><span>Error 404</span></a>
+                        <a href="500.html" class="nav-link" target="_blank"><span>Error 500</span></a>
+                        <a href="503.html" class="nav-link" target="_blank"><span>Error 503</span></a>
+                        <a href="504.html" class="nav-link" target="_blank"><span>Error 504</span></a>
+                        <a href="505.html" class="nav-link" target="_blank"><span>Error 505</span></a>
+                        <a href="506.html" class="nav-link" target="_blank"><span>Error 506</span></a>
+                        <a href="507.html" class="nav-link" target="_blank"><span>Error 507</span></a>
+                    </div>
+                </div>
+
+                <a class="nav-link " data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span> <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse" id="menuSettings">
+                    <div class="nav-submenu">
+                        <div class="nav-submenu-label">Platform & Identitas</div>
+                        <a href="setting-general.html" class="nav-link"><span>Identitas & SEO</span></a>
+                        <a href="setting-appearance.html" class="nav-link"><span>Tampilan & Tema</span></a>
+                        <a href="setting-localization.html" class="nav-link"><span>Bahasa & Wilayah</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Bisnis & Keuangan</div>
+                        <a href="setting-currency.html" class="nav-link"><span>Mata Uang & Kripto</span></a>
+                        <a href="setting-payment.html" class="nav-link"><span>Metode Pembayaran</span></a>
+                        <a href="setting-tax.html" class="nav-link"><span>Pajak & Biaya Layanan</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Operasional</div>
+                        <a href="setting-schedule.html" class="nav-link"><span>Jam Kerja & Jadwal</span></a>
+                        <a href="setting-notification.html" class="nav-link"><span>Notifikasi (WA/Email)</span></a>
+
+                        <div class="nav-submenu-divider"></div>
+
+                        <div class="nav-submenu-label">Sistem</div>
+                        <a href="setting-users.html" class="nav-link"><span>Pengguna & Akses</span></a>
+                        <a href="setting-api.html" class="nav-link"><span>API & Webhooks</span></a>
+                        <a href="setting-logs.html" class="nav-link"><span>System Logs</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dropup profile-wrapper">
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div>
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+
+                    <li><a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left"><i class="bi bi-person item-icon"></i> <span>Profile</span></div>
+                        </a></li>
+                    <li><a class="profile-menu-item" href="edit-profile.html">
+                            <div class="item-left"><i class="bi bi-sliders item-icon"></i> <span>Settings</span></div>
+                        </a></li>
+
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default;">
+                            <div class="item-left"><i class="bi bi-moon-stars item-icon"></i> <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch">
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 6px 0;"></div>
+
+                    <li><a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left"><i class="bi bi-box-arrow-left item-icon"></i> <span>Sign Out</span>
+                            </div>
+                        </a></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Navbar -->
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari sesuatu...">
+                </div>
+
+                <!-- [NEW] Notification Bell with Red Dot -->
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger"><i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p>
+                                    <span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success"><i class="bi bi-cart-check"></i></div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p>
+                                    <span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a></li>
+
+                        <li><a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info"><i class="bi bi-info-circle"></i></div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p>
+                                    <span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a></li>
+
+                        <div class="px-2 pt-2"><button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem;">Tandai Semua Dibaca</button></div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER -->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Manajemen Produk & Stok</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6;">
+                            Kelola inventaris, varian produk, dan pemantauan stok secara real-time.
+                        </p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-box-seam"></i> INVENTORY SYSTEM</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><i
+                                        class="bi bi-house-door-fill"></i></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">E-Commerce</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Produk</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATS OVERVIEW -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="text-muted small mb-1">Total SKU</p>
+                                <h3 class="fw-bold mb-0">1,452</h3>
+                            </div>
+                            <div class="badge bg-soft-primary text-primary p-2 rounded-3"><i class="bi bi-upc-scan"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="text-muted small mb-1">Low Stock</p>
+                                <h3 class="fw-bold mb-0 text-warning">24</h3>
+                            </div>
+                            <div class="badge bg-soft-warning text-warning p-2 rounded-3"><i
+                                    class="bi bi-exclamation-triangle"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="text-muted small mb-1">Out of Stock</p>
+                                <h3 class="fw-bold mb-0 text-danger">5</h3>
+                            </div>
+                            <div class="badge bg-soft-danger text-danger p-2 rounded-3"><i class="bi bi-x-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="analytic-box p-3 bg-soft-primary border-primary border-opacity-25">
+                        <div class="d-flex justify-content-between align-items-center h-100">
+                            <div>
+                                <h6 class="fw-bold text-primary mb-1">Tambah Produk</h6>
+                                <small class="text-muted">Buat SKU baru</small>
+                            </div>
+                            <button class="btn btn-primary rounded-circle" style="width: 40px; height: 40px;"><i
+                                    class="bi bi-plus-lg"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OPTION 1: GRADIENT STYLE -->
+            <div class="d-flex align-items-center justify-content-between mt-5">
+                <div class="section-title-modern mt-0 mb-3">Style 1: Gradient Cards (Premium)</div>
+                <button class="btn btn-sm btn-outline-secondary rounded-pill">Lihat Semua</button>
+            </div>
+            <p class="text-muted small mb-4">Cocok untuk menampilkan produk unggulan atau katalog visual.</p>
+
+            <div class="row g-4">
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="prod-card-gradient">
+                        <div class="prod-badge-float bg-success bg-opacity-75">Ready Stock</div>
+                        <div class="prod-gradient-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80"
+                                alt="Product">
+                            <div class="prod-img-overlay"></div>
+                        </div>
+                        <div class="prod-content-gradient">
+                            <span class="prod-cat">Footwear</span>
+                            <h5 class="prod-title">Nike Air Zoom Pegasus 38</h5>
+                            <div class="prod-price-row">
+                                <span class="prod-price">$120.00</span>
+                                <div class="stock-indicator text-success">
+                                    <div class="stock-dot bg-success"></div> 45 in stock
+                                </div>
+                            </div>
+                            <button class="btn-gradient-action">
+                                <i class="bi bi-pencil-square"></i> Kelola Varian
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="prod-card-gradient">
+                        <div class="prod-badge-float bg-warning bg-opacity-75 text-white">Low Stock</div>
+                        <div class="prod-gradient-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=80"
+                                alt="Product">
+                            <div class="prod-img-overlay"></div>
+                        </div>
+                        <div class="prod-content-gradient">
+                            <span class="prod-cat">Electronics</span>
+                            <h5 class="prod-title">Sony WH-1000XM4 Noise Cancel</h5>
+                            <div class="prod-price-row">
+                                <span class="prod-price">$348.00</span>
+                                <div class="stock-indicator text-warning">
+                                    <div class="stock-dot bg-warning"></div> 3 left
+                                </div>
+                            </div>
+                            <button class="btn-gradient-action">
+                                <i class="bi bi-pencil-square"></i> Kelola Varian
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="prod-card-gradient">
+                        <div class="prod-badge-float bg-secondary bg-opacity-75">Pre-Order</div>
+                        <div class="prod-gradient-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80"
+                                alt="Product">
+                            <div class="prod-img-overlay"></div>
+                        </div>
+                        <div class="prod-content-gradient">
+                            <span class="prod-cat">Accessories</span>
+                            <h5 class="prod-title">Analog Classic Watch Series 5</h5>
+                            <div class="prod-price-row">
+                                <span class="prod-price">$250.00</span>
+                                <div class="stock-indicator text-muted">
+                                    <div class="stock-dot bg-secondary"></div> PO 7 Days
+                                </div>
+                            </div>
+                            <button class="btn-gradient-action">
+                                <i class="bi bi-pencil-square"></i> Kelola Varian
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="prod-card-gradient">
+                        <div class="prod-badge-float bg-danger bg-opacity-75">Sale 20%</div>
+                        <div class="prod-gradient-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=500&q=80"
+                                alt="Product">
+                            <div class="prod-img-overlay"></div>
+                        </div>
+                        <div class="prod-content-gradient">
+                            <span class="prod-cat">Audio</span>
+                            <h5 class="prod-title">Marshall Stanmore II</h5>
+                            <div class="prod-price-row">
+                                <span class="prod-price">$299.00</span>
+                                <div class="stock-indicator text-success">
+                                    <div class="stock-dot bg-success"></div> 12 in stock
+                                </div>
+                            </div>
+                            <button class="btn-gradient-action">
+                                <i class="bi bi-pencil-square"></i> Kelola Varian
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OPTION 2: OUTLINE STYLE -->
+            <div class="section-title-modern">Style 2: Outline & Minimal (Technical)</div>
+            <p class="text-muted small mb-4">Gaya bersih dengan fokus pada data SKU dan efisiensi ruang.</p>
+
+            <div class="row g-4">
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                    <div class="prod-card-outline">
+                        <div class="outline-header">
+                            <div class="outline-img-box">
+                                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=150&q=80"
+                                    alt="img">
+                            </div>
+                            <div class="outline-info">
+                                <div class="outline-sku">SKU-8821</div>
+                                <h6 class="fw-bold mb-1 fs-6">Nike Air Zoom</h6>
+                                <div class="text-accent fw-bold small">$120</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Stock</span>
+                            <span class="fw-bold text-success small">45 Pcs</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 4px;">
+                            <div class="progress-bar bg-success" style="width: 80%"></div>
+                        </div>
+                        <div class="outline-actions">
+                            <!-- [MODIFIED] Icon Only Button -->
+                            <button class="btn-outline-custom" title="Edit"><i class="bi bi-pencil"></i></button>
+                            <button class="btn-outline-custom" title="View"><i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                    <div class="prod-card-outline">
+                        <div class="outline-header">
+                            <div class="outline-img-box">
+                                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=150&q=80"
+                                    alt="img">
+                            </div>
+                            <div class="outline-info">
+                                <div class="outline-sku">SKU-9901</div>
+                                <h6 class="fw-bold mb-1 fs-6">Sony WH-1000</h6>
+                                <div class="text-accent fw-bold small">$348</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Stock</span>
+                            <span class="fw-bold text-warning small">3 Pcs</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 4px;">
+                            <div class="progress-bar bg-warning" style="width: 15%"></div>
+                        </div>
+                        <div class="outline-actions">
+                            <!-- [MODIFIED] Icon Only Button -->
+                            <button class="btn-outline-custom" title="Edit"><i class="bi bi-pencil"></i></button>
+                            <button class="btn-outline-custom" title="View"><i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                    <div class="prod-card-outline">
+                        <div class="outline-header">
+                            <div class="outline-img-box">
+                                <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=150&q=80"
+                                    alt="img">
+                            </div>
+                            <div class="outline-info">
+                                <div class="outline-sku">SKU-1022</div>
+                                <h6 class="fw-bold mb-1 fs-6">Polaroid One</h6>
+                                <div class="text-accent fw-bold small">$99</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Stock</span>
+                            <span class="fw-bold text-danger small">0 Pcs</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 4px;">
+                            <div class="progress-bar bg-danger" style="width: 0%"></div>
+                        </div>
+                        <div class="outline-actions">
+                             <!-- [MODIFIED] Icon Only Button -->
+                            <button class="btn-outline-custom" title="Edit"><i class="bi bi-pencil"></i></button>
+                            <button class="btn-outline-custom" title="View"><i class="bi bi-eye"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                    <div class="prod-card-outline"
+                        style="border-style: dashed; justify-content: center; align-items: center; cursor: pointer;">
+                        <div class="text-center text-muted">
+                            <i class="bi bi-plus-circle fs-2 mb-2 d-block"></i>
+                            <span class="small fw-bold">Tambah Stock</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OPTION 3: TABLE LIST STYLE -->
+            <div class="section-title-modern">Style 3: Detailed Table List</div>
+
+            <div class="analytic-box p-0 overflow-hidden">
+                <div
+                    class="p-4 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Inventory Database</h5>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-filter"></i> Filter</button>
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download"></i> Export</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table-modern">
+                        <thead>
+                            <tr>
+                                <th style="padding-left: 24px;">Produk</th>
+                                <th>Kategori</th>
+                                <th>SKU</th>
+                                <th>Harga</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th class="text-end" style="padding-right: 24px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding-left: 24px;">
+                                    <div class="product-mini-wrapper">
+                                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=100&q=80"
+                                            class="product-mini-img" alt="p">
+                                        <div>
+                                            <div class="fw-bold text-main">Nike Air Zoom Pegasus</div>
+                                            <div class="small text-muted">Size: 42, Color: Red</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-soft-info text-info">Footwear</span></td>
+                                <td class="font-monospace small">NK-ZR-001</td>
+                                <td class="fw-bold">$120.00</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress" style="width: 50px; height: 4px;">
+                                            <div class="progress-bar bg-success" style="width: 80%"></div>
+                                        </div>
+                                        <span class="small">45</span>
+                                    </div>
+                                </td>
+                                <td><span
+                                        class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Active</span>
+                                </td>
+                                <td class="text-end" style="padding-right: 24px;">
+                                    <button class="btn btn-icon btn-sm btn-ghost text-muted"><i
+                                            class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-icon btn-sm btn-ghost text-muted"><i
+                                            class="bi bi-three-dots-vertical"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 24px;">
+                                    <div class="product-mini-wrapper">
+                                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=100&q=80"
+                                            class="product-mini-img" alt="p">
+                                        <div>
+                                            <div class="fw-bold text-main">Sony WH-1000XM4</div>
+                                            <div class="small text-muted">Wireless NC</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-soft-warning text-warning">Electronics</span></td>
+                                <td class="font-monospace small">SN-WH-004</td>
+                                <td class="fw-bold">$348.00</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress" style="width: 50px; height: 4px;">
+                                            <div class="progress-bar bg-warning" style="width: 15%"></div>
+                                        </div>
+                                        <span class="small text-warning">3</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">Low
+                                        Stock</span></td>
+                                <td class="text-end" style="padding-right: 24px;">
+                                    <button class="btn btn-icon btn-sm btn-ghost text-muted"><i
+                                            class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-icon btn-sm btn-ghost text-muted"><i
+                                            class="bi bi-three-dots-vertical"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-left: 24px;">
+                                    <div class="product-mini-wrapper">
+                                        <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=100&q=80"
+                                            class="product-mini-img" alt="p">
+                                        <div>
+                                            <div class="fw-bold text-main">Polaroid OneStep 2</div>
+                                            <div class="small text-muted">Vintage White</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-soft-danger text-danger">Camera</span></td>
+                                <td class="font-monospace small">PL-OS-002</td>
+                                <td class="fw-bold">$99.00</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress" style="width: 50px; height: 4px;">
+                                            <div class="progress-bar bg-danger" style="width: 0%"></div>
+                                        </div>
+                                        <span class="small text-danger">0</span>
+                                    </div>
+                                </td>
+                                <td><span
+                                        class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">Empty</span>
+                                </td>
+                                <td class="text-end" style="padding-right: 24px;">
+                                    <button class="btn btn-icon btn-sm btn-ghost text-muted"><i
+                                            class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-icon btn-sm btn-ghost text-muted"><i
+                                            class="bi bi-three-dots-vertical"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- [ADDED] STYLE 4: GLASSMORPHISM SECTION -->
+            <div class="section-title-modern">Style 4: Glassmorphism (Modern UI)</div>
+            <p class="text-muted small mb-4">Efek transparan dan blur untuk tampilan futuristik dan mewah.</p>
+            
+            <div class="row g-4">
+                <!-- Glass Item 1 -->
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="prod-card-glass">
+                        <span class="glass-badge">Trending</span>
+                        <div class="glass-img-container">
+                            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=500&q=80" alt="Nike">
+                        </div>
+                        <div class="glass-content">
+                            <h5 class="fw-bold mb-1 text-main">Nike Pegasus 38</h5>
+                            <div class="glass-price-tag">$120</div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span class="text-muted small">In Stock: <span class="text-success">45</span></span>
+                                <span class="text-muted small">Sold: 120</span>
+                            </div>
+                        </div>
+                        <div class="glass-actions">
+                            <div class="glass-btn-icon"><i class="bi bi-cart"></i></div>
+                            <div class="glass-btn-icon"><i class="bi bi-heart"></i></div>
+                            <div class="glass-btn-icon"><i class="bi bi-share"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Glass Item 2 -->
+                <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="prod-card-glass">
+                        <span class="glass-badge bg-warning text-dark">Promo</span>
+                        <div class="glass-img-container">
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=80" alt="Sony">
+                        </div>
+                        <div class="glass-content">
+                            <h5 class="fw-bold mb-1 text-main">Sony WH-1000XM4</h5>
+                            <div class="glass-price-tag">$348</div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span class="text-muted small">In Stock: <span class="text-warning">3</span></span>
+                                <span class="text-muted small">Sold: 85</span>
+                            </div>
+                        </div>
+                        <div class="glass-actions">
+                            <div class="glass-btn-icon"><i class="bi bi-cart"></i></div>
+                            <div class="glass-btn-icon"><i class="bi bi-heart"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Glass Item 3 -->
+                 <div class="col-xl-3 col-lg-4 col-md-6">
+                    <div class="prod-card-glass">
+                        <span class="glass-badge bg-primary">New Arrival</span>
+                        <div class="glass-img-container">
+                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80" alt="Watch">
+                        </div>
+                        <div class="glass-content">
+                            <h5 class="fw-bold mb-1 text-main">Analog Classic</h5>
+                            <div class="glass-price-tag">$250</div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span class="text-muted small">Pre-Order</span>
+                                <span class="text-muted small">ETA: 7d</span>
+                            </div>
+                        </div>
+                        <div class="glass-actions">
+                            <div class="glass-btn-icon"><i class="bi bi-bell"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [ADDED] STYLE 5: HORIZONTAL LIST SECTION -->
+            <div class="section-title-modern">Style 5: Horizontal List (Compact & Detail)</div>
+            <p class="text-muted small mb-4">Layout horizontal yang efisien, ideal untuk daftar panjang dengan gambar.</p>
+
+            <div class="row">
+                <!-- Horiz Item 1 -->
+                <div class="col-lg-6 col-xl-6">
+                    <div class="prod-card-horiz">
+                        <div class="horiz-img-box">
+                             <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=300&q=80" alt="Nike">
+                        </div>
+                        <div class="horiz-content">
+                            <div class="horiz-top">
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-main">Nike Air Zoom Pegasus 38</h6>
+                                    <span class="text-muted small">Running Shoes / Men</span>
+                                </div>
+                                <div class="fs-5 fw-bold text-accent-purple">$120</div>
+                            </div>
+                            
+                            <div class="horiz-meta">
+                                <div class="horiz-meta-item"><i class="bi bi-upc"></i> NK-ZR-001</div>
+                                <div class="horiz-meta-item text-success"><i class="bi bi-check-circle"></i> Ready (45)</div>
+                            </div>
+                            
+                            <div class="horiz-footer">
+                                <div class="d-flex gap-2">
+                                    <span class="badge bg-dark border border-secondary">Size 40</span>
+                                    <span class="badge bg-dark border border-secondary">Size 42</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-secondary py-1 px-3">Manage</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Horiz Item 2 -->
+                <div class="col-lg-6 col-xl-6">
+                    <div class="prod-card-horiz">
+                        <div class="horiz-img-box">
+                             <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80" alt="Sony">
+                        </div>
+                        <div class="horiz-content">
+                            <div class="horiz-top">
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-main">Sony WH-1000XM4</h6>
+                                    <span class="text-muted small">Audio / Headphones</span>
+                                </div>
+                                <div class="fs-5 fw-bold text-accent-purple">$348</div>
+                            </div>
+                            
+                            <div class="horiz-meta">
+                                <div class="horiz-meta-item"><i class="bi bi-upc"></i> SN-WH-004</div>
+                                <div class="horiz-meta-item text-warning"><i class="bi bi-exclamation-circle"></i> Low Stock (3)</div>
+                            </div>
+                            
+                            <div class="horiz-footer">
+                                <div class="d-flex gap-2">
+                                    <span class="badge bg-dark border border-secondary">Black</span>
+                                    <span class="badge bg-dark border border-secondary">Silver</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-secondary py-1 px-3">Manage</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <footer class="footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025 <strong class="text-white">Nexus
+                                Admin</strong>. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan Privasi</a>
+                            <a href="#" class="footer-link">Syarat & Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Theme Toggle Floating -->
+    <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        /* ======================================================================
+              GLOBAL JS (SIDEBAR, THEME, MOBILE MENU)
+           ====================================================================== */
+        const body = document.body;
+        const sidebar = document.getElementById("sidebar");
+        const collapseBtn = document.getElementById("collapseBtn");
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+        const menuThemeSwitch = document.getElementById("menuThemeSwitch");
+        const mobileBtn = document.getElementById("mobileMenuBtn");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        // Function to handle Theme Change
+        function toggleTheme() {
+            body.classList.toggle("light-mode");
+            const isLight = body.classList.contains("light-mode");
+
+            // Update Icons
+            if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+
+            // Update Local Storage
+            localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+
+            // Sync Checkbox state (if toggled via floating btn)
+            if (menuThemeSwitch) menuThemeSwitch.checked = !isLight;
+
+            // Update Revenue Chart Color if exists (DASHBOARD ONLY)
+            if (window.revenueChartInstance) {
+                window.revenueChartInstance.options.scales.x.grid.color = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+                window.revenueChartInstance.options.scales.y.grid.color = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+                window.revenueChartInstance.update();
+            }
+        }
+
+        // Initial Theme Load
+        if (localStorage.getItem("nexus_theme") === "light") {
+            body.classList.add("light-mode");
+            if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            if (menuThemeSwitch) menuThemeSwitch.checked = false;
+        } else {
+            if (menuThemeSwitch) menuThemeSwitch.checked = true; // Default Dark
+        }
+
+        // Event Listeners
+        themeToggle?.addEventListener("click", toggleTheme);
+
+        // Listener for the new switch inside profile menu
+        menuThemeSwitch?.addEventListener("change", () => {
+            if (menuThemeSwitch.checked) {
+                // User wants Dark
+                if (body.classList.contains("light-mode")) {
+                    toggleTheme();
+                }
+            } else {
+                // User wants Light
+                if (!body.classList.contains("light-mode")) {
+                    toggleTheme();
+                }
+            }
+        });
+
+
+        // Sidebar & Mobile Logic
+        function closeMobileMenu() {
+            sidebar.classList.remove("active");
+            if (overlay) overlay.classList.remove("show");
+        }
+
+        function toggleMobileMenu() {
+            sidebar.classList.toggle("active");
+            if (overlay) overlay.classList.toggle("show");
+        }
+
+        // Collapse Button Logic
+        if (collapseBtn) {
+            collapseBtn.addEventListener("click", () => {
+                if (window.innerWidth <= 768) {
+                    closeMobileMenu();
+                } else {
+                    sidebar.classList.toggle("collapsed");
+                    body.classList.toggle("sidebar-collapsed");
+                }
+            });
+        }
+
+        if (mobileBtn) {
+            mobileBtn.addEventListener("click", toggleMobileMenu);
+        }
+
+        if (overlay) {
+            overlay.addEventListener("click", closeMobileMenu);
+        }
+    </script>
+
+</body>
+
+</html>

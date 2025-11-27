@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page - Nexus Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ======================================================================
+           1. CORE STYLES
+           ====================================================================== */
+        :root {
+            --bg-dark: #111827;
+            --bg-sidebar: #1f2937;
+            --bg-card: #1f2937;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent-purple: #6366f1;
+            --accent-blue: #3b82f6;
+            --border-color: #374151;
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --gradient-primary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            /* New Gradient for Text */
+            --text-gradient-dark: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            --text-gradient-light: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+        }
+
+        body.light-mode {
+            --bg-dark: #f3f4f6;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-bg: #f9fafb;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        /* ======================================================================
+           2. SPLIT LAYOUT STYLES
+           ====================================================================== */
+        .login-wrapper {
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* --- LEFT SIDE (BRANDING) --- */
+        .brand-section {
+            background: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            overflow: hidden;
+            color: white;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            filter: blur(50px);
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
+            opacity: 0.6;
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: #ec4899;
+            border-radius: 50%;
+            top: -50px;
+            left: -50px;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: #6366f1;
+            border-radius: 50%;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 2s;
+        }
+
+        .shape-3 {
+            width: 150px;
+            height: 150px;
+            background: #3b82f6;
+            border-radius: 50%;
+            top: 40%;
+            right: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px) scale(1);
+            }
+
+            50% {
+                transform: translateY(-20px) scale(1.05);
+            }
+
+            100% {
+                transform: translateY(0px) scale(1);
+            }
+        }
+
+        .glass-showcase {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(0);
+            transition: transform 0.3s;
+        }
+
+        .glass-showcase:hover {
+            transform: translateY(-5px);
+        }
+
+        .brand-logo-large {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #4f46e5;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* --- RIGHT SIDE (FORM) --- */
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-dark);
+            position: relative;
+            padding: 20px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            z-index: 2;
+        }
+
+        /* [MODIFIED] New Stylish Title */
+        .form-header-modern {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .form-title-text {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.5px;
+            /* Gradient Text Effect */
+            background: var(--text-gradient-dark);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        body.light-mode .form-title-text {
+            background: var(--text-gradient-light);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .title-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* No gradient clip on the wrapper itself to keep icon consistent if needed, 
+               but here we let the icon take the text gradient too */
+        }
+
+        /* Custom Input Styling */
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-group-custom {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .input-group-custom:focus-within {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+
+        .input-icon {
+            padding: 0 16px;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Highlight icon when input focused */
+        .input-group-custom:focus-within .input-icon {
+            color: var(--accent-purple);
+        }
+
+        .form-control-custom {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            padding: 14px 0;
+            font-size: 0.95rem;
+            width: 100%;
+            outline: none;
+        }
+
+        .form-control-custom:focus {
+            background: transparent;
+            box-shadow: none;
+            color: var(--text-main);
+        }
+
+        .form-control-custom::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .btn-toggle-password {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0 16px;
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-toggle-password:hover {
+            color: var(--accent-purple);
+        }
+
+        /* FIXED CHECKBOX VISIBILITY */
+        .form-check-input {
+            background-color: transparent;
+            border: 2px solid var(--text-muted);
+            width: 1.1em;
+            height: 1.1em;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        .form-check-label {
+            color: var(--text-main);
+            /* Jelas di Dark Mode */
+            opacity: 0.9;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding-left: 4px;
+            padding-top: 1px;
+        }
+
+        .btn-primary-gradient {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 14px;
+            border-radius: 12px;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .btn-primary-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+        }
+
+        .divider-text {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 24px 0;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .divider-text::before,
+        .divider-text::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .divider-text::before {
+            margin-right: 12px;
+        }
+
+        .divider-text::after {
+            margin-left: 12px;
+        }
+
+        .social-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .social-btn:hover {
+            background: var(--input-bg);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+        }
+
+        .auth-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .auth-link {
+            color: var(--accent-purple);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .auth-link:hover {
+            color: #8b5cf6;
+            text-decoration: none;
+        }
+
+        .theme-toggle-fixed {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle-fixed:hover {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            transform: rotate(15deg);
+        }
+
+        /* --- MOBILE LOGO STYLES --- */
+        .mobile-logo-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .mobile-logo {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 991px) {
+            .brand-section {
+                display: none;
+            }
+
+            .form-section {
+                padding: 40px 20px;
+                min-height: 100vh;
+                justify-content: center;
+            }
+
+            body {
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid p-0 login-wrapper">
+        <div class="row g-0 h-100">
+
+            <!-- LEFT SIDE: BRANDING -->
+            <div class="col-lg-6 brand-section">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+
+                <div class="glass-showcase">
+                    <div class="brand-logo-large">
+                        <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Logo" width="50"
+                            style="border-radius: 10px;">
+                    </div>
+                    <h2 class="fw-bold mb-3">Nexus Admin</h2>
+                    <p class="mb-4 opacity-75">
+                        Platform manajemen dashboard modern.
+                    </p>
+                </div>
+
+                <div class="mt-5 text-white opacity-50 small">
+                    &copy; 2025 Nexus Technology.
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE: LOGIN FORM -->
+            <div class="col-lg-6 form-section">
+
+                <button class="theme-toggle-fixed" id="themeToggle" title="Ganti Tema">
+                    <i class="bi bi-moon-fill" id="themeIcon"></i>
+                </button>
+
+                <div class="login-card">
+                    <!-- Mobile Logo (Visible only on Mobile) -->
+                    <div class="mobile-logo-container d-lg-none">
+                        <img src="https://placehold.co/120x120/6366f1/ffffff?text=N" alt="Nexus Logo"
+                            class="mobile-logo rounded-3">
+                    </div>
+
+                    <!-- [MODIFIED] New Header Style -->
+                    <div class="form-header-modern">
+                        <h1 class="form-title-text">
+                            <i class="bi bi-shield-lock-fill title-icon-wrapper"></i> Login Page
+                        </h1>
+                        <!-- Subtitle removed as requested -->
+                    </div>
+
+                    <form action="home.html">
+                        <!-- Email Input -->
+                        <div class="mb-4">
+                            <label class="form-label" for="email">Email Address</label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-envelope"></i></span>
+                                <input type="email" class="form-control-custom" id="email"
+                                    placeholder="nama@perusahaan.com" required>
+                            </div>
+                        </div>
+
+                        <!-- Password Input -->
+                        <div class="mb-4">
+                            <label class="form-label" for="password">Password</label>
+                            <div class="input-group-custom">
+                                <span class="input-icon"><i class="bi bi-lock-fill"></i></span>
+                                <input type="password" class="form-control-custom" id="password"
+                                    placeholder="Masukkan password" required>
+                                <button type="button" class="btn-toggle-password" id="togglePassword">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Remember & Forgot (Fixed Visibility) -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check d-flex align-items-center gap-2">
+                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Ingat Saya</label>
+                            </div>
+                            <a href="forgot-password.html" class="auth-link small">Lupa Password?</a>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary-gradient">
+                            Masuk <i class="bi bi-box-arrow-in-right ms-2"></i>
+                        </button>
+
+                        <!-- Social Login -->
+                        <div class="divider-text">Atau</div>
+
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <a href="#" class="social-btn">
+                                    <i class="bi bi-google text-danger"></i> Google
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="#" class="social-btn">
+                                    <i class="bi bi-facebook text-primary"></i> Facebook
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="auth-footer">
+                            Belum punya akun? <a href="register.html" class="auth-link">Buat Akun Baru</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const body = document.body;
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            // Initial Theme Load
+            if (localStorage.getItem("nexus_theme") === "light") {
+                body.classList.add("light-mode");
+                if (themeIcon) themeIcon.classList.replace("bi-moon-fill", "bi-sun-fill");
+            }
+
+            function toggleTheme() {
+                body.classList.toggle("light-mode");
+                const isLight = body.classList.contains("light-mode");
+                if (themeIcon) themeIcon.classList.replace(isLight ? "bi-moon-fill" : "bi-sun-fill", isLight ? "bi-sun-fill" : "bi-moon-fill");
+                localStorage.setItem("nexus_theme", isLight ? "light" : "dark");
+            }
+
+            themeToggle?.addEventListener("click", toggleTheme);
+
+            const togglePasswordBtn = document.getElementById("togglePassword");
+            const passwordInput = document.getElementById("password");
+            const toggleIcon = togglePasswordBtn.querySelector("i");
+
+            togglePasswordBtn.addEventListener("click", () => {
+                const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+                passwordInput.setAttribute("type", type);
+
+                if (type === "text") {
+                    toggleIcon.classList.remove("bi-eye-slash");
+                    toggleIcon.classList.add("bi-eye");
+                } else {
+                    toggleIcon.classList.remove("bi-eye");
+                    toggleIcon.classList.add("bi-eye-slash");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

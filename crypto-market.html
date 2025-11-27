@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nexus Admin - Crypto Market</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+    <!-- [ADDED] Chart.js for Crypto Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        
+
+        /* ======================================================================
+                     // GLOBAL NEW CSS (CRYPTO SPECIFIC)
+           ====================================================================== */
+
+        /* Ticker Animation */
+        .crypto-ticker-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 12px 0;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .crypto-ticker-track {
+            display: inline-flex;
+            animation: tickerSlide 40s linear infinite;
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 24px;
+            border-right: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .ticker-item strong {
+            color: var(--text-main);
+        }
+
+        @keyframes tickerSlide {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Crypto Specific Text Colors */
+        .text-up {
+            color: #10b981 !important;
+        }
+
+        .text-down {
+            color: #ef4444 !important;
+        }
+
+        /* Badges */
+        .crypto-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .bg-soft-green {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .bg-soft-red {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Coin Icon */
+        .coin-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        /* Coin Colors */
+        .coin-btc {
+            background: #f7931a;
+        }
+
+        .coin-eth {
+            background: #627eea;
+        }
+
+        .coin-sol {
+            background: linear-gradient(135deg, #9945ff, #14f195);
+        }
+
+        .coin-bnb {
+            background: #f3ba2f;
+            color: black;
+        }
+
+        .coin-usdt {
+            background: #26a17b;
+        }
+
+        .coin-xrp {
+            background: #23292f;
+        }
+
+        .coin-ada {
+            background: #0033ad;
+        }
+
+        /* Custom Tabs for Crypto Chart */
+        .crypto-tabs .nav-link {
+            border: 1px solid var(--border-color);
+            margin-right: 8px;
+            color: var(--text-muted);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            background: var(--bg-card);
+        }
+
+        .crypto-tabs .nav-link.active {
+            background: var(--accent-purple);
+            color: white !important;
+            border-color: var(--accent-purple);
+        }
+
+        /* Table Styles Adjustment */
+        /* [FIXED] Force transparency to override Bootstrap default white bg */
+        .table-crypto {
+            --bs-table-bg: transparent !important;
+            --bs-table-color: var(--text-main) !important;
+            color: var(--text-main);
+        }
+
+        .table-crypto th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px;
+            background-color: transparent !important;
+            /* Force transparent */
+        }
+
+        .table-crypto td {
+            padding: 16px;
+            vertical-align: middle;
+            color: var(--text-main);
+            background-color: transparent !important;
+            /* Force transparent */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        body.light-mode .table-crypto td {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table-crypto tr:last-child td {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-120%);
+                width: 260px !important;
+                padding-right: 16px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .top-navbar-standalone {
+                justify-content: flex-end;
+                padding-left: 70px;
+                margin-bottom: 20px;
+                gap: 10px;
+            }
+
+            .search-standalone-box {
+                width: auto;
+                flex-grow: 1;
+                max-width: 100%;
+            }
+
+            .search-standalone-input {
+                padding-left: 40px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .search-standalone-icon {
+                left: 14px;
+            }
+
+            .notification-btn {
+                width: 42px;
+                height: 42px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+
+<body id="body-container">
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="bi bi-list" style="font-size: 1.5rem"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div>
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo" />
+                    <span class="logo-text">Nexus</span>
+                </div>
+                <div class="sidebar-collapse-btn" id="collapseBtn">
+                    <i class="bi bi-chevron-left"></i>
+                </div>
+            </div>
+            <div class="sidebar-divider"></div>
+
+            <div class="nav flex-column flex-nowrap nav-scrollable">
+                <div class="nav-category">UTAMA</div>
+                <a href="home.html" class="nav-link"><i class="bi bi-grid-1x2-fill"></i> <span>Dashboard</span></a>
+                <a href="analytic.html" class="nav-link"><i class="bi bi-graph-up-arrow"></i> <span>Analytics</span></a>
+
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuBusiness">
+                    <i class="bi bi-shop"></i>
+                    <span>E-Commerce</span>
+                    <i class="bi bi-chevron-right arrow-icon"></i>
+                </a>
+                <div class="collapse" id="menuBusiness">
+                    <div class="nav-submenu">
+                        <a href="/products.html" class="nav-link"><span>Produk & Stok</span></a>
+                        <a href="/orders.html" class="nav-link"><span>Pesanan</span></a>
+                        <a href="/customers.html" class="nav-link"><span>Pelanggan (CRM)</span></a>
+                        <a href="/pos.html" class="nav-link"><span>Kasir (POS)</span></a>
+                    </div>
+                </div>
+
+                <div class="nav-category">FINANSIAL & CRYPTO</div>
+                <a class="nav-link active-btn" data-bs-toggle="collapse" href="#menuFinance" aria-expanded="true"><i
+                        class="bi bi-wallet2"></i> <span>Keuangan</span>
+                    <i class="bi bi-chevron-right arrow-icon"></i></a>
+                <div class="collapse show" id="menuFinance">
+                    <div class="nav-submenu">
+                        <a href="wallet.html" class="nav-link"><span>Dompet Digital</span></a>
+                        <a href="transactions.html" class="nav-link"><span>Riwayat Transaksi</span></a>
+                        <!-- [ACTIVE] Crypto Market Menu -->
+                        <a href="crypto-market.html" class="nav-link active"><span>Crypto Market</span></a>
+                        <a href="invoices.html" class="nav-link"><span>Faktur & Tagihan</span></a>
+                    </div>
+                </div>
+
+                <!-- ... (Sisa menu lainnya tetap sama seperti template asli) ... -->
+                <!-- Saya persingkat untuk fokus pada konten utama -->
+                <div class="nav-category">SYSTEM TOOLS</div>
+                <a class="nav-link" data-bs-toggle="collapse" href="#menuSettings"><i class="bi bi-gear"></i>
+                    <span>Pengaturan</span>
+                    <i class="bi bi-chevron-right arrow-icon"></i></a>
+            </div>
+
+            <div class="dropup profile-wrapper">
+                <div class="user-profile-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-display="static">
+                    <div class="avatar-container">
+                        <div class="avatar-modern">A</div>
+                        <div class="status-dot pulse"></div>
+                    </div>
+                    <div class="user-info-modern">
+                        <div class="user-name-modern">Admin Pusat</div>
+                        <div class="user-role-modern">Super Admin</div>
+                    </div>
+                    <i class="bi bi-chevron-up profile-chevron"></i>
+                </div>
+
+                <ul class="dropdown-menu profile-dropdown-menu">
+                    <div class="dropdown-header-modern">
+                        <div class="menu-label">SIGNED IN AS</div>
+                        <div class="menu-user-email">admin@nexus.com</div>
+                    </div>
+                    <li>
+                        <a class="profile-menu-item" href="profile-me.html">
+                            <div class="item-left">
+                                <i class="bi bi-person item-icon"></i> <span>Profile</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <div class="profile-menu-item" style="cursor: default">
+                            <div class="item-left">
+                                <i class="bi bi-moon-stars item-icon"></i>
+                                <span>Dark Mode</span>
+                            </div>
+                            <div class="form-check form-switch theme-switch-wrapper mb-0">
+                                <input class="form-check-input custom-switch" type="checkbox" id="menuThemeSwitch" />
+                            </div>
+                        </div>
+                    </li>
+                    <div style="
+                height: 1px;
+                background: rgba(255, 255, 255, 0.08);
+                margin: 6px 0;
+              "></div>
+                    <li>
+                        <a class="profile-menu-item danger-item" href="login.html">
+                            <div class="item-left">
+                                <i class="bi bi-box-arrow-left item-icon"></i>
+                                <span>Sign Out</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- Navbar -->
+            <div class="top-navbar-standalone">
+                <div class="search-standalone-box">
+                    <i class="bi bi-search search-standalone-icon"></i>
+                    <input type="text" class="search-standalone-input" placeholder="Cari sesuatu..." />
+                </div>
+
+                <!-- [NEW] Notification Bell with Red Dot -->
+                <div class="notification-wrapper dropdown">
+                    <div class="notification-btn" data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-display="static">
+                        <i class="bi bi-bell"></i>
+                        <div class="notification-dot-red"></div>
+                    </div>
+                    <ul class="dropdown-menu notification-dropdown-menu">
+                        <div
+                            class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom border-secondary border-opacity-10 mb-2">
+                            <h6 class="mb-0 fw-bold text-white">Notifikasi</h6>
+                            <span class="badge bg-danger rounded-pill">3 Baru</span>
+                        </div>
+
+                        <li>
+                            <a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-danger">
+                                    <i class="bi bi-exclamation-octagon"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>System Alert</h6>
+                                    <p>CPU Usage above 90% detected.</p>
+                                    <span class="notif-time">2 mins ago</span>
+                                </div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-success">
+                                    <i class="bi bi-cart-check"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>New Order</h6>
+                                    <p>Received order #ORD-248 from Budi.</p>
+                                    <span class="notif-time">15 mins ago</span>
+                                </div>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="notification-item" href="#">
+                                <div class="notif-icon-box bg-soft-info">
+                                    <i class="bi bi-info-circle"></i>
+                                </div>
+                                <div class="notif-content">
+                                    <h6>Server Update</h6>
+                                    <p>Server scheduled for maintenance.</p>
+                                    <span class="notif-time">1 hour ago</span>
+                                </div>
+                            </a>
+                        </li>
+
+                        <div class="px-2 pt-2">
+                            <button class="btn btn-outline-secondary btn-sm w-100 rounded-pill"
+                                style="font-size: 0.75rem">
+                                Tandai Semua Dibaca
+                            </button>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER-->
+            <div class="active-page-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                        <h1 class="page-title-large">Crypto Market</h1>
+                        <p class="text-muted mb-0" style="font-size: 1.05rem; line-height: 1.6">
+                            Pantau pergerakan pasar aset digital secara realtime dan kelola
+                            portofolio Anda.
+                        </p>
+                    </div>
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0">
+                                <i class="bi bi-currency-bitcoin"></i> Market Live
+                            </div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><i
+                                        class="bi bi-house-door-fill"></i></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">Keuangan</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">Crypto Market</span>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- START OF CONTENT HERE -->
+
+            <!-- [NEW COMPONENT] Running Ticker -->
+            <div class="crypto-ticker-wrapper">
+                <div class="crypto-ticker-track">
+                    <!-- Repeated items for seamless scrolling loop -->
+                    <span class="ticker-item"><i class="bi bi-currency-bitcoin text-warning"></i> BTC
+                        <strong>$64,230</strong>
+                        <span class="text-up ms-1">+2.4%</span></span>
+                    <span class="ticker-item"><i class="bi bi-currency-exchange text-primary"></i> ETH
+                        <strong>$3,450</strong>
+                        <span class="text-up ms-1">+1.8%</span></span>
+                    <span class="ticker-item"><i class="bi bi-activity text-info"></i> SOL
+                        <strong>$145.20</strong>
+                        <span class="text-down ms-1">-0.5%</span></span>
+                    <span class="ticker-item"><i class="bi bi-coin text-warning"></i> BNB
+                        <strong>$590.10</strong>
+                        <span class="text-up ms-1">+0.2%</span></span>
+                    <span class="ticker-item"><i class="bi bi-shield-check text-success"></i> USDT
+                        <strong>$1.00</strong>
+                        <span class="text-muted ms-1">0.0%</span></span>
+                    <span class="ticker-item"><i class="bi bi-triangle text-light"></i> XRP
+                        <strong>$0.62</strong>
+                        <span class="text-down ms-1">-1.2%</span></span>
+                    <!-- Duplicate for loop effect -->
+                    <span class="ticker-item"><i class="bi bi-currency-bitcoin text-warning"></i> BTC
+                        <strong>$64,230</strong>
+                        <span class="text-up ms-1">+2.4%</span></span>
+                    <span class="ticker-item"><i class="bi bi-currency-exchange text-primary"></i> ETH
+                        <strong>$3,450</strong>
+                        <span class="text-up ms-1">+1.8%</span></span>
+                    <span class="ticker-item"><i class="bi bi-activity text-info"></i> SOL
+                        <strong>$145.20</strong>
+                        <span class="text-down ms-1">-0.5%</span></span>
+                    <span class="ticker-item"><i class="bi bi-coin text-warning"></i> BNB
+                        <strong>$590.10</strong>
+                        <span class="text-up ms-1">+0.2%</span></span>
+                </div>
+            </div>
+
+            <!-- [NEW COMPONENT] Summary Cards (Varied Styles as Requested) -->
+            <div class="row g-4 mb-4">
+                <!-- Style 1: Gradient Full (Existing Template Style) -->
+                <div class="col-xl-3 col-md-6">
+                    <div class="widget-card bg-grad-1 h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <p class="mb-1 opacity-75 small text-uppercase fw-bold">
+                                    Total Saldo (Est.)
+                                </p>
+                                <h3 class="fw-bold mb-0 text-white">$124,592.00</h3>
+                            </div>
+                            <div class="icon-square bg-white bg-opacity-25 text-white">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-white text-primary rounded-pill"><i class="bi bi-arrow-up-short"></i>
+                                +12.5%</span>
+                            <span class="small opacity-75">Bulan ini</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Style 2: Outline Style (Existing Template Style) -->
+                <div class="col-xl-3 col-md-6">
+                    <div class="widget-card card-outline-primary h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <p class="mb-1 text-muted small text-uppercase fw-bold">
+                                    Portfolio Growth
+                                </p>
+                                <h3 class="fw-bold mb-0 text-white" style="color: var(--text-main) !important">
+                                    $4,200.50
+                                </h3>
+                            </div>
+                            <div class="icon-square text-white" style="background: var(--accent-purple)">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="crypto-badge bg-soft-green"><i class="bi bi-caret-up-fill"></i> +5.2%</span>
+                            <span class="small text-muted">vs Kemarin</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Style 3: Gradient Border (Existing Template Style) -->
+                <div class="col-xl-3 col-md-6">
+                    <div class="widget-card card-outline-gradient h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <p class="mb-1 text-muted small text-uppercase fw-bold">
+                                    Volume 24H
+                                </p>
+                                <h3 class="fw-bold mb-0">$2.4B</h3>
+                            </div>
+                            <div class="icon-square bg-secondary bg-opacity-10 text-white">
+                                <i class="bi bi-bar-chart-fill" style="color: var(--text-main)"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="crypto-badge bg-soft-red"><i class="bi bi-caret-down-fill"></i> -1.4%</span>
+                            <span class="small text-muted">Global Market</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Style 4: Standard Widget -->
+                <div class="col-xl-3 col-md-6">
+                    <div class="widget-card h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <p class="mb-1 text-muted small text-uppercase fw-bold">
+                                    Aset Aktif
+                                </p>
+                                <h3 class="fw-bold mb-0">12 Coin</h3>
+                            </div>
+                            <div class="icon-square bg-warning bg-opacity-10 text-warning">
+                                <i class="bi bi-stars"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="d-flex align-items-center mb-1 small text-muted justify-content-between">
+                                <span>Diversifikasi</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress" style="height: 4px; background: rgba(255, 255, 255, 0.1)">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <!-- CHART SECTION -->
+                <div class="col-lg-8">
+                    <div class="widget-card h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                            <div>
+                                <h5 class="fw-bold mb-1">Bitcoin (BTC) Chart</h5>
+                                <p class="text-muted small mb-0">
+                                    Pergerakan harga realtime terhadap USD
+                                </p>
+                            </div>
+                            <div class="nav nav-pills crypto-tabs">
+                                <button class="nav-link" onclick="updateChart('1H')">
+                                    1H
+                                </button>
+                                <button class="nav-link active" onclick="updateChart('1D')">
+                                    1D
+                                </button>
+                                <button class="nav-link" onclick="updateChart('1W')">
+                                    1W
+                                </button>
+                                <button class="nav-link" onclick="updateChart('1Y')">
+                                    1Y
+                                </button>
+                            </div>
+                        </div>
+                        <div style="position: relative; height: 320px; width: 100%">
+                            <canvas id="cryptoMainChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WATCHLIST / QUICK TRADE -->
+                <div class="col-lg-4">
+                    <div class="widget-card h-100">
+                        <div class="card-header-custom p-0 border-0 bg-transparent mb-3">
+                            <h5 class="fw-bold mb-0">Quick Trade</h5>
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                History
+                            </button>
+                        </div>
+
+                        <!-- Trade Tabs -->
+                        <ul class="nav nav-tabs nav-fill mb-3" style="border-bottom: 1px solid var(--border-color)">
+                            <li class="nav-item">
+                                <a class="nav-link active fw-bold text-success border-0 bg-transparent" href="#">BUY</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold text-danger border-0 bg-transparent" href="#">SELL</a>
+                            </li>
+                        </ul>
+
+                        <div class="mb-3">
+                            <label class="small text-muted mb-2">Pilih Aset</label>
+                            <select class="form-select bg-dark text-light border-secondary" style="
+                    background-color: var(--input-bg);
+                    border-color: var(--border-color);
+                    color: var(--text-main);
+                  ">
+                                <option selected>Bitcoin (BTC)</option>
+                                <option>Ethereum (ETH)</option>
+                                <option>Solana (SOL)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="small text-muted mb-2">Jumlah (USD)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-secondary text-muted"
+                                    style="border-color: var(--border-color)">$</span>
+                                <input type="number" class="form-control bg-transparent text-light" placeholder="0.00"
+                                    style="
+                      border-color: var(--border-color);
+                      color: var(--text-main);
+                    " />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between small text-muted mb-4">
+                            <span>Balance: $12,450.00</span>
+                            <span>Max Buy: 0.19 BTC</span>
+                        </div>
+
+                        <button class="btn btn-success w-100 py-2 rounded-3 fw-bold">
+                            Beli BTC Sekarang
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MARKET TABLE -->
+            <div class="widget-card p-0">
+                <div class="card-header-custom">
+                    <h5 class="fw-bold mb-0">Pasar Crypto</h5>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control form-control-sm bg-transparent"
+                            placeholder="Search coin..." style="
+                  width: 200px;
+                  border-color: var(--border-color);
+                  color: var(--text-main);
+                " />
+                        <button class="btn btn-sm btn-primary">
+                            <i class="bi bi-filter"></i> Filter
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-crypto mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nama Aset</th>
+                                <th>Harga</th>
+                                <th>24h Change</th>
+                                <th>Market Cap</th>
+                                <th class="text-end">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cryptoTableBody">
+                            <!-- JS WILL POPULATE THIS -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div
+                    class="p-3 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+                    <span class="small text-muted">Showing 1-5 of 50 assets</span>
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link bg-transparent border-secondary text-muted" href="#">Prev</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link border-secondary" href="#" style="
+                      background: var(--accent-purple);
+                      border-color: var(--accent-purple);
+                    ">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link bg-transparent border-secondary text-muted" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link bg-transparent border-secondary text-muted" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- END OF CONTENT HERE -->
+
+            <!-- START OF COPYRIGHT FOOTER SECTION -->
+            <footer class="footer-dashboard">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                        <p class="mb-0 small text-muted">
+                            Copyright &copy; 2025
+                            <strong class="text-white">Nexus Admin</strong>. All rights
+                            reserved.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="#" class="footer-link">Kebijakan Privasi</a>
+                            <a href="#" class="footer-link">Syarat & Ketentuan</a>
+                            <a href="#" class="footer-link">Bantuan</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Theme Toggle Floating (Maintained) -->
+    <div class="floating-btn" id="themeToggle">
+        <i class="bi bi-moon-fill" id="themeIcon"></i>
+    </div>
+
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/script.js"></script>
+    <script>
+       
+
+        /* ======================================================================
+                        // CRYPTO MARKET JS (NEW LOGIC)
+             ====================================================================== */
+
+        // 1. DATA MOCKUP
+        const cryptoData = [
+            {
+                id: 1,
+                name: "Bitcoin",
+                symbol: "BTC",
+                price: 64230.5,
+                change: 2.4,
+                cap: "1.2T",
+                color: "coin-btc",
+                icon: "bi-currency-bitcoin",
+            },
+            {
+                id: 2,
+                name: "Ethereum",
+                symbol: "ETH",
+                price: 3450.12,
+                change: 1.8,
+                cap: "400B",
+                color: "coin-eth",
+                icon: "bi-currency-exchange",
+            },
+            {
+                id: 3,
+                name: "Binance",
+                symbol: "BNB",
+                price: 590.1,
+                change: 0.2,
+                cap: "87B",
+                color: "coin-bnb",
+                icon: "bi-coin",
+            },
+            {
+                id: 4,
+                name: "Solana",
+                symbol: "SOL",
+                price: 145.2,
+                change: -0.5,
+                cap: "65B",
+                color: "coin-sol",
+                icon: "bi-activity",
+            },
+            {
+                id: 5,
+                name: "Cardano",
+                symbol: "ADA",
+                price: 0.45,
+                change: -1.2,
+                cap: "15B",
+                color: "coin-ada",
+                icon: "bi-box",
+            },
+        ];
+
+        // 2. RENDER TABLE
+        const tableBody = document.getElementById("cryptoTableBody");
+
+        function renderCryptoTable() {
+            tableBody.innerHTML = "";
+            cryptoData.forEach((coin) => {
+                // Determine Trend Badge
+                const isPositive = coin.change >= 0;
+                const trendClass = isPositive ? "bg-soft-green" : "bg-soft-red";
+                const iconTrend = isPositive
+                    ? "bi-caret-up-fill"
+                    : "bi-caret-down-fill";
+                const colorClass = isPositive ? "text-up" : "text-down";
+                const sign = isPositive ? "+" : "";
+
+                const row = `
+                    <tr>
+                        <td><span class="text-muted small">${coin.id
+                    }</span></td>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="coin-icon ${coin.color
+                    }"><i class="bi ${coin.icon}"></i></div>
+                                <div>
+                                    <div class="fw-bold">${coin.name}</div>
+                                    <div class="small text-muted">${coin.symbol
+                    }</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="fw-bold">$${coin.price.toLocaleString(
+                        "en-US",
+                        { minimumFractionDigits: 2 }
+                    )}</td>
+                        <td>
+                            <span class="crypto-badge ${trendClass}">
+                                <i class="bi ${iconTrend}"></i> ${sign}${coin.change
+                    }%
+                            </span>
+                        </td>
+                        <td class="text-muted">$${coin.cap}</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary rounded-pill px-3">Trade</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML("beforeend", row);
+            });
+        }
+
+        // 3. INIT CHART.JS
+        let mainChart;
+        function initChart() {
+            const ctx = document.getElementById("cryptoMainChart").getContext("2d");
+
+            // Create Gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, "rgba(99, 102, 241, 0.4)"); // Purple
+            gradient.addColorStop(1, "rgba(99, 102, 241, 0.0)");
+
+            // Initial Colors based on theme
+            const isLight = body.classList.contains("light-mode");
+            const gridColor = isLight
+                ? "rgba(0,0,0,0.05)"
+                : "rgba(255,255,255,0.05)";
+            const textColor = isLight ? "#64748b" : "#9ca3af";
+
+            mainChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: [
+                        "00:00",
+                        "04:00",
+                        "08:00",
+                        "12:00",
+                        "16:00",
+                        "20:00",
+                        "23:59",
+                    ],
+                    datasets: [
+                        {
+                            label: "BTC Price (USD)",
+                            data: [62000, 62500, 63800, 63200, 64000, 64230, 64100],
+                            borderColor: "#6366f1",
+                            backgroundColor: gradient,
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 3,
+                            pointHoverRadius: 6,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: "index",
+                            intersect: false,
+                            backgroundColor: "rgba(31, 41, 55, 0.9)",
+                            titleColor: "#fff",
+                            bodyColor: "#fff",
+                            borderColor: "rgba(255,255,255,0.1)",
+                            borderWidth: 1,
+                        },
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor, drawBorder: false },
+                            ticks: { color: textColor },
+                        },
+                        y: {
+                            grid: { color: gridColor, drawBorder: false },
+                            ticks: { color: textColor },
+                        },
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: "index",
+                    },
+                },
+            });
+        }
+
+        // 4. CHART THEME UPDATE FUNCTION
+        function updateCryptoChartTheme(isLight) {
+            if (!mainChart) return;
+
+            const gridColor = isLight
+                ? "rgba(0,0,0,0.05)"
+                : "rgba(255,255,255,0.05)";
+            const textColor = isLight ? "#64748b" : "#9ca3af";
+
+            mainChart.options.scales.x.grid.color = gridColor;
+            mainChart.options.scales.y.grid.color = gridColor;
+            mainChart.options.scales.x.ticks.color = textColor;
+            mainChart.options.scales.y.ticks.color = textColor;
+            mainChart.update();
+        }
+
+        // 5. SIMULATE LIVE DATA UPDATE
+        function simulateLivePrices() {
+            // Randomly update 24h change and price slightly
+            cryptoData.forEach((coin) => {
+                const fluctuation = (Math.random() - 0.5) * 10; // Random +/-
+                coin.price += fluctuation;
+
+                // Update specific row elements (Simplified for demo)
+                // In real app, you would bind data or re-render smarter
+            });
+            renderCryptoTable();
+        }
+
+        // 6. INITIALIZE ALL
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCryptoTable();
+            initChart();
+
+            // Start simulation every 3 seconds
+            setInterval(simulateLivePrices, 3000);
+        });
+
+        // Mock function for buttons
+        function updateChart(timeframe) {
+            // In real app, fetch data based on timeframe
+            console.log("Switching chart to:", timeframe);
+            // Visual feedback only
+            document
+                .querySelectorAll(".crypto-tabs .nav-link")
+                .forEach((btn) => btn.classList.remove("active"));
+            event.target.classList.add("active");
+        }
+    </script>
+</body>
+
+</html>
