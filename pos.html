@@ -1,490 +1,40 @@
+<!-- 
+======================================================
+  WKNG TEMPLATE UNIVERSAL - ADMIN DASHBOARD
+  © 2025 Irvanscx (Irvansc)
+
+  Developer GitHub : https://github.com/irvansc
+  Template GitHub  : https://github.com/irvansc/wkng-admin-template-universal
+  Instagram        : @irvansc
+
+  Dibuat menggunakan:
+  - HTML, CSS, JavaScript
+  - Bootstrap 5 & Bootstrap Icons
+  - Serta beberapa library open-source lainnya
+
+  Catatan:
+  Semua komponen dalam template ini berasal dari internet 
+  dan dikustomisasi ulang. Mohon tetap cantumkan kredit ini 
+  apabila menggunakan ulang atau memodifikasi template.
+
+======================================================
+-->
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Admin - Pos</title>
+    <title>WKNG Admin - Pos</title>
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-         /* =========================================
-           [MODIFIED] POS SPECIFIC STYLES - RAPIHKAN LAYOUT
-           ========================================= */
 
-        /* Container Utama: Menggunakan tinggi layar penuh dikurangi margin */
-        .pos-container {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 24px;
-            /* [FIX] Gunakan calc yang lebih aman agar tidak overflow */
-            height: calc(100vh - 120px); 
-            min-height: 600px;
-            position: relative;
-        }
-
-        @media (max-width: 992px) {
-            .pos-container {
-                grid-template-columns: 1fr;
-                height: auto;
-                display: flex;
-                flex-direction: column;
-            }
-            
-            /* Pada mobile, cart panel tidak sticky */
-            .cart-panel {
-                position: relative;
-                top: 0;
-                height: auto;
-                max-height: 500px;
-            }
-        }
-
-        /* --- [MODIFIED] POS Header Area (Categories & View Switcher) --- */
-        .pos-header-area {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .pos-categories {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            scrollbar-width: none; /* Firefox */
-            flex-grow: 1;
-        }
-
-        .pos-categories::-webkit-scrollbar {
-            display: none;
-        }
-
-        .cat-pill {
-            padding: 8px 16px;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .cat-pill:hover {
-            background: rgba(255,255,255,0.08);
-            color: var(--text-main);
-        }
-
-        .cat-pill.active {
-            background: var(--accent-purple);
-            color: white;
-            border-color: var(--accent-purple);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-        
-        /* View Toggle Button Group */
-        .view-toggle {
-            background: rgba(0,0,0,0.2);
-            padding: 4px;
-            border-radius: 10px;
-            display: flex;
-            gap: 2px;
-        }
-        
-        .view-btn {
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        
-        .view-btn.active {
-            background: var(--bg-card);
-            color: var(--accent-purple);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        /* --- [MODIFIED] Product Scroll Area --- */
-        .product-scroll-area {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-right: 8px;
-            /* Custom Scrollbar for this area */
-        }
-        
-        .product-scroll-area::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        .product-scroll-area::-webkit-scrollbar-thumb {
-            background-color: var(--border-color);
-        }
-
-        /* --- Style 1: Modern Gradient (Enhanced) --- */
-        .pos-card-gradient {
-            background: var(--bg-card);
-            border-radius: 16px;
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-            transition: all 0.2s;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .pos-card-gradient:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-purple);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .pos-img-wrapper {
-            height: 150px;
-            width: 100%;
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .pos-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .pos-overlay-grad {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(17, 24, 39, 0.8) 0%, transparent 50%);
-        }
-        
-        .pos-qty-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .pos-content-grad {
-            padding: 12px;
-            position: relative;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .pos-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-            line-height: 1.3;
-        }
-
-        .pos-price {
-            font-weight: 700;
-            color: var(--accent-purple);
-            font-size: 1.1rem;
-        }
-        
-        /* [NEW] Style 5: Neumorphism (Soft UI) */
-        .pos-card-neumorphism {
-            border-radius: 20px;
-            background: var(--bg-card);
-            /* Light Shadow Top-Left, Dark Shadow Bottom-Right */
-            box-shadow: 
-                5px 5px 10px rgba(0,0,0,0.2), 
-                -5px -5px 10px rgba(255,255,255,0.02);
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(255,255,255,0.01);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        
-        .pos-card-neumorphism:hover {
-            transform: translateY(-2px);
-             box-shadow: 
-                8px 8px 15px rgba(0,0,0,0.25), 
-                -8px -8px 15px rgba(255,255,255,0.03);
-        }
-        
-        .pos-card-neumorphism:active {
-            box-shadow: inset 5px 5px 10px rgba(0,0,0,0.2), 
-                inset -5px -5px 10px rgba(255,255,255,0.02);
-        }
-        
-        .neu-img-box {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin-bottom: 12px;
-            border: 4px solid rgba(255,255,255,0.05);
-        }
-        
-        .neu-img-box img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
-
-        /* [NEW] Style 6: List View Compact */
-        .pos-list-item {
-            display: flex;
-            align-items: center;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .pos-list-item:hover {
-            border-color: var(--accent-purple);
-            background: rgba(255,255,255,0.02);
-        }
-        
-        .list-img {
-            width: 60px; height: 60px;
-            border-radius: 10px;
-            object-fit: cover;
-            margin-right: 16px;
-        }
-        
-        .list-info {
-            flex-grow: 1;
-        }
-        
-        .list-action {
-            width: 40px; height: 40px;
-            background: var(--bg-dark);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent-purple);
-            opacity: 0.5;
-            transition: 0.2s;
-        }
-        
-        .pos-list-item:hover .list-action {
-            opacity: 1;
-            background: var(--accent-purple);
-            color: white;
-        }
-
-
-        /* --- [MODIFIED] Cart Panel (Sticky & Clean) --- */
-        .cart-panel {
-            background: var(--bg-card);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            height: 100%;
-            /* [FIX] Sticky Behavior */
-            position: sticky;
-            top: 20px;
-            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
-        }
-
-        .cart-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(0, 0, 0, 0.1);
-            z-index: 2;
-        }
-
-        .cart-items-scroll {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            /* Ensures scroll only happens inside list */
-            max-height: calc(100vh - 350px); 
-        }
-
-        .cart-item {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px dashed var(--border-color);
-            animation: slideInRight 0.3s ease;
-            position: relative;
-        }
-
-        .cart-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .cart-item-img {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
-        }
-
-        .qty-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--bg-dark);
-            border-radius: 8px;
-            padding: 4px 8px;
-            margin-top: 6px;
-            width: fit-content;
-            border: 1px solid var(--border-color);
-        }
-
-        .qty-btn {
-            cursor: pointer;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            width: 24px; height: 24px;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            border-radius: 4px;
-            transition: 0.2s;
-        }
-
-        .qty-btn:hover {
-            background: rgba(255,255,255,0.1);
-            color: var(--text-main);
-        }
-
-        .cart-footer {
-            padding: 20px;
-            border-top: 1px solid var(--border-color);
-            background: var(--bg-card);
-            z-index: 2;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-        }
-
-        .cart-total-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .cart-total-final {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--text-main);
-        }
-        
-        .btn-checkout {
-            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
-            border: none;
-            color: white;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-checkout:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(236, 72, 153, 0.4);
-        }
-
-        /* --- Empty State --- */
-        .empty-cart-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            min-height: 200px;
-            color: var(--text-muted);
-            text-align: center;
-            opacity: 0.6;
-        }
-
-        /* --- [NEW] Style Gallery Section --- */
-        .style-gallery-container {
-            margin-top: 40px;
-            padding: 30px;
-            border-radius: 24px;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--border-color);
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-120%);
-                width: 260px !important;
-                padding-right: 16px;
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 20px;
-            }
-
-            .mobile-menu-btn {
-                display: flex;
-            }
-
-            .top-navbar-standalone {
-                padding-left: 60px;
-            }
-        }
-    </style>
 </head>
 
 <body id="body-container">
@@ -496,18 +46,14 @@
         <!-- SIDEBAR -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <!-- [MODIFIED] Menggunakan IMG, bukan Icon -->
                 <div class="brand-logo">
-                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=N" alt="Nexus Logo">
-                    <span class="logo-text">Nexus</span>
+                    <img src="https://placehold.co/100x100/6366f1/ffffff?text=W" alt="WKNG Logo">
+                    <span class="logo-text">WKNG ADMIN</span>
                 </div>
-                <!-- [MODIFIED] Tombol Collapse -->
                 <div class="sidebar-collapse-btn" id="collapseBtn"><i class="bi bi-chevron-left"></i></div>
             </div>
-            <!-- [MODIFIED] Divider lebih tebal -->
             <div class="sidebar-divider"></div>
 
-            <!-- [MODIFIED] NEW CATEGORIZED SIDEBAR STRUCTURE -->
             <div class="nav flex-column flex-nowrap nav-scrollable">
                 <div class="nav-category">UTAMA</div>
                 <a href="home.html" class="nav-link "><i class="bi bi-grid-1x2-fill"></i>
@@ -681,7 +227,7 @@
                 <ul class="dropdown-menu profile-dropdown-menu">
                     <div class="dropdown-header-modern">
                         <div class="menu-label">SIGNED IN AS</div>
-                        <div class="menu-user-email">admin@nexus.com</div>
+                        <div class="menu-user-email">admin@WKNG.com</div>
                     </div>
 
                     <li><a class="profile-menu-item" href="profile-me.html">
@@ -778,8 +324,19 @@
                         <h1 class="page-title-large">Terminal Kasir</h1>
                         <p class="text-muted mb-0">Point of Sale System</p>
                     </div>
-                    <div class="col-lg-5 text-lg-end">
-                        <div class="header-badge"><i class="bi bi-shop-window"></i> TERMINAL 01: ACTIVE</div>
+                 
+                    <div class="col-lg-5 col-md-12">
+                        <div class="d-flex flex-column align-items-lg-end align-items-start gap-3">
+                            <div class="header-badge mb-0"><i class="bi bi-shop-window"></i>TERMINAL 01: ACTIVE</div>
+                            <nav class="breadcrumb-modern">
+                                <a href="home.html" class="breadcrumb-item-custom"><span class="breadcrumb-home-icon"><i
+                                            class="bi bi-house-door-fill"></i></span></a>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom">E-Commerce</span>
+                                <i class="bi bi-chevron-right breadcrumb-sep"></i>
+                                <span class="breadcrumb-item-custom active">POS</span>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -791,8 +348,11 @@
                     <p class="text-muted small mb-0">Rabu, 24 Mei 2024 • Shift Pagi</p>
                 </div>
                 <div class="d-flex gap-2">
-                     <button class="btn btn-outline-secondary d-flex align-items-center gap-2"><i class="bi bi-clock-history"></i> Riwayat</button>
-                     <button class="btn btn-primary d-flex align-items-center gap-2" style="background: var(--accent-purple); border:none;"><i class="bi bi-plus-circle"></i> Pesanan Baru</button>
+                    <button class="btn btn-outline-secondary d-flex align-items-center gap-2"><i
+                            class="bi bi-clock-history"></i> Riwayat</button>
+                    <button class="btn btn-primary d-flex align-items-center gap-2"
+                        style="background: var(--accent-purple); border:none;"><i class="bi bi-plus-circle"></i> Pesanan
+                        Baru</button>
                 </div>
             </div>
 
@@ -801,30 +361,37 @@
 
                 <!-- [MODIFIED] LEFT: PRODUCT AREA -->
                 <div class="d-flex flex-column h-100 overflow-hidden">
-                    
+
                     <!-- [NEW] POS Header Toolbar -->
                     <div class="pos-header-area">
                         <!-- Search -->
                         <div class="search-standalone-box" style="width: 250px;">
                             <i class="bi bi-search search-standalone-icon"></i>
-                            <input type="text" class="search-standalone-input" id="searchInput" 
-                                style="padding-top: 8px; padding-bottom: 8px; height: 40px;"
-                                placeholder="Cari menu..." onkeyup="filterProducts()">
+                            <input type="text" class="search-standalone-input" id="searchInput"
+                                style="padding-top: 8px; padding-bottom: 8px; height: 40px;" placeholder="Cari menu..."
+                                onkeyup="filterProducts()">
                         </div>
 
                         <!-- Categories -->
                         <div class="pos-categories">
-                            <div class="cat-pill active" data-category="all" onclick="setCategory('all')"><i class="bi bi-grid-fill"></i> Semua</div>
-                            <div class="cat-pill" data-category="food" onclick="setCategory('food')"><i class="bi bi-egg-fried"></i> Makanan</div>
-                            <div class="cat-pill" data-category="drink" onclick="setCategory('drink')"><i class="bi bi-cup-hot"></i> Minuman</div>
-                            <div class="cat-pill" data-category="dessert" onclick="setCategory('dessert')"><i class="bi bi-cake2"></i> Dessert</div>
-                            <div class="cat-pill" data-category="promo" onclick="setCategory('promo')"><i class="bi bi-tag-fill"></i> Promo</div>
+                            <div class="cat-pill active" data-category="all" onclick="setCategory('all')"><i
+                                    class="bi bi-grid-fill"></i> Semua</div>
+                            <div class="cat-pill" data-category="food" onclick="setCategory('food')"><i
+                                    class="bi bi-egg-fried"></i> Makanan</div>
+                            <div class="cat-pill" data-category="drink" onclick="setCategory('drink')"><i
+                                    class="bi bi-cup-hot"></i> Minuman</div>
+                            <div class="cat-pill" data-category="dessert" onclick="setCategory('dessert')"><i
+                                    class="bi bi-cake2"></i> Dessert</div>
+                            <div class="cat-pill" data-category="promo" onclick="setCategory('promo')"><i
+                                    class="bi bi-tag-fill"></i> Promo</div>
                         </div>
 
                         <!-- View Toggle -->
                         <div class="view-toggle">
-                            <button class="view-btn active" onclick="setViewMode('grid')" id="btnViewGrid"><i class="bi bi-grid-3x3"></i></button>
-                            <button class="view-btn" onclick="setViewMode('list')" id="btnViewList"><i class="bi bi-list-ul"></i></button>
+                            <button class="view-btn active" onclick="setViewMode('grid')" id="btnViewGrid"><i
+                                    class="bi bi-grid-3x3"></i></button>
+                            <button class="view-btn" onclick="setViewMode('list')" id="btnViewList"><i
+                                    class="bi bi-list-ul"></i></button>
                         </div>
                     </div>
 
@@ -841,12 +408,14 @@
                     <div class="cart-header">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h5 class="fw-bold mb-0"><i class="bi bi-basket me-2"></i>Order #8821</h5>
-                            <button class="btn btn-sm text-danger p-0" onclick="clearCart()"><span class="small">Reset</span></button>
+                            <button class="btn btn-sm text-danger p-0" onclick="clearCart()"><span
+                                    class="small">Reset</span></button>
                         </div>
                         <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
+                                checked>
                             <label class="btn btn-outline-secondary btn-sm" for="btnradio1">Dine In</label>
-                          
+
                             <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
                             <label class="btn btn-outline-secondary btn-sm" for="btnradio2">Take Away</label>
                         </div>
@@ -869,7 +438,8 @@
                             <span>Total Bayar</span>
                             <span class="text-accent-purple" id="cart-total">$0.00</span>
                         </div>
-                        <button class="btn btn-primary w-100 mt-3 py-3 rounded-4 btn-checkout shadow-lg" onclick="handleCheckout()">
+                        <button class="btn btn-primary w-100 mt-3 py-3 rounded-4 btn-checkout shadow-lg"
+                            onclick="handleCheckout()">
                             <i class="bi bi-wallet2 me-2"></i> Bayar Sekarang
                         </button>
                     </div>
@@ -879,13 +449,16 @@
             <!-- [NEW] SECTION: STYLE GALLERY & UI KIT -->
             <div class="style-gallery-container">
                 <div class="section-title-modern mt-0">Galeri Style & UI Components (Contoh)</div>
-                <p class="text-muted small mb-4">Klik item di bawah untuk melihat efek animasi atau menambah ke cart.</p>
+                <p class="text-muted small mb-4">Klik item di bawah untuk melihat efek animasi atau menambah ke cart.
+                </p>
 
                 <div class="row g-4">
                     <!-- Style 2: Outline -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="text-muted text-uppercase small fw-bold mb-3">Style 2: Technical / Hardware</h6>
-                        <div class="pos-card-gradient" style="background: transparent; border: 2px solid var(--border-color);" onclick="addToCart(101)">
+                        <div class="pos-card-gradient"
+                            style="background: transparent; border: 2px solid var(--border-color);"
+                            onclick="addToCart(101)">
                             <div class="p-3">
                                 <i class="bi bi-tools fs-1 text-muted mb-2"></i>
                                 <h6 class="fw-bold mb-1">Drill Set Pro</h6>
@@ -901,9 +474,12 @@
                     <!-- Style 3: Glassmorphism -->
                     <div class="col-lg-3 col-md-6">
                         <h6 class="text-muted text-uppercase small fw-bold mb-3">Style 3: Glass / Luxury</h6>
-                        <div class="pos-card-gradient" style="background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);" onclick="addToCart(103)">
+                        <div class="pos-card-gradient"
+                            style="background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);"
+                            onclick="addToCart(103)">
                             <div class="pos-img-wrapper">
-                                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=300&q=80" alt="Watch">
+                                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=300&q=80"
+                                    alt="Watch">
                             </div>
                             <div class="p-3 text-white">
                                 <h6 class="fw-bold mb-0">Luxury Watch</h6>
@@ -917,7 +493,8 @@
                         <h6 class="text-muted text-uppercase small fw-bold mb-3">Style 5: Neumorphism (Soft)</h6>
                         <div class="pos-card-neumorphism" onclick="addToCart(105)">
                             <div class="neu-img-box">
-                                <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=300&q=80" alt="Coffee">
+                                <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=300&q=80"
+                                    alt="Coffee">
                             </div>
                             <h6 class="fw-bold mb-1">Latte Art</h6>
                             <span class="text-accent-purple fw-bold">$4.50</span>
@@ -929,7 +506,8 @@
                         <h6 class="text-muted text-uppercase small fw-bold mb-3">Style 6: Compact List</h6>
                         <div class="d-flex flex-column gap-2">
                             <div class="pos-list-item" onclick="addToCart(106)">
-                                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=100&q=80" class="list-img" alt="Burger">
+                                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=100&q=80"
+                                    class="list-img" alt="Burger">
                                 <div class="list-info">
                                     <div class="fw-bold small">Beef Burger</div>
                                     <div class="text-accent-purple small fw-bold">$6.50</div>
@@ -937,7 +515,8 @@
                                 <div class="list-action"><i class="bi bi-plus-lg"></i></div>
                             </div>
                             <div class="pos-list-item" onclick="addToCart(107)">
-                                <img src="https://images.unsplash.com/photo-1619860860774-1e2e173b5a63?auto=format&fit=crop&w=100&q=80" class="list-img" alt="Fries">
+                                <img src="https://images.unsplash.com/photo-1619860860774-1e2e173b5a63?auto=format&fit=crop&w=100&q=80"
+                                    class="list-img" alt="Fries">
                                 <div class="list-info">
                                     <div class="fw-bold small">French Fries</div>
                                     <div class="text-accent-purple small fw-bold">$3.00</div>
@@ -954,7 +533,7 @@
             <footer class="footer-dashboard">
                 <div class="row align-items-center justify-content-between">
                     <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
-                        <p class="mb-0 small text-muted">Copyright &copy; 2025 <strong class="text-white">Nexus
+                        <p class="mb-0 small text-muted">Copyright &copy; 2025 <strong class="text-white">WKNG
                                 Admin</strong>. All rights reserved.</p>
                     </div>
                     <div class="col-md-6 text-center text-md-end">
@@ -971,231 +550,9 @@
 
     <!-- Theme Toggle Floating (Maintained) -->
     <div class="floating-btn" id="themeToggle"><i class="bi bi-moon-fill" id="themeIcon"></i></div>
-
-    <!-- JS Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- <script src="assets/js/script.js"></script> -->
-    <script>
-       /* ======================================================================
-               POS LOGIC SYSTEM
-        ====================================================================== */
-        const productsArray = [
-            { id: 1, name: "Salad Bowl Mix", price: 8.50, category: "food", stock: 24, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80" },
-            { id: 2, name: "Pepperoni Pizza", price: 12.00, category: "food", stock: 10, isPromo: true, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=300&q=80" },
-            { id: 3, name: "Fruit Cake Slice", price: 4.20, category: "dessert", stock: 15, image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=300&q=80" },
-            { id: 4, name: "Avocado Toast", price: 6.50, category: "food", stock: 8, image: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=300&q=80" },
-            { id: 5, name: "Pancakes", price: 7.00, category: "dessert", stock: 12, image: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?auto=format&fit=crop&w=300&q=80" },
-            { id: 9, name: "Iced Coffee", price: 3.50, category: "drink", stock: 50, image: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=300&q=80" },
-            { id: 10, name: "Berry Smoothie", price: 4.50, category: "drink", stock: 30, image: "https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=300&q=80" },
-            { id: 11, name: "Burger King", price: 9.50, category: "food", stock: 30, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=300&q=80" },
-            
-            // Produk Tambahan untuk Demo Style Bawah
-            { id: 101, name: "Drill Set Pro", price: 85.00, category: "other", image: "" },
-            { id: 103, name: "Luxury Watch", price: 250.00, category: "other", image: "" },
-            { id: 105, name: "Latte Art", price: 4.50, category: "drink", image: "" },
-            { id: 106, name: "Beef Burger", price: 6.50, category: "food", image: "" },
-            { id: 107, name: "French Fries", price: 3.00, category: "food", image: "" },
-        ];
-
-        let cart = [];
-        let currentCategory = 'all';
-        let searchQuery = '';
-        let viewMode = 'grid'; // 'grid' or 'list'
-
-        function setViewMode(mode) {
-            viewMode = mode;
-            document.getElementById('btnViewGrid').classList.toggle('active', mode === 'grid');
-            document.getElementById('btnViewList').classList.toggle('active', mode === 'list');
-            renderProducts();
-        }
-
-        function renderProducts() {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
-
-            const filtered = productsArray.filter(p => {
-                const matchCat = currentCategory === 'all' || p.category === currentCategory || (currentCategory === 'promo' && p.isPromo);
-                const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-                return matchCat && matchSearch && p.id < 100; // Only main items
-            });
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '<div class="col-12 text-center text-muted py-5"><i class="bi bi-search fs-1 mb-3 d-block opacity-25"></i>Produk tidak ditemukan</div>';
-                return;
-            }
-
-            filtered.forEach(p => {
-                const badge = p.isPromo ? `<div class="pos-qty-badge bg-danger">Promo</div>` : `<div class="pos-qty-badge">Stok: ${p.stock}</div>`;
-                
-                let html = '';
-
-                if (viewMode === 'grid') {
-                    // --- GRID VIEW ---
-                    html = `
-                    <div class="col-xl-3 col-lg-4 col-md-6 col-6">
-                        <div class="pos-card-gradient" onclick="addToCart(${p.id})">
-                            ${badge}
-                            <div class="pos-img-wrapper">
-                                <img src="${p.image}" alt="${p.name}" loading="lazy">
-                                <div class="pos-overlay-grad"></div>
-                            </div>
-                            <div class="pos-content-grad">
-                                <div class="pos-title">${p.name}</div>
-                                <div class="d-flex justify-content-between align-items-end mt-2">
-                                    <div class="pos-price">$${p.price.toFixed(2)}</div>
-                                    <button class="btn btn-sm btn-primary rounded-circle" style="width:32px; height:32px; padding:0;"><i class="bi bi-plus"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-                } else {
-                    // --- LIST VIEW ---
-                    html = `
-                    <div class="col-12">
-                        <div class="pos-list-item" onclick="addToCart(${p.id})">
-                            <img src="${p.image}" class="list-img" alt="${p.name}">
-                            <div class="list-info">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="fw-bold">${p.name}</div>
-                                    ${p.isPromo ? '<span class="badge bg-danger" style="font-size:0.6rem">PROMO</span>' : ''}
-                                </div>
-                                <div class="text-muted small">Stok: ${p.stock} porsi</div>
-                            </div>
-                            <div class="fw-bold text-accent-purple me-3">$${p.price.toFixed(2)}</div>
-                            <div class="list-action"><i class="bi bi-plus-lg"></i></div>
-                        </div>
-                    </div>`;
-                }
-
-                grid.innerHTML += html;
-            });
-        }
-
-        function renderCart() {
-            const container = document.getElementById('cart-items-container');
-            container.innerHTML = '';
-
-            if (cart.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-cart-state">
-                        <i class="bi bi-basket fs-1 mb-2 opacity-25"></i>
-                        <p>Keranjang Kosong</p>
-                    </div>`;
-            } else {
-                cart.forEach(item => {
-                    const product = productsArray.find(p => p.id === item.id);
-                    // Default image fallback if gallery item has no image
-                    const imgUrl = product.image || 'https://placehold.co/60?text=Item';
-                    
-                    const html = `
-                        <div class="cart-item">
-                            <img src="${imgUrl}" class="cart-item-img" alt="img">
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <span class="fw-bold small text-truncate" style="max-width: 120px;">${product.name}</span>
-                                    <span class="fw-bold small">$${(product.price * item.qty).toFixed(2)}</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-end">
-                                    <div class="qty-control">
-                                        <div class="qty-btn" onclick="updateQty(${item.id}, -1)"><i class="bi bi-dash"></i></div>
-                                        <span class="px-2 small fw-bold" style="min-width:20px; text-align:center;">${item.qty}</span>
-                                        <div class="qty-btn" onclick="updateQty(${item.id}, 1)"><i class="bi bi-plus"></i></div>
-                                    </div>
-                                    <button class="btn btn-link text-danger p-0 text-decoration-none" style="font-size: 0.8rem;" onclick="removeItem(${item.id})">Hapus</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    container.innerHTML += html;
-                });
-            }
-            calculateTotals();
-        }
-
-        function calculateTotals() {
-            let subtotal = 0;
-            cart.forEach(item => {
-                const product = productsArray.find(p => p.id === item.id);
-                subtotal += product.price * item.qty;
-            });
-            const tax = subtotal * 0.10;
-            const total = subtotal + tax;
-
-            document.getElementById('cart-subtotal').innerText = '$' + subtotal.toFixed(2);
-            document.getElementById('cart-tax').innerText = '$' + tax.toFixed(2);
-            document.getElementById('cart-total').innerText = '$' + total.toFixed(2);
-        }
-
-        function addToCart(id) {
-            const existing = cart.find(item => item.id === id);
-            if (existing) {
-                existing.qty++;
-            } else {
-                cart.push({ id: id, qty: 1 });
-            }
-            renderCart();
-        }
-
-        function updateQty(id, change) {
-            const item = cart.find(item => item.id === id);
-            if (item) {
-                item.qty += change;
-                if (item.qty <= 0) removeItem(id);
-                else renderCart();
-            }
-        }
-
-        function removeItem(id) {
-            cart = cart.filter(item => item.id !== id);
-            renderCart();
-        }
-
-        function clearCart() {
-            if(confirm('Kosongkan keranjang?')) {
-                cart = [];
-                renderCart();
-            }
-        }
-
-        function setCategory(cat) {
-            currentCategory = cat;
-            document.querySelectorAll('.cat-pill').forEach(pill => {
-                pill.classList.remove('active');
-                if (pill.dataset.category === cat) pill.classList.add('active');
-            });
-            renderProducts();
-        }
-
-        function filterProducts() {
-            searchQuery = document.getElementById('searchInput').value;
-            renderProducts();
-        }
-
-        function handleCheckout() {
-            if (cart.length === 0) {
-                alert("Keranjang masih kosong!");
-                return;
-            }
-            const btn = document.querySelector('.btn-checkout');
-            const originalText = btn.innerHTML;
-            
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                alert("Pembayaran Berhasil! Struk telah dicetak.");
-                cart = [];
-                renderCart();
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }, 1500);
-        }
-
-        // Init
-        renderProducts();
-        renderCart();
-    </script>
+    <script src="assets/vendor/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/script.js"></script>
+    
 </body>
 
 </html>
